@@ -1,0 +1,24 @@
+# PowerShell
+*.psd1
+*.psm1
+
+# VSCode
+.vscode/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Temporary
+*.tmp
+
+.vscode/
+bin/
+obj/
+*.log
+*.tmp
+Thumbs.db
+Desktop.ini
