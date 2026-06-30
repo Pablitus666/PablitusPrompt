@@ -1,54 +1,103 @@
-\# Pablitus Prompt Framework (PPF)
+# Pablitus Prompt Framework (PPF)
 
+> **Build once. Render anywhere.**
 
+PPF is a modular framework for building intelligent PowerShell prompts.
 
-An intelligent PowerShell prompt built on top of Oh My Posh.
+Instead of mixing business logic with rendering, PPF separates the prompt into independent components.
 
+```
+Providers
+     │
+     ▼
+ PromptContext
+     │
+     ▼
+  Pipeline
+     │
+     ▼
+ Renderer
+```
 
+---
 
-\## Features
+# Architecture
 
+```
+src/
 
+ Core/
+     Prompt.Context.ps1
+     Prompt.Registry.ps1
+     Prompt.Pipeline.ps1
+     Prompt.Core.ps1
 
-\- Intelligent project detection
+ Providers/
+     Session/
+     Path/
+     Project/
+     Git/
 
-\- Git integration
+ Renderers/
+     OhMyPosh/
 
-\- Python detection
+ Themes/
 
-\- .NET detection
+ Utils/
+```
 
-\- Node.js detection
+---
 
-\- Docker support
+# Features
 
-\- Kubernetes support
+- Modular Provider architecture
+- Independent Prompt Context
+- Provider Pipeline
+- Renderer abstraction
+- Oh My Posh integration
+- Native renderer (planned)
+- Git support
+- Project detection
+- Language detection
+- Docker support
+- Kubernetes support
 
-\- WSL awareness
+---
 
-\- SSH awareness
+# Project Status
 
-\- Lightweight
+Current Version
 
-\- Fully customizable
+```
+v0.2.0-dev
+```
 
+---
 
+# Roadmap
 
-\## Project Status
+- Core Framework ✅
+- Provider System ✅
+- Git Provider 🚧
+- Native Renderer 🚧
+- Theme Engine 🚧
 
+---
 
+# Philosophy
 
-Current Version:
+PPF follows a simple idea.
 
+Collect information once.
 
+Render it anywhere.
 
-v0.1.0 (Development)
+Providers never render.
 
+Renderers never collect data.
 
+Everything communicates through a single PromptContext.
 
-\---
-
-
+---
 
 Created by Pablo
-
