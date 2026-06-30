@@ -6,19 +6,22 @@
 function Invoke-PromptPipeline {
 
     param(
+
         [PromptContext]$Context
+
     )
 
-    foreach ($module in $script:PromptModules) {
+    foreach ($provider in ($script:PromptProviders | Sort-Object Priority)) {
 
         try {
 
-            & $module.Script $Context
+            & $provider.Script $Context
 
         }
+
         catch {
 
-            Write-Verbose "Module '$($module.Name)' failed."
+            Write-Verbose "[PPF] Provider '$($provider.Name)' failed."
 
         }
 

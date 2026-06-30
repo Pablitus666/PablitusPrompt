@@ -9,12 +9,12 @@ function New-PromptContext {
 
 }
 
-function Get-PromptContext {
+function Invoke-Prompt {
 
-    $ctx = New-PromptContext
+    $context = New-PromptContext
 
-    Invoke-PromptPipeline -Context $ctx
+    Invoke-PromptPipeline -Context $context
 
-    return $ctx
+    return $context
 
 }

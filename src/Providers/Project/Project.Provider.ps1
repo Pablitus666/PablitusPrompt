@@ -1,9 +1,9 @@
 # ============================================================
 # Pablitus Prompt Framework (PPF)
-# Prompt.Project.ps1
+# Project.Provider.ps1
 # ============================================================
 
-Register-PromptModule -Name "Project" -Script {
+function Invoke-ProjectProvider {
 
     param(
         [PromptContext]$Context
@@ -11,22 +11,27 @@ Register-PromptModule -Name "Project" -Script {
 
     $current = Get-Location
 
-    $Context.ProjectName = Split-Path $current -Leaf
+    $Context.Project.Name = Split-Path $current -Leaf
 
     if (Test-Path ".git") {
-        $Context.ProjectType = "Git"
+        $Context.Project.Type = "Git"
     }
     elseif (Test-Path "package.json") {
-        $Context.ProjectType = "Node"
+        $Context.Project.Type = "Node"
     }
-    elseif (Test-Path "*.sln") {
-        $Context.ProjectType = ".NET"
+    elseif (Get-ChildItem -Filter "*.sln" -ErrorAction SilentlyContinue) {
+        $Context.Project.Type = ".NET"
     }
     elseif (Test-Path "pyproject.toml") {
-        $Context.ProjectType = "Python"
+        $Context.Project.Type = "Python"
     }
     else {
-        $Context.ProjectType = "Folder"
+        $Context.Project.Type = "Folder"
     }
 
 }
+
+Register-PromptProvider `
+    -Name "Project" `
+    -Priority 300 `
+    -Script ${function:Invoke-ProjectProvider}

@@ -1,28 +1,29 @@
 # ============================================================
 # Pablitus Prompt Framework (PPF)
-# Prompt.Path.ps1
+# Path.Provider.ps1
 # ============================================================
 
-function Get-FriendlyPath {
-
-    $current = (Get-Location).Path
-    $homePath = [System.IO.Path]::GetFullPath($HOME)
-
-    if ($current.StartsWith($homePath, [System.StringComparison]::OrdinalIgnoreCase)) {
-        return $current.Replace($homePath, "~")
-    }
-
-    return $current
-
-}
-
-Register-PromptModule -Name "Path" -Script {
+function Invoke-PathProvider {
 
     param(
         [PromptContext]$Context
     )
 
-    $Context.CurrentPath = (Get-Location).Path
-    $Context.FriendlyPath = Get-FriendlyPath
+    $current = (Get-Location).Path
+    $userHome = [System.IO.Path]::GetFullPath($HOME)
+
+    $friendly = $current
+
+    if ($friendly.StartsWith($userHome, [System.StringComparison]::OrdinalIgnoreCase)) {
+        $friendly = $friendly.Replace($userHome, "~")
+    }
+
+    $Context.Path.Current  = $current
+    $Context.Path.Friendly = $friendly
 
 }
+
+Register-PromptProvider `
+    -Name "Path" `
+    -Priority 200 `
+    -Script ${function:Invoke-PathProvider}

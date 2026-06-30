@@ -1,22 +1,27 @@
 # ============================================================
 # Pablitus Prompt Framework (PPF)
-# Prompt.Session.ps1
+# Session.Provider.ps1
 # ============================================================
 
-Register-PromptModule -Name "Session" -Script {
+function Invoke-SessionProvider {
 
     param(
         [PromptContext]$Context
     )
 
-    $Context.User = $env:USERNAME
-    $Context.Host = $env:COMPUTERNAME
+    $Context.Session.User = $env:USERNAME
+    $Context.Session.Host = $env:COMPUTERNAME
 
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = [Security.Principal.WindowsPrincipal]::new($identity)
 
-    $Context.IsAdmin = $principal.IsInRole(
+    $Context.Session.IsAdmin = $principal.IsInRole(
         [Security.Principal.WindowsBuiltInRole]::Administrator
     )
 
 }
+
+Register-PromptProvider `
+    -Name "Session" `
+    -Priority 100 `
+    -Script ${function:Invoke-SessionProvider}

@@ -3,21 +3,25 @@
 # Prompt.Registry.ps1
 # ============================================================
 
-$script:PromptModules = @()
+$script:PromptProviders = @()
 
-function Register-PromptModule {
+function Register-PromptProvider {
 
     param(
+
         [Parameter(Mandatory)]
         [string]$Name,
 
-        [Parameter(Mandatory)]
+        [int]$Priority = 100,
+
         [scriptblock]$Script
+
     )
 
-    $script:PromptModules += [PSCustomObject]@{
+    $script:PromptProviders += [PSCustomObject]@{
 
-        Name   = $Name
+        Name = $Name
+        Priority = $Priority
         Script = $Script
 
     }

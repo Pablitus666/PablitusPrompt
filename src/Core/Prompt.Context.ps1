@@ -3,37 +3,53 @@
 # Prompt.Context.ps1
 # ============================================================
 
-class PromptContext {
+class SessionContext {
 
-    # Session
     [string]$User
     [string]$Host
     [bool]$IsAdmin
 
-    # Location
-    [string]$CurrentPath
-    [string]$FriendlyPath
+}
 
-    # Project
-    [string]$ProjectName
-    [string]$ProjectType
+class PathContext {
 
-    # Git
-    [string]$GitBranch
-    [bool]$GitDirty
+    [string]$Current
+    [string]$Friendly
 
-    # Languages
-    [string]$PythonVersion
-    [string]$NodeVersion
-    [string]$DotNetVersion
+}
 
-    # Containers
-    [bool]$DockerRunning
+class ProjectContext {
 
-    # Environment
+    [string]$Name
+    [string]$Type
+    [string]$Root
+    [string]$Icon
+
+}
+
+class GitContext {
+
+    [bool]$IsRepository
+    [string]$Branch
+    [bool]$Dirty
+
+}
+
+class PromptContext {
+
+    [SessionContext]$Session
+    [PathContext]$Path
+    [ProjectContext]$Project
+    [GitContext]$Git
+
     [datetime]$Timestamp
 
     PromptContext() {
+
+        $this.Session = [SessionContext]::new()
+        $this.Path = [PathContext]::new()
+        $this.Project = [ProjectContext]::new()
+        $this.Git = [GitContext]::new()
 
         $this.Timestamp = Get-Date
 
