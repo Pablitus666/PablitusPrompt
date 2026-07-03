@@ -9,25 +9,12 @@ function Invoke-ProjectProvider {
         [PromptContext]$Context
     )
 
-    $current = Get-Location
+    $project = Get-ProjectInfo
 
-    $Context.Project.Name = Split-Path $current -Leaf
-
-    if (Test-Path ".git") {
-        $Context.Project.Type = "Git"
-    }
-    elseif (Test-Path "package.json") {
-        $Context.Project.Type = "Node"
-    }
-    elseif (Get-ChildItem -Filter "*.sln" -ErrorAction SilentlyContinue) {
-        $Context.Project.Type = ".NET"
-    }
-    elseif (Test-Path "pyproject.toml") {
-        $Context.Project.Type = "Python"
-    }
-    else {
-        $Context.Project.Type = "Folder"
-    }
+    $Context.Project.Name = $project.Name
+    $Context.Project.Type = $project.Type
+    $Context.Project.Root = $project.Root
+    $Context.Project.Icon = $project.Icon
 
 }
 

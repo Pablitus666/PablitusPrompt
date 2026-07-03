@@ -1,0 +1,74 @@
+# ============================================================
+# Pablitus Prompt Framework (PPF)
+# Prompt.Factory.ps1
+# ============================================================
+
+function New-PromptSegment {
+
+    param(
+
+        [Parameter(Mandatory)]
+        [string]$Name,
+
+        [string]$Text,
+
+        [string]$Icon,
+
+        [string]$Foreground,
+
+        [string]$Background,
+
+        [bool]$Visible = $true
+
+    )
+
+    $segment = [PromptSegment]::new()
+
+    $segment.Name = $Name
+    $segment.Text = $Text
+    $segment.Icon = $Icon
+    $segment.Foreground = $Foreground
+    $segment.Background = $Background
+    $segment.Visible = $Visible
+
+    return $segment
+
+}
+
+function Get-PromptSegmentConfiguration {
+
+    param(
+        [string]$Name
+    )
+
+    if ($script:PromptConfiguration.Segments.ContainsKey($Name)) {
+        return $script:PromptConfiguration.Segments[$Name]
+    }
+
+    return @{}
+
+}
+
+function New-ConfiguredPromptSegment {
+
+    param(
+
+        [Parameter(Mandatory)]
+        [string]$Name,
+
+        [Parameter(Mandatory)]
+        [string]$Text
+
+    )
+
+    $cfg = Get-PromptSegmentConfiguration $Name
+
+    return New-PromptSegment `
+        -Name $Name `
+        -Text $Text `
+        -Icon $cfg.Icon `
+        -Foreground $cfg.Foreground `
+        -Background $cfg.Background `
+        -Visible $cfg.Visible
+
+}
