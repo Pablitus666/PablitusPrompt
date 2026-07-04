@@ -3,7 +3,10 @@
 # Bootstrap.ps1
 # ============================================================
 
+$script:BootstrapStart = [System.Diagnostics.Stopwatch]::StartNew()
+
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$global:PPF_InstallRoot = $Root
 
 # ------------------------------------------------------------
 # Core
@@ -36,41 +39,17 @@ ForEach-Object {
 }
 
 # ------------------------------------------------------------
-# Services
+# Modules (Discovery & Import)
 # ------------------------------------------------------------
 
-Get-ChildItem "$Root\Services\*\*.ps1" |
-Sort-Object FullName |
-ForEach-Object {
-    . $_.FullName
-}
+. Initialize-PPFModules -ModulesPath "$Root\Modules"
 
 # ------------------------------------------------------------
-# Providers
+# Themes
 # ------------------------------------------------------------
 
-Get-ChildItem "$Root\Providers\*\*.ps1" |
-Sort-Object FullName |
-ForEach-Object {
-    . $_.FullName
-}
-
-# ------------------------------------------------------------
-# Segment Registry
-# ------------------------------------------------------------
-
-Get-ChildItem "$Root\Segments\*.ps1" |
+Get-ChildItem "$Root\Themes\*.Theme.ps1" |
 Sort-Object Name |
-ForEach-Object {
-    . $_.FullName
-}
-
-# ------------------------------------------------------------
-# Segments
-# ------------------------------------------------------------
-
-Get-ChildItem "$Root\Segments\*\*.ps1" |
-Sort-Object FullName |
 ForEach-Object {
     . $_.FullName
 }
@@ -83,4 +62,13 @@ Get-ChildItem "$Root\Renderers\*\*.ps1" |
 Sort-Object FullName |
 ForEach-Object {
     . $_.FullName
+}
+
+# ------------------------------------------------------------
+# Telemetry Finish
+# ------------------------------------------------------------
+$script:BootstrapStart.Stop()
+$global:PPF_BootstrapTimeMs = $script:BootstrapStart.Elapsed.TotalMilliseconds
+if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
+    Write-PPFLog -Level "INFO" -Message "PPF bootstrapped in $($global:PPF_BootstrapTimeMs) ms."
 }

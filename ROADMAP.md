@@ -1,31 +1,7 @@
 # Pablitus Prompt Framework Roadmap
+> **Pablitus Prompt Framework v1.0 Architecture Frozen**
 
-## v0.2
+The roadmap documentation has been moved to the official docs directory.
 
-- [x] Core Architecture
-- [x] Provider Pipeline
-- [x] Session Provider
-- [x] Path Provider
-- [x] Project Provider
-- [ ] Git Provider
-- [ ] Node Provider
-- [ ] Python Provider
-
----
-
-## v0.3
-
-- [ ] Docker Provider
-- [ ] Kubernetes Provider
-- [ ] Azure Provider
-- [ ] WSL Provider
-
----
-
-## v1.0
-
-- [ ] Native Renderer
-- [ ] Theme Engine
-- [ ] Installer
-- [ ] Documentation
-- [ ] Unit Tests
+Please refer to:
+- [docs/Roadmap.md](file:///I:/PablitusPrompt/docs/Roadmap.md)

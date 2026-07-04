@@ -1,0 +1,35 @@
+{
+  "Timestamp": "2026-07-04 13:21:32",
+  "BootstrapMs": 687.1407,
+  "TotalMs": 37.9933,
+  "RendererMs": 1.1451,
+  "RendererName": "Plain",
+  "Providers": {
+    "Battery": 0.4772,
+    "CPU": 0.8387,
+    "Docker": 2.9469,
+    "Git": 4.6814,
+    "Kubernetes": 0.4833,
+    "Memory": 0.4909,
+    "Node": 0.4828,
+    "Path": 0.5281,
+    "Project": 1.4377,
+    "Python": 0.5512,
+    "Session": 0.7738,
+    "WSL": 0.4785
+  },
+  "Segments": {
+    "Battery": 0.3445,
+    "CPU": 1.4828,
+    "Docker": 0.342,
+    "Git": 0.9482,
+    "Kubernetes": 0.3684,
+    "Memory": 1.2457,
+    "Node": 0.8571,
+    "Path": 0.8656,
+    "Project": 0.9284,
+    "Python": 0.8684,
+    "Session": 0.9499,
+    "WSL": 0.3196
+  }
+}

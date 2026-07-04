@@ -43,6 +43,46 @@ class RuntimeContext {
 
 }
 
+class DockerContext {
+
+    [bool]$Active
+    [int]$RunningContainers
+
+}
+
+class WslContext {
+
+    [bool]$IsWsl
+    [string]$Distro
+
+}
+
+class BatteryContext {
+
+    [int]$Percentage
+    [string]$Status
+
+}
+
+class CpuContext {
+
+    [int]$Usage
+
+}
+
+class MemoryContext {
+
+    [int]$Usage
+
+}
+
+class KubernetesContext {
+
+    [string]$Context
+    [string]$Namespace
+
+}
+
 class PromptSegment {
 
     [string]$Name
@@ -61,22 +101,36 @@ class PromptContext {
     [ProjectContext]$Project
     [GitContext]$Git
     [RuntimeContext]$Runtime
+    [DockerContext]$Docker
+    [WslContext]$Wsl
+    [BatteryContext]$Battery
+    [CpuContext]$Cpu
+    [MemoryContext]$Memory
+    [KubernetesContext]$Kubernetes
 
     [System.Collections.Generic.List[PromptSegment]]$Segments
 
     [datetime]$Timestamp
+    [hashtable]$Metrics
 
     PromptContext() {
 
-        $this.Session = [SessionContext]::new()
-        $this.Path    = [PathContext]::new()
-        $this.Project = [ProjectContext]::new()
-        $this.Git     = [GitContext]::new()
-        $this.Runtime = [RuntimeContext]::new()
+        $this.Session    = [SessionContext]::new()
+        $this.Path       = [PathContext]::new()
+        $this.Project    = [ProjectContext]::new()
+        $this.Git        = [GitContext]::new()
+        $this.Runtime    = [RuntimeContext]::new()
+        $this.Docker     = [DockerContext]::new()
+        $this.Wsl        = [WslContext]::new()
+        $this.Battery    = [BatteryContext]::new()
+        $this.Cpu        = [CpuContext]::new()
+        $this.Memory     = [MemoryContext]::new()
+        $this.Kubernetes = [KubernetesContext]::new()
 
         $this.Segments = [System.Collections.Generic.List[PromptSegment]]::new()
 
         $this.Timestamp = Get-Date
+        $this.Metrics = @{}
 
     }
 

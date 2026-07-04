@@ -52,9 +52,29 @@ function Invoke-PromptRenderer {
 
     )
 
-    $renderer = Get-PromptRenderer -Name $Renderer
+    $rendererScript = Get-PromptRenderer -Name $Renderer
 
-    & $renderer -Context $Context
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
+    try {
+        if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
+            Write-PPFLog -Level "DEBUG" -Message "Invoking Renderer '$Renderer'..."
+        }
+        $result = & $rendererScript -Context $Context
+        $sw.Stop()
+        $Context.Metrics["Renderer_TimeMs"] = $sw.Elapsed.TotalMilliseconds
+        if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
+            Write-PPFLog -Level "TRACE" -Message "Renderer '$Renderer' took $($sw.Elapsed.TotalMilliseconds) ms."
+        }
+        return $result
+    }
+    catch {
+        $sw.Stop()
+        $Context.Metrics["Renderer_TimeMs"] = $sw.Elapsed.TotalMilliseconds
+        if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
+            Write-PPFLog -Level "ERROR" -Message "Renderer '$Renderer' failed: $_"
+        }
+        throw $_
+    }
 
 }
 

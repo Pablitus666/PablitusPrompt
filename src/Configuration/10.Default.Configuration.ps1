@@ -61,6 +61,8 @@ $script:PromptConfiguration.Segments["Git"] = @{
 
     Foreground = "Yellow"
 
+    CacheTimeoutMs = 5000
+
 }
 
 # ------------------------------------------------------------
