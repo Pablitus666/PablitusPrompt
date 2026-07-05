@@ -44,6 +44,17 @@ function Invoke-PromptProviders {
     )
 
     foreach ($provider in ($script:PromptProviders | Sort-Object Priority)) {
+        
+        $global:PPF_CurrentExecutingProvider = $provider.Name
+        if (-not $global:PPF_ProviderCacheStats.Contains($provider.Name)) {
+            $global:PPF_ProviderCacheStats[$provider.Name] = @{ Hits = 0; Misses = 0; Expirations = 0; Refreshes = 0 }
+        }
+        
+        $stats = $global:PPF_ProviderCacheStats[$provider.Name]
+        $beforeHits = $stats.Hits
+        $beforeMisses = $stats.Misses
+        $beforeExpirations = $stats.Expirations
+        $beforeRefreshes = $stats.Refreshes
 
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         try {
@@ -52,17 +63,57 @@ function Invoke-PromptProviders {
             }
             & $provider.Script $Context
             $sw.Stop()
-            $Context.Metrics["Provider_$($provider.Name)_TimeMs"] = $sw.Elapsed.TotalMilliseconds
+            
+            $elapsed = $sw.Elapsed.TotalMilliseconds
+            $afterHits = $stats.Hits
+            $afterMisses = $stats.Misses
+            $afterExpirations = $stats.Expirations
+            $afterRefreshes = $stats.Refreshes
+
+            $hasHit = $afterHits -gt $beforeHits
+            $hasMiss = $afterMisses -gt $beforeMisses
+            $hasExpiration = $afterExpirations -gt $beforeExpirations
+            $hasRefresh = $afterRefreshes -gt $beforeRefreshes
+
+            $Context.Metrics["Provider_$($provider.Name)_TimeMs"] = $elapsed
+            $Context.Metrics["Provider_$($provider.Name)_CacheHit"] = $hasHit
+            $Context.Metrics["Provider_$($provider.Name)_CacheMiss"] = $hasMiss
+            $Context.Metrics["Provider_$($provider.Name)_TTLExpired"] = $hasExpiration
+            $Context.Metrics["Provider_$($provider.Name)_Refresh"] = $hasRefresh
+            $Context.Metrics["Provider_$($provider.Name)_ReadTimeMs"] = if ($hasHit -and -not $hasMiss) { $elapsed } else { 0.0 }
+            $Context.Metrics["Provider_$($provider.Name)_UpdateTimeMs"] = if ($hasMiss -or $hasRefresh -or $hasExpiration) { $elapsed } else { 0.0 }
+
             if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
-                Write-PPFLog -Level "TRACE" -Message "Provider '$($provider.Name)' took $($sw.Elapsed.TotalMilliseconds) ms."
+                Write-PPFLog -Level "TRACE" -Message "Provider '$($provider.Name)' took $($elapsed) ms (CacheHit: $hasHit, CacheMiss: $hasMiss, TTLExpired: $hasExpiration, Refresh: $hasRefresh)."
             }
         }
         catch {
             $sw.Stop()
-            $Context.Metrics["Provider_$($provider.Name)_TimeMs"] = $sw.Elapsed.TotalMilliseconds
+            $elapsed = $sw.Elapsed.TotalMilliseconds
+            
+            $afterHits = $stats.Hits
+            $afterMisses = $stats.Misses
+            $afterExpirations = $stats.Expirations
+            $afterRefreshes = $stats.Refreshes
+
+            $hasHit = $afterHits -gt $beforeHits
+            $hasMiss = $afterMisses -gt $beforeMisses
+            $hasExpiration = $afterExpirations -gt $beforeExpirations
+            $hasRefresh = $afterRefreshes -gt $beforeRefreshes
+
+            $Context.Metrics["Provider_$($provider.Name)_TimeMs"] = $elapsed
+            $Context.Metrics["Provider_$($provider.Name)_CacheHit"] = $hasHit
+            $Context.Metrics["Provider_$($provider.Name)_CacheMiss"] = $hasMiss
+            $Context.Metrics["Provider_$($provider.Name)_TTLExpired"] = $hasExpiration
+            $Context.Metrics["Provider_$($provider.Name)_Refresh"] = $hasRefresh
+            $Context.Metrics["Provider_$($provider.Name)_ReadTimeMs"] = if ($hasHit -and -not $hasMiss) { $elapsed } else { 0.0 }
+            $Context.Metrics["Provider_$($provider.Name)_UpdateTimeMs"] = if ($hasMiss -or $hasRefresh -or $hasExpiration) { $elapsed } else { 0.0 }
             if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
                 Write-PPFLog -Level "ERROR" -Message "Provider '$($provider.Name)' failed: $_"
             }
+        }
+        finally {
+            $global:PPF_CurrentExecutingProvider = $null
         }
 
     }

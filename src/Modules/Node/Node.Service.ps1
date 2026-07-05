@@ -5,13 +5,10 @@
 
 function Get-NodeVersion {
 
-    if (Test-CommandExists node) {
-
-        $version = (node --version 2>$null)
-        if ($version) {
-            return ($version -join "").TrimStart("v").Trim()
-        }
-
+    $res = Invoke-PPFExternalCommand -Command "node" -Arguments @("--version") -TimeoutMs 1000
+    if ($res.Installed -and $res.ExitCode -eq 0 -and $res.Output) {
+        $val = ($res.Output -join "").Trim()
+        return $val.TrimStart([char]"v").Trim()
     }
 
     return $null

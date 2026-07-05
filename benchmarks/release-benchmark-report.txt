@@ -1,0 +1,13 @@
+
+Name                           Value
+----                           -----
+Timestamp                      2026-07-05 10:36:29
+Iterations                     50
+BootstrapMs                    413,1444
+CacheStats                     {[Hits, 444], [Misses, 158], [Expirations, 1], [Refreshes, 8]}
+TotalStats                     @{Min=20,6029; Max=203,5786; Average=27,851762; Median=23,17475; Q1=22,8173; Q3=24,2545;…
+RendererStats                  @{Min=0,2544; Max=0,8109; Average=0,29041; Median=0,2684; Q1=0,2635; Q3=0,2894; P95=0,35…
+RendererName                   Plain
+ProviderStats                  {[Battery, @{Min=0,1468; Max=7,5477; Average=0,319012; Median=0,1528; Q1=0,1512; Q3=0,15…
+SegmentStats                   {[Battery, @{Min=0,0973; Max=2,1568; Average=0,149916; Median=0,10175; Q1=0,1004; Q3=0,1…
+

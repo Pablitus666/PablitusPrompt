@@ -8,8 +8,10 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
     BeforeAll {
         $bootstrapPath = Resolve-Path (Join-Path $PSScriptRoot "..\src\Bootstrap.ps1")
         . $bootstrapPath
+        $global:PPF_InsidePester = $true
     }
 
+    InModuleScope PablitusPrompt {
     Context "Kernel, Modules & Pipeline" {
 
         It "Carga Bootstrap.ps1 sin errores y define las funciones clave" {
@@ -26,8 +28,8 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             }
         }
 
-        It "Registra los 12 proveedores modularizados" {
-            $expectedProviders = @("Session", "Project", "Path", "Git", "Python", "Node", "Docker", "WSL", "Battery", "CPU", "Memory", "Kubernetes")
+        It "Registra los proveedores modularizados" {
+            $expectedProviders = @("Session", "Project", "Path", "Git", "Python", "Node", "Docker", "WSL", "Battery", "CPU", "Memory", "Kubernetes", "DotNet")
 
             foreach ($providerName in $expectedProviders) {
                 $provider = $script:PromptProviders | Where-Object Name -eq $providerName
@@ -35,8 +37,8 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             }
         }
 
-        It "Registra los 12 segmentos modularizados" {
-            $expectedSegments = @("Session", "Project", "Path", "Git", "Python", "Node", "Docker", "WSL", "Battery", "CPU", "Memory", "Kubernetes")
+        It "Registra los segmentos modularizados" {
+            $expectedSegments = @("Session", "Project", "Path", "Git", "Python", "Node", "Docker", "WSL", "Battery", "CPU", "Memory", "Kubernetes", "DotNet")
 
             foreach ($segmentName in $expectedSegments) {
                 $segment = $script:PromptSegments | Where-Object Name -eq $segmentName
@@ -322,4 +324,790 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
 
     }
 
+    Context "CPU Sampler & Health Diagnostics" {
+        It "Inicia y detiene el Sampler CPU sin errores" {
+            { Start-CpuSampler } | Should Not Throw
+            $usage = Get-CpuUsage
+            $usage | Should BeGreaterThan -1
+            { Stop-CpuSampler } | Should Not Throw
+        }
+
+        It "Retorna el diagnóstico del framework en Test-PromptFramework" {
+            $diag = Test-PromptFramework
+            $diag | Should Not Be $null
+            $diag.Checks.Count | Should BeGreaterThan 0
+        }
+
+        It "Retorna el estado de salud en Get-PromptHealth" {
+            $health = Get-PromptHealth
+            $health | Should Not Be $null
+            $health.ActiveProviders.Count | Should BeGreaterThan 0
+        }
+    }
+
+    Context "Statistical Benchmarks" {
+        It "Ejecuta Measure-PromptDetailed exitosamente" {
+            $rep = Measure-PromptDetailed -Iterations 2
+            $rep | Should Not Be $null
+            $rep.TotalStats.Average | Should BeGreaterThan -1
+        }
+
+        It "Ejecuta Measure-PromptCacheComparison exitosamente" {
+            $comp = Measure-PromptCacheComparison -Iterations 2
+            $comp | Should Not Be $null
+            $comp.SpeedupFactor | Should BeGreaterThan -1
+        }
+
+        It "Ejecuta benchmarks individuales exitosamente" {
+            $stats = Measure-CpuProvider -Iterations 2
+            $stats | Should Not Be $null
+            $stats.Average | Should BeGreaterThan -1
+        }
+    }
+
+    Context "Hardening & Coverage Updates (Fase 5)" {
+        It "Testea Get-Prompt para recuperar segmentos" {
+            $segments = Get-Prompt
+            $segments | Should Not Be $null
+        }
+
+        It "Testea el logger con todos los niveles (Trace, Debug, Info, Warn, Error)" {
+            # Save current log level
+            $oldLevel = $script:LogLevel
+            
+            # Set to TRACE to allow all logs
+            Set-PPFLogLevel -Level "TRACE"
+            $script:LogLevel | Should Be "TRACE"
+            
+            { Write-PPFLog -Level "TRACE" -Message "Test Trace" } | Should Not Throw
+            { Write-PPFLog -Level "DEBUG" -Message "Test Debug" } | Should Not Throw
+            { Write-PPFLog -Level "INFO" -Message "Test Info" } | Should Not Throw
+            { Write-PPFLog -Level "INFORMATION" -Message "Test Info alias" } | Should Not Throw
+            { Write-PPFLog -Level "WARN" -Message "Test Warn" } | Should Not Throw
+            { Write-PPFLog -Level "WARNING" -Message "Test Warn alias" } | Should Not Throw
+            { Write-PPFLog -Level "ERROR" -Message "Test Error" } | Should Not Throw
+
+            # Restore log level
+            Set-PPFLogLevel -Level $oldLevel
+        }
+
+        It "Ejecuta Measure-Prompt con diferentes renderers" {
+            $m = Measure-Prompt -Renderer "Minimal"
+            $m | Should Not Be $null
+            $m.TotalPromptTimeMs | Should BeGreaterThan -1
+        }
+
+        It "Cubre metodos adicionales de cache y disco" {
+            # Force disk cache loading/saving test cases
+            $testKey = "TempDiskTest"
+            Set-PPFCache -Key $testKey -Value "Val" -UseDisk -TtlSeconds 10
+            $val = Get-PPFCache -Key $testKey -UseDisk
+            $val | Should Be "Val"
+
+            # Trigger TTL Expirations via Disk Cache manual load/save
+            $diskCache = Load-PPFDiskCache
+            $diskCache[$testKey].Expiry = (Get-Date).AddSeconds(-10) # Expire manually
+            Save-PPFDiskCache -Cache $diskCache
+            $script:PPFMemoryCache.Remove($testKey) # Clear memory
+
+            $valExpired = Get-PPFCache -Key $testKey -UseDisk
+            $valExpired | Should Be $null
+        }
+
+        It "Ejecuta todos los benchmarks individuales de los proveedores" {
+            $benchmarks = @(
+                "Session", "Project", "Path", "Git", "Python", "Node", 
+                "Docker", "WSL", "Battery", "CPU", "Memory", "Kubernetes", "DotNet"
+            )
+            foreach ($b in $benchmarks) {
+                $cmdName = "Measure-${b}Provider"
+                if (Get-Command $cmdName -ErrorAction SilentlyContinue) {
+                    $res = & $cmdName -Iterations 1
+                    $res | Should Not Be $null
+                }
+            }
+        }
+
+        It "Prueba New-PromptSegment con configuracion de visibilidad y resolucion de color explicita" {
+            $cfg = Get-PromptConfiguration
+            $oldSegments = $cfg.Segments.Clone()
+            $cfg.Segments["TestUncoveredSeg"] = @{ Visible = $false }
+            $seg = New-PromptSegment -Name "TestUncoveredSeg" -Text "Hello"
+            $seg | Should Be $null
+            $cfg.Segments = $oldSegments
+
+            $seg2 = New-PromptSegment -Name "Session" -Text "User" -Foreground "Red" -Background "Blue"
+            $seg2 | Should Not Be $null
+            $seg2.Foreground | Should Not BeNullOrEmpty
+            $seg2.Background | Should Not BeNullOrEmpty
+        }
+
+        It "Prueba el registro y recuperacion de componentes PPF (Fase 5)" {
+            Register-PPFComponent -Category "Themes" -Name "CoverageTheme" -Value @{ Name = "CoverageTheme" }
+            $retTheme = Get-PPFComponent -Category "Themes" -Name "CoverageTheme"
+            $retTheme.Name | Should Be "CoverageTheme"
+
+            $dummyProv = @{ Name = "DummyProv" }
+            Register-PPFComponent -Category "Providers" -Name "DummyProv" -Value $dummyProv
+            $dummyProv2 = @{ Name = "DummyProv"; Check = $true }
+            Register-PPFComponent -Category "Providers" -Name "DummyProv" -Value $dummyProv2
+            $retProv = Get-PPFComponent -Category "Providers" -Name "DummyProv"
+            $retProv.Check | Should Be $true
+
+            $dummySeg = @{ Name = "DummySeg" }
+            Register-PPFComponent -Category "Segments" -Name "DummySeg" -Value $dummySeg
+            $dummySeg2 = @{ Name = "DummySeg"; Check = $true }
+            Register-PPFComponent -Category "Segments" -Name "DummySeg" -Value $dummySeg2
+            $retSeg = Get-PPFComponent -Category "Segments" -Name "DummySeg"
+            $retSeg.Check | Should Be $true
+
+            $allProvs = Get-PPFComponent -Category "Providers"
+            $allProvs | Should Not Be $null
+            $allThemes = Get-PPFComponent -Category "Themes"
+            $allThemes | Should Not Be $null
+        }
+
+        It "Prueba la importacion/exportacion y Hot Reload del ConfigManager" {
+            $t1 = $false; try { Import-PromptConfiguration -Path "test.invalid" } catch { $t1 = $true }; $t1 | Should Be $true
+            $t2 = $false; try { Export-PromptConfiguration -Path "test.invalid" } catch { $t2 = $true }; $t2 | Should Be $true
+
+            $ret = Import-PromptConfiguration -Path "nonexistent.json"
+            $ret | Should Be $null
+
+            $tempPathJson = Join-Path $env:TEMP "temp_cov_config.json"
+            @{ theme = "Nord"; renderer = "Plain"; segments = @{ Session = $true } } | ConvertTo-Json | Out-File $tempPathJson -Encoding utf8
+            $t3 = $false; try { Import-PromptConfiguration -Path $tempPathJson } catch { $t3 = $true }; $t3 | Should Be $false
+            Remove-Item $tempPathJson -ErrorAction SilentlyContinue
+
+            $tempReload = Join-Path $env:TEMP "temp_cov_reload.json"
+            "invalid-json-content" | Out-File $tempReload -Encoding utf8
+            $t4 = $false; try { Enable-PromptConfigHotReload -Path $tempReload } catch { $t4 = $true }; $t4 | Should Be $false
+            (Get-Item $tempReload).LastWriteTime = (Get-Date).AddMinutes(1)
+            $t5 = $false; try { Test-PromptConfigReload } catch { $t5 = $true }; $t5 | Should Be $false
+            $t6 = $false; try { Disable-PromptConfigHotReload } catch { $t6 = $true }; $t6 | Should Be $false
+            Remove-Item $tempReload -ErrorAction SilentlyContinue
+        }
+
+        It "Prueba el manejo de errores en renderers, providers y segments" {
+            $t1 = $false; try { Get-PromptRenderer -Name "NonExistentRenderer" } catch { $t1 = $true }; $t1 | Should Be $true
+
+            Register-PromptRenderer -Name "ThrowingRenderer" -Script { throw "Simulated renderer error" }
+            $context = New-PromptContext
+            $t2 = $false; try { Invoke-PromptRenderer -Context $context -Renderer "ThrowingRenderer" } catch { $t2 = $true }; $t2 | Should Be $true
+
+            Register-PromptProvider -Name "ThrowingProvider" -Priority 1 -Script { throw "Simulated provider error" }
+            $context2 = Invoke-Prompt
+            $context2.Metrics.ContainsKey("Provider_ThrowingProvider_TimeMs") | Should Be $true
+
+            Register-PromptSegment -Name "ThrowingSegment" -Priority 1 -Script { throw "Simulated segment error" }
+            $segs = Get-PromptSegments
+            $segs | Should Not Be $null
+        }
+
+        It "Prueba la generacion de estadisticas de Telemetria con valores vacios y outliers" {
+            $statsOutliers = Get-PPFStatistics -Values @(1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 100.0)
+            $statsOutliers.OutliersCount | Should Be 1
+            $statsOutliers.BoxPlot | Should Not BeNullOrEmpty
+            $statsOutliers.Histogram.Count | Should BeGreaterThan 0
+
+            $statsEmpty = Get-PPFStatistics -Values @()
+            $statsEmpty.Min | Should Be 0.0
+        }
+
+        It "Ejecuta Test-PromptFramework con la suite de pruebas completa" {
+            $diag = Test-PromptFramework -RunTests
+            $diag | Should Not Be $null
+            $diag.HealthScore | Should BeGreaterThan -1
+        }
+    }
+
+    Context "External Runtimes Mocking (Fase V & Resiliency)" {
+
+        # --- Node.js tests ---
+        It "Detecta Node.js correctamente cuando está instalado" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 0
+                    Output    = "v18.12.1"
+                    Error     = ""
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-NodeVersion
+            $version | Should Be "18.12.1"
+        }
+
+        It "Maneja elegantemente cuando Node.js no está instalado" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = -1
+                    Output    = $null
+                    Error     = "CommandNotFoundException"
+                    TimedOut  = $false
+                    Installed = $false
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-NodeVersion
+            $version | Should Be $null
+        }
+
+        It "Maneja errores de Node.js de ejecución" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 1
+                    Output    = "Some fatal startup error"
+                    Error     = "Some stderr"
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-NodeVersion
+            $version | Should Be $null
+        }
+
+        It "Maneja Node.js con timeout" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = -1
+                    Output    = $null
+                    Error     = "Process timed out"
+                    TimedOut  = $true
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-NodeVersion
+            $version | Should Be $null
+        }
+
+        It "Maneja una salida de Node.js con formato inesperado" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 0
+                    Output    = "   v20.0.0-rc.1 with custom patches   "
+                    Error     = ""
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-NodeVersion
+            $version | Should Be "20.0.0-rc.1 with custom patches"
+        }
+
+        # --- Python tests ---
+        It "Detecta Python correctamente con salida estándar" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 0
+                    Output    = "Python 3.13.5"
+                    Error     = ""
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-PythonVersion
+            $version | Should Be "3.13.5"
+        }
+
+        It "Maneja elegantemente cuando Python no está instalado" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = -1
+                    Output    = $null
+                    Error     = "CommandNotFoundException"
+                    TimedOut  = $false
+                    Installed = $false
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-PythonVersion
+            $version | Should Be $null
+        }
+
+        It "Maneja errores de Python de ejecución" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 127
+                    Output    = ""
+                    Error     = "library loading error"
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-PythonVersion
+            $version | Should Be $null
+        }
+
+        It "Maneja Python con timeout" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = -1
+                    Output    = $null
+                    Error     = "Process timed out"
+                    TimedOut  = $true
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-PythonVersion
+            $version | Should Be $null
+        }
+
+        It "Maneja Python con formato inesperado" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 0
+                    Output    = "   Py version: 3.14.0   "
+                    Error     = ""
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-PythonVersion
+            $version | Should Be "Py version: 3.14.0"
+        }
+
+        # --- DotNet tests ---
+        It "Detecta DotNet correctamente cuando está instalado" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 0
+                    Output    = "8.0.301"
+                    Error     = ""
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-DotNetVersion
+            $version | Should Be "8.0.301"
+        }
+
+        It "Maneja elegantemente cuando DotNet no está instalado" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = -1
+                    Output    = $null
+                    Error     = "CommandNotFoundException"
+                    TimedOut  = $false
+                    Installed = $false
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-DotNetVersion
+            $version | Should Be $null
+        }
+
+        It "Maneja errores de DotNet de ejecución" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 1
+                    Output    = ""
+                    Error     = "Configuration error"
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-DotNetVersion
+            $version | Should Be $null
+        }
+
+        It "Maneja DotNet con timeout" {
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = -1
+                    Output    = $null
+                    Error     = "Process timed out"
+                    TimedOut  = $true
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $version = Get-DotNetVersion
+            $version | Should Be $null
+        }
+
+        # --- Docker tests ---
+        It "Maneja Docker con timeout y devuelve estado de error" {
+            $oldDockerHost = $env:DOCKER_HOST
+            $env:DOCKER_HOST = "tcp://localhost:2375"
+            try {
+                Mock Invoke-PPFExternalCommand {
+                    return [pscustomobject]@{
+                        ExitCode  = -1
+                        Output    = ""
+                        Error     = "Process timed out"
+                        TimedOut  = $true
+                        Installed = $true
+                    }
+                } -ModuleName PablitusPrompt
+
+                $info = Get-DockerInfo
+                $info.Active | Should Be $false
+                $info.Count | Should Be 0
+            } finally {
+                $env:DOCKER_HOST = $oldDockerHost
+            }
+        }
+
+        It "Maneja Docker cuando la salida contiene IDs de contenedores válidos" {
+            $oldDockerHost = $env:DOCKER_HOST
+            $env:DOCKER_HOST = "tcp://localhost:2375"
+            try {
+                Mock Invoke-PPFExternalCommand {
+                    return [pscustomobject]@{
+                        ExitCode  = 0
+                        Output    = "a1b2c3d4e5f6`r`n1234567890ab"
+                        Error     = ""
+                        TimedOut  = $false
+                        Installed = $true
+                    }
+                } -ModuleName PablitusPrompt
+
+                $info = Get-DockerInfo
+                $info.Active | Should Be $true
+                $info.Count | Should Be 2
+            } finally {
+                $env:DOCKER_HOST = $oldDockerHost
+            }
+        }
+
+        It "Maneja elegantemente cuando Docker no está instalado" {
+            $oldDockerHost = $env:DOCKER_HOST
+            $env:DOCKER_HOST = "tcp://localhost:2375"
+            try {
+                Mock Invoke-PPFExternalCommand {
+                    return [pscustomobject]@{
+                        ExitCode  = -1
+                        Output    = $null
+                        Error     = "CommandNotFoundException"
+                        TimedOut  = $false
+                        Installed = $false
+                    }
+                } -ModuleName PablitusPrompt
+
+                $info = Get-DockerInfo
+                $info.Active | Should Be $false
+                $info.Count | Should Be 0
+            } finally {
+                $env:DOCKER_HOST = $oldDockerHost
+            }
+        }
+
+        It "Maneja elegantemente cuando Docker daemon devuelve un error" {
+            $oldDockerHost = $env:DOCKER_HOST
+            $env:DOCKER_HOST = "tcp://localhost:2375"
+            try {
+                Mock Invoke-PPFExternalCommand {
+                    return [pscustomobject]@{
+                        ExitCode  = 1
+                        Output    = ""
+                        Error     = "docker daemon is not running"
+                        TimedOut  = $false
+                        Installed = $true
+                    }
+                } -ModuleName PablitusPrompt
+
+                $info = Get-DockerInfo
+                $info.Active | Should Be $false
+                $info.Count | Should Be 0
+            } finally {
+                $env:DOCKER_HOST = $oldDockerHost
+            }
+        }
+
+        # --- Git tests ---
+        It "Maneja Git cuando está instalado y el repositorio está limpio" {
+            Mock Get-GitDir { return "C:\test\.git" } -ModuleName PablitusPrompt
+            Mock Test-GitRepository { return $true } -ModuleName PablitusPrompt
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 0
+                    Output    = "## main...origin/main"
+                    Error     = ""
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $gitStatus = Get-GitStatusAndBranch
+            $gitStatus.IsRepository | Should Be $true
+            $gitStatus.Branch | Should Be "main"
+            $gitStatus.Dirty | Should Be $false
+        }
+
+        It "Maneja Git cuando está instalado y el repositorio está sucio con archivos modificados" {
+            Mock Get-GitDir { return "C:\test\.git" } -ModuleName PablitusPrompt
+            Mock Test-GitRepository { return $true } -ModuleName PablitusPrompt
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 0
+                    Output    = "## main...origin/main`r`n M src/File.ps1`r`n?? untracked.txt"
+                    Error     = ""
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $gitStatus = Get-GitStatusAndBranch
+            $gitStatus.IsRepository | Should Be $true
+            $gitStatus.Branch | Should Be "main"
+            $gitStatus.Dirty | Should Be $true
+        }
+
+        It "Maneja elegantemente cuando Git no está instalado" {
+            Mock Get-GitDir { return "C:\test\.git" } -ModuleName PablitusPrompt
+            Mock Test-GitRepository { return $true } -ModuleName PablitusPrompt
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = -1
+                    Output    = $null
+                    Error     = "CommandNotFoundException"
+                    TimedOut  = $false
+                    Installed = $false
+                }
+            } -ModuleName PablitusPrompt
+
+            $gitStatus = Get-GitStatusAndBranch
+            $gitStatus.IsRepository | Should Be $true
+            $gitStatus.Branch | Should Be "HEAD"
+            $gitStatus.Dirty | Should Be $false
+        }
+
+        It "Maneja errores de Git (ej. repositorio corrupto) y se degrada elegantemente" {
+            Mock Get-GitDir { return "C:\test\.git" } -ModuleName PablitusPrompt
+            Mock Test-GitRepository { return $true } -ModuleName PablitusPrompt
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = 128
+                    Output    = ""
+                    Error     = "fatal: repository corrupted"
+                    TimedOut  = $false
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $gitStatus = Get-GitStatusAndBranch
+            $gitStatus.IsRepository | Should Be $true
+            $gitStatus.Branch | Should Be "HEAD"
+            $gitStatus.Dirty | Should Be $false
+        }
+
+        It "Maneja Git con timeout y se degrada elegantemente" {
+            Mock Get-GitDir { return "C:\test\.git" } -ModuleName PablitusPrompt
+            Mock Test-GitRepository { return $true } -ModuleName PablitusPrompt
+            Mock Invoke-PPFExternalCommand {
+                return [pscustomobject]@{
+                    ExitCode  = -1
+                    Output    = $null
+                    Error     = "Process timed out"
+                    TimedOut  = $true
+                    Installed = $true
+                }
+            } -ModuleName PablitusPrompt
+
+            $gitStatus = Get-GitStatusAndBranch
+            $gitStatus.IsRepository | Should Be $true
+            $gitStatus.Branch | Should Be "HEAD"
+            $gitStatus.Dirty | Should Be $false
+        }
+    }
+
+    Context "Pipeline Resiliency & Failure Recovery" {
+        It "Maneja paso Recoverable: Falla un provider pero el pipeline continúa y el prompt se genera" {
+            Register-PromptProvider -Name "RecoverableProvider" -Priority 10 -Script {
+                throw "Recoverable connection error"
+            }
+
+            $global:logMsgs = @()
+            Mock Write-PPFLog {
+                param($Level, $Message)
+                $global:logMsgs += "$($Level): $Message"
+            } -ModuleName PablitusPrompt
+
+            $context = Invoke-Prompt
+
+            # 1. Excepción capturada (no explotó)
+            $context | Should Not Be $null
+
+            ($global:logMsgs -match "Recoverable connection error").Count | Should BeGreaterThan 0
+
+            # 3. Contexto íntegro
+            $context.Timestamp | Should Not Be $null
+            $context.Session.User | Should Be $env:USERNAME
+
+            # 4. Prompt renderizado
+            $prompt = Invoke-PromptRenderer -Context $context -Renderer "Plain"
+            $prompt | Should Not BeNullOrEmpty
+
+            # 5. Métricas registradas
+            $context.Metrics.ContainsKey("Provider_RecoverableProvider_TimeMs") | Should Be $true
+        }
+
+        It "Maneja paso Partial: Falla un segmento visual y solo ese segmento desaparece" {
+            Register-PromptSegment -Name "FailingSegment" -Priority 5 -Script {
+                throw "Visual rendering failure"
+            }
+
+            Register-PromptSegment -Name "HealthySegment" -Priority 10 -Script {
+                return New-PromptSegment -Name "HealthySegment" -Text "OK"
+            }
+
+            $global:logMsgs = @()
+            Mock Write-PPFLog {
+                param($Level, $Message)
+                $global:logMsgs += "$($Level): $Message"
+            } -ModuleName PablitusPrompt
+
+            $context = Invoke-Prompt
+            
+            # El segmento que falló no está, el sano sí
+            ($context.Segments | Where-Object Name -eq "FailingSegment") | Should Be $null
+            ($context.Segments | Where-Object Name -eq "HealthySegment") | Should Not Be $null
+
+            # Log escrito
+            ($global:logMsgs -match "Visual rendering failure").Count | Should BeGreaterThan 0
+
+            # Prompt renderizado incluye "OK" pero no falla
+            $prompt = Invoke-PromptRenderer -Context $context -Renderer "Plain"
+            $prompt | Should Match "OK"
+        }
+
+        It "Maneja paso Fatal: Error explicito al fallar la inicializacion crítica" {
+            $thrown = $false
+            try {
+                Import-PromptConfiguration -Path "invalid_extension.txt"
+            } catch {
+                $thrown = $true
+            }
+            $thrown | Should Be $true
+        }
+    }
+
+    Context "Golden Snapshot Regression Tests" {
+        It "Compara la salida de los renderizadores con snapshots estáticos para evitar regresiones" {
+            # Asegurar tema activo consistente para pruebas deterministas
+            $oldTheme = Get-ActiveTheme
+            Set-PromptTheme -Name "Default"
+
+            try {
+                $mockContext = New-PromptContext
+                $mockContext.Session.User = "testuser"
+                $mockContext.Session.Host = "testhost"
+                $mockContext.Session.IsAdmin = $false
+                
+                # Segmento con icono, sin color
+                $seg1 = [PSCustomObject]@{ Name = "Session"; Text = "testuser@testhost"; Icon = "👤"; Foreground = $null; Background = $null; Visible = $true }
+                # Segmento sin icono, con color
+                $seg2 = [PSCustomObject]@{ Name = "Path"; Text = "~/Projects/MyProject"; Icon = $null; Foreground = "Blue"; Background = "Black"; Visible = $true }
+                # Segmento con icono y color
+                $seg3 = [PSCustomObject]@{ Name = "Git"; Text = "feature/coverage"; Icon = ""; Foreground = "Red"; Background = "Black"; Visible = $true }
+                # Segmento invisible
+                $seg4 = [PSCustomObject]@{ Name = "Hidden"; Text = "invisible"; Icon = "X"; Foreground = "White"; Background = "White"; Visible = $false }
+
+                $mockContext.Segments = @($seg1, $seg2, $seg3, $seg4)
+
+                # Golden Snapshots Esperados para cada renderer
+                $goldens = @{
+                    "Plain" = "👤 testuser@testhost  ~/Projects/MyProject   feature/coverage"
+                    "Minimal" = "\[feature/coverage\] ~/Projects/MyProject >"
+                    "JSON" = '"Name":\s*"Session",\s*"Text":\s*"testuser@testhost"'
+                    "Markdown" = "👤 testuser@testhost \| \*\*~/Projects/MyProject\*\* \| \*\* feature/coverage\*\*"
+                    "HTML" = '<span>👤 testuser@testhost</span> <span style="color: Blue; background-color: Black;">~/Projects/MyProject</span> <span style="color: Red; background-color: Black;"> feature/coverage</span>'
+                    "ANSI" = '👤 testuser@testhost  .*~/Projects/MyProject.*  .* feature/coverage.*'
+                }
+
+                foreach ($rendererName in $goldens.Keys) {
+                    $output = Invoke-PromptRenderer -Context $mockContext -Renderer $rendererName
+                    $cleanOutput = $output.Trim()
+                    
+                    if ($rendererName -in @("JSON", "HTML", "Markdown", "ANSI", "Minimal")) {
+                        $cleanOutput | Should Match $goldens[$rendererName]
+                    } else {
+                        $cleanOutput | Should Be $goldens[$rendererName]
+                    }
+                }
+
+                # Probar prompt de Admin en minimal para cubrir la rama de la línea 27 de minimal
+                $mockContext.Session.IsAdmin = $true
+                $minOutputAdmin = Invoke-PromptRenderer -Context $mockContext -Renderer "Minimal"
+                $minOutputAdmin.Trim() | Should Match "#$"
+
+                # Probar prompt sin segmentos en minimal
+                $mockContext.Segments = @()
+                $minOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "Minimal"
+                $minOutputNoSegs.Trim() | Should Be "#"
+
+                # Probar prompt sin segmentos en plain
+                $plainOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "Plain"
+                $plainOutputNoSegs.Trim() | Should Be ""
+
+                # Probar prompt sin segmentos en HTML
+                $htmlOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "HTML"
+                $htmlOutputNoSegs.Trim() | Should Be ""
+
+                # Probar prompt sin segmentos en Markdown
+                $mdOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "Markdown"
+                $mdOutputNoSegs.Trim() | Should Be ""
+
+                # Probar prompt sin segmentos en ANSI
+                $ansiOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "ANSI"
+                $ansiOutputNoSegs.Trim() | Should Be ""
+
+                # Probar prompt sin segmentos en Rich (debe retornar el símbolo de prompt de flecha)
+                $richOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "Rich"
+                $richOutputNoSegs.Trim() | Should Be "`e[32m➔`e[0m"
+
+                # Probar prompt con un segmento vacío y sin color en ANSI
+                $segEmpty = [PSCustomObject]@{ Name = "Empty"; Text = ""; Icon = $null; Foreground = $null; Background = $null; Visible = $true }
+                $mockContext.Segments = @($segEmpty)
+                $ansiEmpty = Invoke-PromptRenderer -Context $mockContext -Renderer "ANSI"
+                $ansiEmpty.Trim() | Should Be ""
+
+                # Probar prompt con un segmento vacío y sin color en Rich
+                $richEmpty = Invoke-PromptRenderer -Context $mockContext -Renderer "Rich"
+                $richEmpty.Trim() | Should Be "[] `e[32m➔`e[0m"
+
+                # Probar prompt de PowerLine sin segmentos visibles
+                $mockContext.Segments = @()
+                $plEmpty = Invoke-PromptRenderer -Context $mockContext -Renderer "PowerLine"
+                $plEmpty | Should Be "> "
+
+                # PowerLine con segmentos sin background definidos
+                $segNoBg = [PSCustomObject]@{ Name = "TestNoBg"; Text = "NoBg"; Icon = $null; Foreground = "Green"; Background = $null; Visible = $true }
+                $segNoBgNext = [PSCustomObject]@{ Name = "TestNoBgNext"; Text = "NoBg2"; Icon = $null; Foreground = "Yellow"; Background = $null; Visible = $true }
+                $mockContext.Segments = @($segNoBg, $segNoBgNext)
+                
+                $plOutput = Invoke-PromptRenderer -Context $mockContext -Renderer "PowerLine"
+                $plOutput | Should Not BeNullOrEmpty
+
+                # Golden check for PowerShell Objects (PromptContext structure & integrity)
+                $mockContext.Session.User | Should Be "testuser"
+                $mockContext.Session.Host | Should Be "testhost"
+                $mockContext.Segments.Count | Should Be 2
+                $mockContext.Segments[0].Name | Should Be "TestNoBg"
+                $mockContext.Segments[1].Name | Should Be "TestNoBgNext"
+            }
+            finally {
+                if ($oldTheme) {
+                    Set-PromptTheme -Name $oldTheme.Name
+                }
+            }
+        }
+    }
+
+    }
+
+    AfterAll {
+        $global:PPF_InsidePester = $null
+    }
 }

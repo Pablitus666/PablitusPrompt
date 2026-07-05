@@ -104,3 +104,13 @@ $script:PromptConfiguration.Renderer["Default"] = "Plain"
 # ------------------------------------------------------------
 
 $script:PromptConfiguration.Theme["Name"] = "Default"
+
+# ------------------------------------------------------------
+# Performance
+# ------------------------------------------------------------
+
+$script:PromptConfiguration.Performance = @{
+
+    CpuSampleInterval = 2
+
+}

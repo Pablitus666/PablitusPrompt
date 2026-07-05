@@ -5,13 +5,9 @@
 
 function Get-PythonVersion {
 
-    if (Test-CommandExists python) {
-
-        $version = (python --version 2>$null)
-        if ($version) {
-            return ($version -join "").Replace("Python ","").Trim()
-        }
-
+    $res = Invoke-PPFExternalCommand -Command "python" -Arguments @("--version") -TimeoutMs 1000
+    if ($res.Installed -and $res.ExitCode -eq 0 -and $res.Output) {
+        return ($res.Output -join "").Replace("Python ","").Trim()
     }
 
     return $null

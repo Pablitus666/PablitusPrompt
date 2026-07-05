@@ -1,35 +1,8044 @@
 {
-  "Timestamp": "2026-07-04 13:21:32",
-  "BootstrapMs": 687.1407,
-  "TotalMs": 37.9933,
-  "RendererMs": 1.1451,
-  "RendererName": "Plain",
-  "Providers": {
-    "Battery": 0.4772,
-    "CPU": 0.8387,
-    "Docker": 2.9469,
-    "Git": 4.6814,
-    "Kubernetes": 0.4833,
-    "Memory": 0.4909,
-    "Node": 0.4828,
-    "Path": 0.5281,
-    "Project": 1.4377,
-    "Python": 0.5512,
-    "Session": 0.7738,
-    "WSL": 0.4785
+  "Timestamp": "2026-07-05 10:36:29",
+  "Iterations": 50,
+  "BootstrapMs": 413.1444,
+  "CacheStats": {
+    "Hits": 444,
+    "Misses": 158,
+    "Expirations": 1,
+    "Refreshes": 8
   },
-  "Segments": {
-    "Battery": 0.3445,
-    "CPU": 1.4828,
-    "Docker": 0.342,
-    "Git": 0.9482,
-    "Kubernetes": 0.3684,
-    "Memory": 1.2457,
-    "Node": 0.8571,
-    "Path": 0.8656,
-    "Project": 0.9284,
-    "Python": 0.8684,
-    "Session": 0.9499,
-    "WSL": 0.3196
+  "TotalStats": {
+    "Min": 20.6029,
+    "Max": 203.5786,
+    "Average": 27.851761999999997,
+    "Median": 23.174750000000003,
+    "Q1": 22.8173,
+    "Q3": 24.2545,
+    "P95": 35.1933,
+    "P99": 203.5786,
+    "StdDev": 25.342241542443634,
+    "IQR": 1.4372000000000007,
+    "LowerBound": 20.661499999999997,
+    "UpperBound": 26.4103,
+    "Outliers": [
+      20.6029,
+      26.6409,
+      26.8461,
+      27.8782,
+      28.3126,
+      30.4606,
+      35.1933,
+      41.9841,
+      203.5786
+    ],
+    "OutliersCount": 9,
+    "BoxPlot": "****-------------------------*",
+    "Histogram": [
+      {
+        "Range": "20.6 - 57.2 ms",
+        "Count": 49,
+        "Percentage": 98.0
+      },
+      {
+        "Range": "57.2 - 93.79 ms",
+        "Count": 0,
+        "Percentage": 0.0
+      },
+      {
+        "Range": "93.79 - 130.39 ms",
+        "Count": 0,
+        "Percentage": 0.0
+      },
+      {
+        "Range": "130.39 - 166.98 ms",
+        "Count": 0,
+        "Percentage": 0.0
+      },
+      {
+        "Range": "166.98 - 203.58 ms",
+        "Count": 1,
+        "Percentage": 2.0
+      }
+    ],
+    "Cumulative": [
+      {
+        "Label": "Min",
+        "Value": 20.6029,
+        "CumulativePercent": 0.0
+      },
+      {
+        "Label": "Q1",
+        "Value": 22.8173,
+        "CumulativePercent": 25.0
+      },
+      {
+        "Label": "Median",
+        "Value": 23.174750000000003,
+        "CumulativePercent": 50.0
+      },
+      {
+        "Label": "Q3",
+        "Value": 24.2545,
+        "CumulativePercent": 75.0
+      },
+      {
+        "Label": "P95",
+        "Value": 35.1933,
+        "CumulativePercent": 95.0
+      },
+      {
+        "Label": "P99",
+        "Value": 203.5786,
+        "CumulativePercent": 99.0
+      },
+      {
+        "Label": "Max",
+        "Value": 203.5786,
+        "CumulativePercent": 100.0
+      }
+    ]
+  },
+  "RendererStats": {
+    "Min": 0.2544,
+    "Max": 0.8109,
+    "Average": 0.29041000000000006,
+    "Median": 0.26839999999999997,
+    "Q1": 0.2635,
+    "Q3": 0.2894,
+    "P95": 0.359,
+    "P99": 0.8109,
+    "StdDev": 0.07945837715433156,
+    "IQR": 0.02589999999999998,
+    "LowerBound": 0.22465000000000004,
+    "UpperBound": 0.32824999999999993,
+    "Outliers": [
+      0.3291,
+      0.3375,
+      0.359,
+      0.4018,
+      0.8109
+    ],
+    "OutliersCount": 5,
+    "BoxPlot": "[|=-**--*--------------------*",
+    "Histogram": [
+      {
+        "Range": "0.25 - 0.37 ms",
+        "Count": 48,
+        "Percentage": 96.0
+      },
+      {
+        "Range": "0.37 - 0.48 ms",
+        "Count": 1,
+        "Percentage": 2.0
+      },
+      {
+        "Range": "0.48 - 0.59 ms",
+        "Count": 0,
+        "Percentage": 0.0
+      },
+      {
+        "Range": "0.59 - 0.7 ms",
+        "Count": 0,
+        "Percentage": 0.0
+      },
+      {
+        "Range": "0.7 - 0.81 ms",
+        "Count": 1,
+        "Percentage": 2.0
+      }
+    ],
+    "Cumulative": [
+      {
+        "Label": "Min",
+        "Value": 0.2544,
+        "CumulativePercent": 0.0
+      },
+      {
+        "Label": "Q1",
+        "Value": 0.2635,
+        "CumulativePercent": 25.0
+      },
+      {
+        "Label": "Median",
+        "Value": 0.26839999999999997,
+        "CumulativePercent": 50.0
+      },
+      {
+        "Label": "Q3",
+        "Value": 0.2894,
+        "CumulativePercent": 75.0
+      },
+      {
+        "Label": "P95",
+        "Value": 0.359,
+        "CumulativePercent": 95.0
+      },
+      {
+        "Label": "P99",
+        "Value": 0.8109,
+        "CumulativePercent": 99.0
+      },
+      {
+        "Label": "Max",
+        "Value": 0.8109,
+        "CumulativePercent": 100.0
+      }
+    ]
+  },
+  "RendererName": "Plain",
+  "ProviderStats": {
+    "Battery": {
+      "Min": 0.1468,
+      "Max": 7.5477,
+      "Average": 0.31901199999999996,
+      "Median": 0.1528,
+      "Q1": 0.1512,
+      "Q3": 0.156,
+      "P95": 0.5003,
+      "P99": 7.5477,
+      "StdDev": 1.0351693854901236,
+      "IQR": 0.004799999999999999,
+      "LowerBound": 0.14400000000000002,
+      "UpperBound": 0.1632,
+      "Outliers": [
+        0.1636,
+        0.1639,
+        0.1667,
+        0.18,
+        0.205,
+        0.2439,
+        0.5003,
+        0.5299,
+        7.5477
+      ],
+      "OutliersCount": 9,
+      "BoxPlot": "***--------------------------*",
+      "Histogram": [
+        {
+          "Range": "0.15 - 1.63 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "1.63 - 3.11 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "3.11 - 4.59 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "4.59 - 6.07 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "6.07 - 7.55 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1468,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1512,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.1528,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.156,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.5003,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 7.5477,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 7.5477,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Battery_CacheHit": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.98,
+      "Median": 1.0,
+      "Q1": 1.0,
+      "Q3": 1.0,
+      "P95": 1.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999985,
+      "IQR": 0.0,
+      "LowerBound": 1.0,
+      "UpperBound": 1.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[----------------------------]",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 1.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 1.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 1.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 1.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Battery_CacheMiss": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Battery_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 0.5299,
+      "Average": 0.16805799999999993,
+      "Median": 0.15275,
+      "Q1": 0.151,
+      "Q3": 0.156,
+      "P95": 0.2439,
+      "P99": 0.5299,
+      "StdDev": 0.07579786036558024,
+      "IQR": 0.0050000000000000044,
+      "LowerBound": 0.1435,
+      "UpperBound": 0.1635,
+      "Outliers": [
+        0.0,
+        0.1636,
+        0.1639,
+        0.1667,
+        0.18,
+        0.205,
+        0.2439,
+        0.5003,
+        0.5299
+      ],
+      "OutliersCount": 9,
+      "BoxPlot": "*-------|***-*-------------*-*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.11 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.11 - 0.21 ms",
+          "Count": 46,
+          "Percentage": 92.0
+        },
+        {
+          "Range": "0.21 - 0.32 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.32 - 0.42 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.42 - 0.53 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.151,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.15275,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.156,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.2439,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.5299,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.5299,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Battery_Refresh": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Battery_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Battery_UpdateTimeMs": {
+      "Min": 0.0,
+      "Max": 7.5477,
+      "Average": 0.150954,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 7.5477,
+      "StdDev": 1.056678,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 7.5477,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 1.51 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "1.51 - 3.02 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "3.02 - 4.53 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "4.53 - 6.04 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "6.04 - 7.55 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 7.5477,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 7.5477,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "CPU": {
+      "Min": 0.1424,
+      "Max": 2.124,
+      "Average": 0.298866,
+      "Median": 0.14925,
+      "Q1": 0.1468,
+      "Q3": 0.1691,
+      "P95": 2.1059,
+      "P99": 2.124,
+      "StdDev": 0.47618053996777315,
+      "IQR": 0.022299999999999986,
+      "LowerBound": 0.11335000000000003,
+      "UpperBound": 0.20254999999999998,
+      "Outliers": [
+        0.2248,
+        0.232,
+        0.2651,
+        0.4505,
+        0.9943,
+        2.1059,
+        2.1218,
+        2.124
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "[**--*------*----------------*",
+      "Histogram": [
+        {
+          "Range": "0.14 - 0.54 ms",
+          "Count": 46,
+          "Percentage": 92.0
+        },
+        {
+          "Range": "0.54 - 0.94 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.94 - 1.33 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "1.33 - 1.73 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.73 - 2.12 ms",
+          "Count": 3,
+          "Percentage": 6.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1424,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1468,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.14925,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1691,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 2.1059,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 2.124,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 2.124,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "CPU_CacheHit": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.96,
+      "Median": 1.0,
+      "Q1": 1.0,
+      "Q3": 1.0,
+      "P95": 1.0,
+      "P99": 1.0,
+      "StdDev": 0.19595917942265437,
+      "IQR": 0.0,
+      "LowerBound": 1.0,
+      "UpperBound": 1.0,
+      "Outliers": [
+        0.0,
+        0.0
+      ],
+      "OutliersCount": 2,
+      "BoxPlot": "*----------------------------]",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 48,
+          "Percentage": 96.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 1.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 1.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 1.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 1.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "CPU_CacheMiss": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.04,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.19595917942265423,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": [
+        1.0,
+        1.0
+      ],
+      "OutliersCount": 2,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 48,
+          "Percentage": 96.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "CPU_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 2.124,
+      "Average": 0.273678,
+      "Median": 0.14900000000000002,
+      "Q1": 0.146,
+      "Q3": 0.1609,
+      "P95": 2.1059,
+      "P99": 2.124,
+      "StdDev": 0.46903191247078274,
+      "IQR": 0.014899999999999997,
+      "LowerBound": 0.12365,
+      "UpperBound": 0.18324999999999997,
+      "Outliers": [
+        0.0,
+        0.0,
+        0.1918,
+        0.1926,
+        0.2248,
+        0.232,
+        0.4505,
+        2.1059,
+        2.1218,
+        2.124
+      ],
+      "OutliersCount": 10,
+      "BoxPlot": "*-|*--*----------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.42 ms",
+          "Count": 46,
+          "Percentage": 92.0
+        },
+        {
+          "Range": "0.42 - 0.85 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.85 - 1.27 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.27 - 1.7 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.7 - 2.12 ms",
+          "Count": 3,
+          "Percentage": 6.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.146,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.14900000000000002,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1609,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 2.1059,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 2.124,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 2.124,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "CPU_Refresh": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.04,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.19595917942265423,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": [
+        1.0,
+        1.0
+      ],
+      "OutliersCount": 2,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 48,
+          "Percentage": 96.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "CPU_TTLExpired": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "CPU_UpdateTimeMs": {
+      "Min": 0.0,
+      "Max": 0.9943,
+      "Average": 0.025188,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.9943,
+      "StdDev": 0.14333099684297182,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": [
+        0.2651,
+        0.9943
+      ],
+      "OutliersCount": 2,
+      "BoxPlot": "[-------*--------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 48,
+          "Percentage": 96.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 0.99 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.9943,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.9943,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Docker": {
+      "Min": 0.17,
+      "Max": 1.988,
+      "Average": 0.23477,
+      "Median": 0.1788,
+      "Q1": 0.1765,
+      "Q3": 0.1877,
+      "P95": 0.3307,
+      "P99": 1.988,
+      "StdDev": 0.2627077282837336,
+      "IQR": 0.011200000000000015,
+      "LowerBound": 0.15969999999999995,
+      "UpperBound": 0.20450000000000002,
+      "Outliers": [
+        0.2078,
+        0.2294,
+        0.2303,
+        0.2309,
+        0.2517,
+        0.3307,
+        0.722,
+        1.988
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "[*-*-----*-------------------*",
+      "Histogram": [
+        {
+          "Range": "0.17 - 0.53 ms",
+          "Count": 48,
+          "Percentage": 96.0
+        },
+        {
+          "Range": "0.53 - 0.9 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.9 - 1.26 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.26 - 1.62 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.62 - 1.99 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.17,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1765,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.1788,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1877,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.3307,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.988,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.988,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Docker_CacheHit": {
+      "Min": 1.0,
+      "Max": 1.0,
+      "Average": 1.0,
+      "Median": 1.0,
+      "Q1": 1.0,
+      "Q3": 1.0,
+      "P95": 1.0,
+      "P99": 1.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 1.0,
+      "UpperBound": 1.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "1 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 1.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 1.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 1.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 1.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 1.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Docker_CacheMiss": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Docker_ReadTimeMs": {
+      "Min": 0.17,
+      "Max": 1.988,
+      "Average": 0.23477,
+      "Median": 0.1788,
+      "Q1": 0.1765,
+      "Q3": 0.1877,
+      "P95": 0.3307,
+      "P99": 1.988,
+      "StdDev": 0.2627077282837336,
+      "IQR": 0.011200000000000015,
+      "LowerBound": 0.15969999999999995,
+      "UpperBound": 0.20450000000000002,
+      "Outliers": [
+        0.2078,
+        0.2294,
+        0.2303,
+        0.2309,
+        0.2517,
+        0.3307,
+        0.722,
+        1.988
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "[*-*-----*-------------------*",
+      "Histogram": [
+        {
+          "Range": "0.17 - 0.53 ms",
+          "Count": 48,
+          "Percentage": 96.0
+        },
+        {
+          "Range": "0.53 - 0.9 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.9 - 1.26 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.26 - 1.62 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.62 - 1.99 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.17,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1765,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.1788,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1877,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.3307,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.988,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.988,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Docker_Refresh": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Docker_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Docker_UpdateTimeMs": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "DotNet": {
+      "Min": 4.9887,
+      "Max": 8.7943,
+      "Average": 5.6329020000000005,
+      "Median": 5.28745,
+      "Q1": 5.1627,
+      "Q3": 5.8719,
+      "P95": 7.1828,
+      "P99": 8.7943,
+      "StdDev": 0.7790767583466985,
+      "IQR": 0.7092,
+      "LowerBound": 4.0989,
+      "UpperBound": 6.935700000000001,
+      "Outliers": [
+        7.1643,
+        7.1815,
+        7.1828,
+        7.6617,
+        8.7943
+      ],
+      "OutliersCount": 5,
+      "BoxPlot": "[=|=====---------*--*--------*",
+      "Histogram": [
+        {
+          "Range": "4.99 - 5.75 ms",
+          "Count": 37,
+          "Percentage": 74.0
+        },
+        {
+          "Range": "5.75 - 6.51 ms",
+          "Count": 7,
+          "Percentage": 14.0
+        },
+        {
+          "Range": "6.51 - 7.27 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        },
+        {
+          "Range": "7.27 - 8.03 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "8.03 - 8.79 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 4.9887,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 5.1627,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 5.28745,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 5.8719,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 7.1828,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 8.7943,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 8.7943,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "DotNet_CacheHit": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "DotNet_CacheMiss": {
+      "Min": 1.0,
+      "Max": 1.0,
+      "Average": 1.0,
+      "Median": 1.0,
+      "Q1": 1.0,
+      "Q3": 1.0,
+      "P95": 1.0,
+      "P99": 1.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 1.0,
+      "UpperBound": 1.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "1 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 1.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 1.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 1.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 1.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 1.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "DotNet_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "DotNet_Refresh": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "DotNet_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "DotNet_UpdateTimeMs": {
+      "Min": 4.9887,
+      "Max": 8.7943,
+      "Average": 5.6329020000000005,
+      "Median": 5.28745,
+      "Q1": 5.1627,
+      "Q3": 5.8719,
+      "P95": 7.1828,
+      "P99": 8.7943,
+      "StdDev": 0.7790767583466985,
+      "IQR": 0.7092,
+      "LowerBound": 4.0989,
+      "UpperBound": 6.935700000000001,
+      "Outliers": [
+        7.1643,
+        7.1815,
+        7.1828,
+        7.6617,
+        8.7943
+      ],
+      "OutliersCount": 5,
+      "BoxPlot": "[=|=====---------*--*--------*",
+      "Histogram": [
+        {
+          "Range": "4.99 - 5.75 ms",
+          "Count": 37,
+          "Percentage": 74.0
+        },
+        {
+          "Range": "5.75 - 6.51 ms",
+          "Count": 7,
+          "Percentage": 14.0
+        },
+        {
+          "Range": "6.51 - 7.27 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        },
+        {
+          "Range": "7.27 - 8.03 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "8.03 - 8.79 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 4.9887,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 5.1627,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 5.28745,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 5.8719,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 7.1828,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 8.7943,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 8.7943,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Git": {
+      "Min": 0.4455,
+      "Max": 59.8159,
+      "Average": 1.9148180000000001,
+      "Median": 0.4804,
+      "Q1": 0.4629,
+      "Q3": 0.5249,
+      "P95": 2.9719,
+      "P99": 59.8159,
+      "StdDev": 8.304356157359582,
+      "IQR": 0.062000000000000055,
+      "LowerBound": 0.3698999999999999,
+      "UpperBound": 0.6179000000000001,
+      "Outliers": [
+        0.6526,
+        2.4278,
+        2.4524,
+        2.5081,
+        2.9719,
+        3.9738,
+        59.8159
+      ],
+      "OutliersCount": 7,
+      "BoxPlot": "***--------------------------*",
+      "Histogram": [
+        {
+          "Range": "0.45 - 12.32 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "12.32 - 24.19 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "24.19 - 36.07 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "36.07 - 47.94 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "47.94 - 59.82 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.4455,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.4629,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.4804,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.5249,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 2.9719,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 59.8159,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 59.8159,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Git_CacheHit": {
+      "Min": 1.0,
+      "Max": 1.0,
+      "Average": 1.0,
+      "Median": 1.0,
+      "Q1": 1.0,
+      "Q3": 1.0,
+      "P95": 1.0,
+      "P99": 1.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 1.0,
+      "UpperBound": 1.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "1 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 1.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 1.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 1.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 1.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 1.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Git_CacheMiss": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Git_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 3.9738,
+      "Average": 0.7185000000000001,
+      "Median": 0.47809999999999997,
+      "Q1": 0.4576,
+      "Q3": 0.5184,
+      "P95": 2.5081,
+      "P99": 3.9738,
+      "StdDev": 0.744163325621466,
+      "IQR": 0.060799999999999965,
+      "LowerBound": 0.36640000000000006,
+      "UpperBound": 0.6095999999999999,
+      "Outliers": [
+        0.0,
+        0.6526,
+        2.4278,
+        2.4524,
+        2.5081,
+        2.9719,
+        3.9738
+      ],
+      "OutliersCount": 7,
+      "BoxPlot": "*--|=*------------*---*------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.79 ms",
+          "Count": 45,
+          "Percentage": 90.0
+        },
+        {
+          "Range": "0.79 - 1.59 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.59 - 2.38 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "2.38 - 3.18 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        },
+        {
+          "Range": "3.18 - 3.97 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.4576,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.47809999999999997,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.5184,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 2.5081,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 3.9738,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 3.9738,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Git_Refresh": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Git_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Git_UpdateTimeMs": {
+      "Min": 0.0,
+      "Max": 59.8159,
+      "Average": 1.196318,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 59.8159,
+      "StdDev": 8.374226,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 59.8159,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 11.96 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "11.96 - 23.93 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "23.93 - 35.89 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "35.89 - 47.85 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "47.85 - 59.82 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 59.8159,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 59.8159,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Kubernetes": {
+      "Min": 0.1629,
+      "Max": 0.6446,
+      "Average": 0.211554,
+      "Median": 0.1746,
+      "Q1": 0.1706,
+      "Q3": 0.2002,
+      "P95": 0.442,
+      "P99": 0.6446,
+      "StdDev": 0.09313668924757847,
+      "IQR": 0.029599999999999987,
+      "LowerBound": 0.12620000000000003,
+      "UpperBound": 0.24459999999999998,
+      "Outliers": [
+        0.2705,
+        0.3144,
+        0.4273,
+        0.442,
+        0.4932,
+        0.6446
+      ],
+      "OutliersCount": 6,
+      "BoxPlot": "[|=---*--*------**--*--------*",
+      "Histogram": [
+        {
+          "Range": "0.16 - 0.26 ms",
+          "Count": 44,
+          "Percentage": 88.0
+        },
+        {
+          "Range": "0.26 - 0.36 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.36 - 0.45 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.45 - 0.55 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.55 - 0.64 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1629,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1706,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.1746,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.2002,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.442,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.6446,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.6446,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Kubernetes_CacheHit": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.98,
+      "Median": 1.0,
+      "Q1": 1.0,
+      "Q3": 1.0,
+      "P95": 1.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999985,
+      "IQR": 0.0,
+      "LowerBound": 1.0,
+      "UpperBound": 1.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[----------------------------]",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 1.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 1.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 1.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 1.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Kubernetes_CacheMiss": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Kubernetes_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 0.6446,
+      "Average": 0.202714,
+      "Median": 0.17354999999999998,
+      "Q1": 0.1702,
+      "Q3": 0.1986,
+      "P95": 0.4273,
+      "P99": 0.6446,
+      "StdDev": 0.09181117581209816,
+      "IQR": 0.02840000000000001,
+      "LowerBound": 0.1276,
+      "UpperBound": 0.24120000000000003,
+      "Outliers": [
+        0.0,
+        0.2705,
+        0.3144,
+        0.4273,
+        0.4932,
+        0.6446
+      ],
+      "OutliersCount": 6,
+      "BoxPlot": "*-------|=--*-*----*--*------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.13 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.13 - 0.26 ms",
+          "Count": 44,
+          "Percentage": 88.0
+        },
+        {
+          "Range": "0.26 - 0.39 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.39 - 0.52 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.52 - 0.64 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1702,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.17354999999999998,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1986,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.4273,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.6446,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.6446,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Kubernetes_Refresh": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Kubernetes_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Kubernetes_UpdateTimeMs": {
+      "Min": 0.0,
+      "Max": 0.442,
+      "Average": 0.00884,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.442,
+      "StdDev": 0.06188,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 0.442,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.09 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.09 - 0.18 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.18 - 0.27 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.27 - 0.35 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.35 - 0.44 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.442,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.442,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Memory": {
+      "Min": 0.1387,
+      "Max": 108.3893,
+      "Average": 2.321702,
+      "Median": 0.14625,
+      "Q1": 0.144,
+      "Q3": 0.1505,
+      "P95": 0.2918,
+      "P99": 108.3893,
+      "StdDev": 15.152556646539752,
+      "IQR": 0.006500000000000006,
+      "LowerBound": 0.13424999999999998,
+      "UpperBound": 0.16025,
+      "Outliers": [
+        0.1634,
+        0.1773,
+        0.1848,
+        0.1982,
+        0.212,
+        0.2918,
+        0.3435,
+        108.3893
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "*----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0.14 - 21.79 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "21.79 - 43.44 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "43.44 - 65.09 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "65.09 - 86.74 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "86.74 - 108.39 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1387,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.144,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.14625,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1505,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.2918,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 108.3893,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 108.3893,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Memory_CacheHit": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.98,
+      "Median": 1.0,
+      "Q1": 1.0,
+      "Q3": 1.0,
+      "P95": 1.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999985,
+      "IQR": 0.0,
+      "LowerBound": 1.0,
+      "UpperBound": 1.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[----------------------------]",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 1.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 1.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 1.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 1.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Memory_CacheMiss": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Memory_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 0.3435,
+      "Average": 0.15391600000000005,
+      "Median": 0.14615,
+      "Q1": 0.1439,
+      "Q3": 0.1504,
+      "P95": 0.212,
+      "P99": 0.3435,
+      "StdDev": 0.04214117397510421,
+      "IQR": 0.006500000000000006,
+      "LowerBound": 0.13415,
+      "UpperBound": 0.16015000000000001,
+      "Outliers": [
+        0.0,
+        0.1634,
+        0.1773,
+        0.1848,
+        0.1982,
+        0.212,
+        0.2918,
+        0.3435
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "*-----------|=*****------*---*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.07 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.07 - 0.14 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.14 - 0.21 ms",
+          "Count": 46,
+          "Percentage": 92.0
+        },
+        {
+          "Range": "0.21 - 0.27 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.27 - 0.34 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1439,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.14615,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1504,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.212,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.3435,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.3435,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Memory_Refresh": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Memory_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Memory_UpdateTimeMs": {
+      "Min": 0.0,
+      "Max": 108.3893,
+      "Average": 2.167786,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 108.3893,
+      "StdDev": 15.174501999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 108.3893,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 21.68 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "21.68 - 43.36 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "43.36 - 65.03 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "65.03 - 86.71 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "86.71 - 108.39 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 108.3893,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 108.3893,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Node": {
+      "Min": 5.3518,
+      "Max": 9.211,
+      "Average": 6.079754,
+      "Median": 5.66875,
+      "Q1": 5.5155,
+      "Q3": 6.0042,
+      "P95": 8.322,
+      "P99": 9.211,
+      "StdDev": 0.9386230330031327,
+      "IQR": 0.4886999999999997,
+      "LowerBound": 4.782450000000001,
+      "UpperBound": 6.7372499999999995,
+      "Outliers": [
+        6.954,
+        7.0343,
+        7.393,
+        7.5263,
+        7.6596,
+        7.7957,
+        7.942,
+        8.322,
+        8.4132,
+        9.211
+      ],
+      "OutliersCount": 10,
+      "BoxPlot": "[=|===------**-*****--**-----*",
+      "Histogram": [
+        {
+          "Range": "5.35 - 6.12 ms",
+          "Count": 38,
+          "Percentage": 76.0
+        },
+        {
+          "Range": "6.12 - 6.9 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "6.9 - 7.67 ms",
+          "Count": 5,
+          "Percentage": 10.0
+        },
+        {
+          "Range": "7.67 - 8.44 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        },
+        {
+          "Range": "8.44 - 9.21 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 5.3518,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 5.5155,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 5.66875,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 6.0042,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 8.322,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 9.211,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 9.211,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Node_CacheHit": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Node_CacheMiss": {
+      "Min": 1.0,
+      "Max": 1.0,
+      "Average": 1.0,
+      "Median": 1.0,
+      "Q1": 1.0,
+      "Q3": 1.0,
+      "P95": 1.0,
+      "P99": 1.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 1.0,
+      "UpperBound": 1.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "1 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 1.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 1.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 1.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 1.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 1.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Node_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Node_Refresh": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Node_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Node_UpdateTimeMs": {
+      "Min": 5.3518,
+      "Max": 9.211,
+      "Average": 6.079754,
+      "Median": 5.66875,
+      "Q1": 5.5155,
+      "Q3": 6.0042,
+      "P95": 8.322,
+      "P99": 9.211,
+      "StdDev": 0.9386230330031327,
+      "IQR": 0.4886999999999997,
+      "LowerBound": 4.782450000000001,
+      "UpperBound": 6.7372499999999995,
+      "Outliers": [
+        6.954,
+        7.0343,
+        7.393,
+        7.5263,
+        7.6596,
+        7.7957,
+        7.942,
+        8.322,
+        8.4132,
+        9.211
+      ],
+      "OutliersCount": 10,
+      "BoxPlot": "[=|===------**-*****--**-----*",
+      "Histogram": [
+        {
+          "Range": "5.35 - 6.12 ms",
+          "Count": 38,
+          "Percentage": 76.0
+        },
+        {
+          "Range": "6.12 - 6.9 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "6.9 - 7.67 ms",
+          "Count": 5,
+          "Percentage": 10.0
+        },
+        {
+          "Range": "7.67 - 8.44 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        },
+        {
+          "Range": "8.44 - 9.21 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 5.3518,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 5.5155,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 5.66875,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 6.0042,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 8.322,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 9.211,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 9.211,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Path": {
+      "Min": 0.1287,
+      "Max": 0.852,
+      "Average": 0.152264,
+      "Median": 0.1347,
+      "Q1": 0.1327,
+      "Q3": 0.1388,
+      "P95": 0.1643,
+      "P99": 0.852,
+      "StdDev": 0.10035941562205311,
+      "IQR": 0.006099999999999994,
+      "LowerBound": 0.12355000000000002,
+      "UpperBound": 0.14795,
+      "Outliers": [
+        0.1491,
+        0.153,
+        0.1535,
+        0.1573,
+        0.1624,
+        0.1643,
+        0.1644,
+        0.852
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "[*---------------------------*",
+      "Histogram": [
+        {
+          "Range": "0.13 - 0.27 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.27 - 0.42 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.42 - 0.56 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.56 - 0.71 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.71 - 0.85 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1287,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1327,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.1347,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1388,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.1643,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.852,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.852,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Path_CacheHit": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Path_CacheMiss": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Path_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Path_Refresh": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Path_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Path_UpdateTimeMs": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Project": {
+      "Min": 0.1634,
+      "Max": 0.5059,
+      "Average": 0.18730999999999998,
+      "Median": 0.17365,
+      "Q1": 0.1691,
+      "Q3": 0.1821,
+      "P95": 0.2487,
+      "P99": 0.5059,
+      "StdDev": 0.05044024286222262,
+      "IQR": 0.013000000000000012,
+      "LowerBound": 0.14959999999999998,
+      "UpperBound": 0.20160000000000003,
+      "Outliers": [
+        0.2045,
+        0.2299,
+        0.2327,
+        0.2487,
+        0.2765,
+        0.5059
+      ],
+      "OutliersCount": 6,
+      "BoxPlot": "[|=*--**--*------------------*",
+      "Histogram": [
+        {
+          "Range": "0.16 - 0.23 ms",
+          "Count": 46,
+          "Percentage": 92.0
+        },
+        {
+          "Range": "0.23 - 0.3 ms",
+          "Count": 3,
+          "Percentage": 6.0
+        },
+        {
+          "Range": "0.3 - 0.37 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.37 - 0.44 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.44 - 0.51 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1634,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1691,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.17365,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1821,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.2487,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.5059,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.5059,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Project_CacheHit": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.98,
+      "Median": 1.0,
+      "Q1": 1.0,
+      "Q3": 1.0,
+      "P95": 1.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999985,
+      "IQR": 0.0,
+      "LowerBound": 1.0,
+      "UpperBound": 1.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[----------------------------]",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 1.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 1.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 1.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 1.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Project_CacheMiss": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Project_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 0.2765,
+      "Average": 0.17719199999999996,
+      "Median": 0.1733,
+      "Q1": 0.1687,
+      "Q3": 0.182,
+      "P95": 0.2327,
+      "P99": 0.2765,
+      "StdDev": 0.033369943601990096,
+      "IQR": 0.013300000000000006,
+      "LowerBound": 0.14875,
+      "UpperBound": 0.20195000000000002,
+      "Outliers": [
+        0.0,
+        0.2045,
+        0.2299,
+        0.2327,
+        0.2487,
+        0.2765
+      ],
+      "OutliersCount": 6,
+      "BoxPlot": "*-----------------|=-*--*-*--*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.06 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.06 - 0.11 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.11 - 0.17 ms",
+          "Count": 6,
+          "Percentage": 12.0
+        },
+        {
+          "Range": "0.17 - 0.22 ms",
+          "Count": 39,
+          "Percentage": 78.0
+        },
+        {
+          "Range": "0.22 - 0.28 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1687,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.1733,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.182,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.2327,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.2765,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.2765,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Project_Refresh": {
+      "Min": 0.0,
+      "Max": 1.0,
+      "Average": 0.02,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 1.0,
+      "StdDev": 0.13999999999999999,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 1.0,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.2 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.2 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.6 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.6 - 0.8 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.8 - 1 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Project_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Project_UpdateTimeMs": {
+      "Min": 0.0,
+      "Max": 0.5059,
+      "Average": 0.010118,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.5059,
+      "StdDev": 0.070826,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": 0.5059,
+      "OutliersCount": 1,
+      "BoxPlot": "[----------------------------*",
+      "Histogram": [
+        {
+          "Range": "0 - 0.1 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.1 - 0.2 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.2 - 0.3 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.3 - 0.4 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.4 - 0.51 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.5059,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.5059,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Python": {
+      "Min": 2.0826,
+      "Max": 4.8717,
+      "Average": 2.5495999999999994,
+      "Median": 2.20265,
+      "Q1": 2.1666,
+      "Q3": 2.6398,
+      "P95": 4.2444,
+      "P99": 4.8717,
+      "StdDev": 0.693643754963598,
+      "IQR": 0.4732000000000003,
+      "LowerBound": 1.4567999999999994,
+      "UpperBound": 3.3496000000000006,
+      "Outliers": [
+        3.9806,
+        4.1556,
+        4.1986,
+        4.2444,
+        4.3021,
+        4.8717
+      ],
+      "OutliersCount": 6,
+      "BoxPlot": "[|=====-------------*-**-----*",
+      "Histogram": [
+        {
+          "Range": "2.08 - 2.64 ms",
+          "Count": 38,
+          "Percentage": 76.0
+        },
+        {
+          "Range": "2.64 - 3.2 ms",
+          "Count": 6,
+          "Percentage": 12.0
+        },
+        {
+          "Range": "3.2 - 3.76 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "3.76 - 4.31 ms",
+          "Count": 5,
+          "Percentage": 10.0
+        },
+        {
+          "Range": "4.31 - 4.87 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 2.0826,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 2.1666,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 2.20265,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 2.6398,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 4.2444,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 4.8717,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 4.8717,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Python_CacheHit": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Python_CacheMiss": {
+      "Min": 1.0,
+      "Max": 1.0,
+      "Average": 1.0,
+      "Median": 1.0,
+      "Q1": 1.0,
+      "Q3": 1.0,
+      "P95": 1.0,
+      "P99": 1.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 1.0,
+      "UpperBound": 1.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "1 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 1.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 1.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 1.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 1.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 1.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Python_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Python_Refresh": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Python_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Python_UpdateTimeMs": {
+      "Min": 2.0826,
+      "Max": 4.8717,
+      "Average": 2.5495999999999994,
+      "Median": 2.20265,
+      "Q1": 2.1666,
+      "Q3": 2.6398,
+      "P95": 4.2444,
+      "P99": 4.8717,
+      "StdDev": 0.693643754963598,
+      "IQR": 0.4732000000000003,
+      "LowerBound": 1.4567999999999994,
+      "UpperBound": 3.3496000000000006,
+      "Outliers": [
+        3.9806,
+        4.1556,
+        4.1986,
+        4.2444,
+        4.3021,
+        4.8717
+      ],
+      "OutliersCount": 6,
+      "BoxPlot": "[|=====-------------*-**-----*",
+      "Histogram": [
+        {
+          "Range": "2.08 - 2.64 ms",
+          "Count": 38,
+          "Percentage": 76.0
+        },
+        {
+          "Range": "2.64 - 3.2 ms",
+          "Count": 6,
+          "Percentage": 12.0
+        },
+        {
+          "Range": "3.2 - 3.76 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "3.76 - 4.31 ms",
+          "Count": 5,
+          "Percentage": 10.0
+        },
+        {
+          "Range": "4.31 - 4.87 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 2.0826,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 2.1666,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 2.20265,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 2.6398,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 4.2444,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 4.8717,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 4.8717,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Session": {
+      "Min": 0.1826,
+      "Max": 2.6845,
+      "Average": 0.37600800000000006,
+      "Median": 0.19505,
+      "Q1": 0.1897,
+      "Q3": 0.2116,
+      "P95": 2.1421,
+      "P99": 2.6845,
+      "StdDev": 0.5840696447650742,
+      "IQR": 0.021900000000000003,
+      "LowerBound": 0.15685,
+      "UpperBound": 0.24445,
+      "Outliers": [
+        0.3293,
+        0.3688,
+        2.0713,
+        2.1421,
+        2.4596,
+        2.6845
+      ],
+      "OutliersCount": 6,
+      "BoxPlot": "[-*-------------------**--*--*",
+      "Histogram": [
+        {
+          "Range": "0.18 - 0.68 ms",
+          "Count": 46,
+          "Percentage": 92.0
+        },
+        {
+          "Range": "0.68 - 1.18 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.18 - 1.68 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.68 - 2.18 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "2.18 - 2.68 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1826,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1897,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.19505,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.2116,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 2.1421,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 2.6845,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 2.6845,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Session_CacheHit": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Session_CacheMiss": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Session_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Session_Refresh": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Session_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Session_UpdateTimeMs": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "WSL": {
+      "Min": 0.1521,
+      "Max": 0.275,
+      "Average": 0.16700800000000002,
+      "Median": 0.16065000000000002,
+      "Q1": 0.1561,
+      "Q3": 0.1705,
+      "P95": 0.2037,
+      "P99": 0.275,
+      "StdDev": 0.019967522029535865,
+      "IQR": 0.014400000000000024,
+      "LowerBound": 0.13449999999999995,
+      "UpperBound": 0.19210000000000005,
+      "Outliers": [
+        0.1962,
+        0.2037,
+        0.2065,
+        0.275
+      ],
+      "OutliersCount": 4,
+      "BoxPlot": "[=|==-----*-**---------------*",
+      "Histogram": [
+        {
+          "Range": "0.15 - 0.18 ms",
+          "Count": 39,
+          "Percentage": 78.0
+        },
+        {
+          "Range": "0.18 - 0.2 ms",
+          "Count": 8,
+          "Percentage": 16.0
+        },
+        {
+          "Range": "0.2 - 0.23 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.23 - 0.25 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.25 - 0.28 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1521,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1561,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.16065000000000002,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1705,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.2037,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.275,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.275,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "WSL_CacheHit": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "WSL_CacheMiss": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "WSL_ReadTimeMs": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "WSL_Refresh": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "WSL_TTLExpired": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "WSL_UpdateTimeMs": {
+      "Min": 0.0,
+      "Max": 0.0,
+      "Average": 0.0,
+      "Median": 0.0,
+      "Q1": 0.0,
+      "Q3": 0.0,
+      "P95": 0.0,
+      "P99": 0.0,
+      "StdDev": 0.0,
+      "IQR": 0.0,
+      "LowerBound": 0.0,
+      "UpperBound": 0.0,
+      "Outliers": null,
+      "OutliersCount": 0,
+      "BoxPlot": "[  |  ]",
+      "Histogram": [
+        {
+          "Range": "0 ms",
+          "Count": 50,
+          "Percentage": 100.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.0,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.0,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.0,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.0,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.0,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.0,
+          "CumulativePercent": 100.0
+        }
+      ]
+    }
+  },
+  "SegmentStats": {
+    "Battery": {
+      "Min": 0.0973,
+      "Max": 2.1568,
+      "Average": 0.14991600000000002,
+      "Median": 0.10175000000000001,
+      "Q1": 0.1004,
+      "Q3": 0.1044,
+      "P95": 0.1388,
+      "P99": 2.1568,
+      "StdDev": 0.28863976119724044,
+      "IQR": 0.0040000000000000036,
+      "LowerBound": 0.0944,
+      "UpperBound": 0.11040000000000001,
+      "Outliers": [
+        0.1111,
+        0.112,
+        0.1158,
+        0.1239,
+        0.1287,
+        0.1388,
+        0.3366,
+        2.1568
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "**-*-------------------------*",
+      "Histogram": [
+        {
+          "Range": "0.1 - 0.51 ms",
+          "Count": 49,
+          "Percentage": 98.0
+        },
+        {
+          "Range": "0.51 - 0.92 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.92 - 1.33 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.33 - 1.74 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.74 - 2.16 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0973,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1004,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.10175000000000001,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1044,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.1388,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 2.1568,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 2.1568,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "CPU": {
+      "Min": 0.2259,
+      "Max": 0.4094,
+      "Average": 0.24935600000000002,
+      "Median": 0.2374,
+      "Q1": 0.2337,
+      "Q3": 0.2467,
+      "P95": 0.3427,
+      "P99": 0.4094,
+      "StdDev": 0.03497356235787255,
+      "IQR": 0.013000000000000012,
+      "LowerBound": 0.21419999999999997,
+      "UpperBound": 0.2662,
+      "Outliers": [
+        0.2665,
+        0.2701,
+        0.2867,
+        0.3427,
+        0.3796,
+        0.4094
+      ],
+      "OutliersCount": 6,
+      "BoxPlot": "[=|=--**--*-------*-----*----*",
+      "Histogram": [
+        {
+          "Range": "0.23 - 0.26 ms",
+          "Count": 43,
+          "Percentage": 86.0
+        },
+        {
+          "Range": "0.26 - 0.3 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        },
+        {
+          "Range": "0.3 - 0.34 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.34 - 0.37 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.37 - 0.41 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.2259,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.2337,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.2374,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.2467,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.3427,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.4094,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.4094,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Docker": {
+      "Min": 0.0986,
+      "Max": 0.1757,
+      "Average": 0.10713,
+      "Median": 0.10235,
+      "Q1": 0.1012,
+      "Q3": 0.1058,
+      "P95": 0.1342,
+      "P99": 0.1757,
+      "StdDev": 0.013634430681183574,
+      "IQR": 0.004600000000000007,
+      "LowerBound": 0.0943,
+      "UpperBound": 0.11270000000000002,
+      "Outliers": [
+        0.1172,
+        0.1338,
+        0.1342,
+        0.1497,
+        0.1757
+      ],
+      "OutliersCount": 5,
+      "BoxPlot": "[|==---*-----*-----*---------*",
+      "Histogram": [
+        {
+          "Range": "0.1 - 0.11 ms",
+          "Count": 45,
+          "Percentage": 90.0
+        },
+        {
+          "Range": "0.11 - 0.13 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.13 - 0.14 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.14 - 0.16 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.16 - 0.18 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0986,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1012,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.10235,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1058,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.1342,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.1757,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.1757,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "DotNet": {
+      "Min": 0.1119,
+      "Max": 0.2141,
+      "Average": 0.12493000000000004,
+      "Median": 0.11624999999999999,
+      "Q1": 0.1147,
+      "Q3": 0.12,
+      "P95": 0.1892,
+      "P99": 0.2141,
+      "StdDev": 0.023392103368444658,
+      "IQR": 0.005299999999999999,
+      "LowerBound": 0.10675,
+      "UpperBound": 0.12795,
+      "Outliers": [
+        0.139,
+        0.1485,
+        0.1538,
+        0.1883,
+        0.1892,
+        0.2032,
+        0.2141
+      ],
+      "OutliersCount": 7,
+      "BoxPlot": "[|=-----*-*-*---------*---*--*",
+      "Histogram": [
+        {
+          "Range": "0.11 - 0.13 ms",
+          "Count": 43,
+          "Percentage": 86.0
+        },
+        {
+          "Range": "0.13 - 0.15 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.15 - 0.17 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.17 - 0.19 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.19 - 0.21 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1119,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1147,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.11624999999999999,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.12,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.1892,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.2141,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.2141,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Git": {
+      "Min": 0.231,
+      "Max": 2.9515,
+      "Average": 0.40696400000000005,
+      "Median": 0.2471,
+      "Q1": 0.2408,
+      "Q3": 0.2598,
+      "P95": 2.2236,
+      "P99": 2.9515,
+      "StdDev": 0.5389889972012416,
+      "IQR": 0.01899999999999999,
+      "LowerBound": 0.2123,
+      "UpperBound": 0.28829999999999995,
+      "Outliers": [
+        0.2969,
+        0.3425,
+        0.3543,
+        0.6689,
+        0.8737,
+        2.2236,
+        2.2431,
+        2.9515
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "[*---*-*-------------*-------*",
+      "Histogram": [
+        {
+          "Range": "0.23 - 0.78 ms",
+          "Count": 46,
+          "Percentage": 92.0
+        },
+        {
+          "Range": "0.78 - 1.32 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "1.32 - 1.86 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.86 - 2.41 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "2.41 - 2.95 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.231,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.2408,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.2471,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.2598,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 2.2236,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 2.9515,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 2.9515,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Kubernetes": {
+      "Min": 0.0979,
+      "Max": 0.1555,
+      "Average": 0.10526799999999997,
+      "Median": 0.10195,
+      "Q1": 0.1004,
+      "Q3": 0.104,
+      "P95": 0.1319,
+      "P99": 0.1555,
+      "StdDev": 0.010609004477329622,
+      "IQR": 0.003599999999999992,
+      "LowerBound": 0.09500000000000001,
+      "UpperBound": 0.10939999999999998,
+      "Outliers": [
+        0.1095,
+        0.1099,
+        0.1109,
+        0.1177,
+        0.1319,
+        0.1437,
+        0.1555
+      ],
+      "OutliersCount": 7,
+      "BoxPlot": "[=|=--**--*------*-----*-----*",
+      "Histogram": [
+        {
+          "Range": "0.1 - 0.11 ms",
+          "Count": 43,
+          "Percentage": 86.0
+        },
+        {
+          "Range": "0.11 - 0.12 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        },
+        {
+          "Range": "0.12 - 0.13 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.13 - 0.14 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.14 - 0.16 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.0979,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1004,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.10195,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.104,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.1319,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.1555,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.1555,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Memory": {
+      "Min": 0.2248,
+      "Max": 0.3778,
+      "Average": 0.24458,
+      "Median": 0.23554999999999998,
+      "Q1": 0.2309,
+      "Q3": 0.2396,
+      "P95": 0.3101,
+      "P99": 0.3778,
+      "StdDev": 0.028032210044875164,
+      "IQR": 0.008700000000000013,
+      "LowerBound": 0.21785,
+      "UpperBound": 0.25265000000000004,
+      "Outliers": [
+        0.2533,
+        0.2562,
+        0.257,
+        0.2798,
+        0.2839,
+        0.2967,
+        0.3101,
+        0.3203,
+        0.3778
+      ],
+      "OutliersCount": 9,
+      "BoxPlot": "[=|=-**---**--*-*-*----------*",
+      "Histogram": [
+        {
+          "Range": "0.22 - 0.26 ms",
+          "Count": 42,
+          "Percentage": 84.0
+        },
+        {
+          "Range": "0.26 - 0.29 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        },
+        {
+          "Range": "0.29 - 0.32 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.32 - 0.35 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.35 - 0.38 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.2248,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.2309,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.23554999999999998,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.2396,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.3101,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.3778,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.3778,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Node": {
+      "Min": 0.1016,
+      "Max": 0.2757,
+      "Average": 0.11438000000000002,
+      "Median": 0.1054,
+      "Q1": 0.1043,
+      "Q3": 0.112,
+      "P95": 0.146,
+      "P99": 0.2757,
+      "StdDev": 0.026419424672009795,
+      "IQR": 0.0076999999999999985,
+      "LowerBound": 0.09275,
+      "UpperBound": 0.12355,
+      "Outliers": [
+        0.124,
+        0.1284,
+        0.136,
+        0.1377,
+        0.1454,
+        0.146,
+        0.1608,
+        0.2757
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "[|=-*-**--*------------------*",
+      "Histogram": [
+        {
+          "Range": "0.1 - 0.14 ms",
+          "Count": 45,
+          "Percentage": 90.0
+        },
+        {
+          "Range": "0.14 - 0.17 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        },
+        {
+          "Range": "0.17 - 0.21 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.21 - 0.24 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.24 - 0.28 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1016,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1043,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.1054,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.112,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.146,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.2757,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.2757,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Path": {
+      "Min": 0.2033,
+      "Max": 1.3195,
+      "Average": 0.252364,
+      "Median": 0.2149,
+      "Q1": 0.2109,
+      "Q3": 0.2261,
+      "P95": 0.4556,
+      "P99": 1.3195,
+      "StdDev": 0.16052271086671815,
+      "IQR": 0.015199999999999991,
+      "LowerBound": 0.18810000000000002,
+      "UpperBound": 0.24889999999999998,
+      "Outliers": [
+        0.2533,
+        0.2595,
+        0.2994,
+        0.4556,
+        0.4696,
+        1.3195
+      ],
+      "OutliersCount": 6,
+      "BoxPlot": "[**----*---------------------*",
+      "Histogram": [
+        {
+          "Range": "0.2 - 0.43 ms",
+          "Count": 47,
+          "Percentage": 94.0
+        },
+        {
+          "Range": "0.43 - 0.65 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.65 - 0.87 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.87 - 1.1 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.1 - 1.32 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.2033,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.2109,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.2149,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.2261,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.4556,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 1.3195,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 1.3195,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Project": {
+      "Min": 0.2027,
+      "Max": 0.537,
+      "Average": 0.22695600000000005,
+      "Median": 0.2115,
+      "Q1": 0.2079,
+      "Q3": 0.2181,
+      "P95": 0.2912,
+      "P99": 0.537,
+      "StdDev": 0.05392682137860529,
+      "IQR": 0.010199999999999987,
+      "LowerBound": 0.19260000000000002,
+      "UpperBound": 0.23339999999999997,
+      "Outliers": [
+        0.2356,
+        0.2361,
+        0.2488,
+        0.253,
+        0.2698,
+        0.2912,
+        0.4012,
+        0.537
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "[|-**-*-*--------*-----------*",
+      "Histogram": [
+        {
+          "Range": "0.2 - 0.27 ms",
+          "Count": 46,
+          "Percentage": 92.0
+        },
+        {
+          "Range": "0.27 - 0.34 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.34 - 0.4 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.4 - 0.47 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.47 - 0.54 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.2027,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.2079,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.2115,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.2181,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.2912,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.537,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.537,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Python": {
+      "Min": 0.1011,
+      "Max": 2.2373,
+      "Average": 0.285924,
+      "Median": 0.10464999999999999,
+      "Q1": 0.103,
+      "Q3": 0.1065,
+      "P95": 2.092,
+      "P99": 2.2373,
+      "StdDev": 0.5553404831488516,
+      "IQR": 0.003500000000000003,
+      "LowerBound": 0.09774999999999999,
+      "UpperBound": 0.11175,
+      "Outliers": [
+        0.1271,
+        0.2908,
+        0.4362,
+        0.4498,
+        2.0525,
+        2.092,
+        2.2276,
+        2.2373
+      ],
+      "OutliersCount": 8,
+      "BoxPlot": "*--*-*--------------------**-*",
+      "Histogram": [
+        {
+          "Range": "0.1 - 0.53 ms",
+          "Count": 46,
+          "Percentage": 92.0
+        },
+        {
+          "Range": "0.53 - 0.96 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.96 - 1.38 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.38 - 1.81 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "1.81 - 2.24 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1011,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.103,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.10464999999999999,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1065,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 2.092,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 2.2373,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 2.2373,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "Session": {
+      "Min": 0.2007,
+      "Max": 0.4122,
+      "Average": 0.21918799999999994,
+      "Median": 0.20805,
+      "Q1": 0.2061,
+      "Q3": 0.218,
+      "P95": 0.2873,
+      "P99": 0.4122,
+      "StdDev": 0.034336660524867585,
+      "IQR": 0.011899999999999994,
+      "LowerBound": 0.18825000000000003,
+      "UpperBound": 0.23585,
+      "Outliers": [
+        0.2365,
+        0.2433,
+        0.2873,
+        0.3185,
+        0.4122
+      ],
+      "OutliersCount": 5,
+      "BoxPlot": "[|=--**-----*---*------------*",
+      "Histogram": [
+        {
+          "Range": "0.2 - 0.24 ms",
+          "Count": 46,
+          "Percentage": 92.0
+        },
+        {
+          "Range": "0.24 - 0.29 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        },
+        {
+          "Range": "0.29 - 0.33 ms",
+          "Count": 2,
+          "Percentage": 4.0
+        },
+        {
+          "Range": "0.33 - 0.37 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.37 - 0.41 ms",
+          "Count": 1,
+          "Percentage": 2.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.2007,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.2061,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.20805,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.218,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.2873,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.4122,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.4122,
+          "CumulativePercent": 100.0
+        }
+      ]
+    },
+    "WSL": {
+      "Min": 0.1018,
+      "Max": 0.1272,
+      "Average": 0.10699000000000002,
+      "Median": 0.105,
+      "Q1": 0.1036,
+      "Q3": 0.1074,
+      "P95": 0.123,
+      "P99": 0.1272,
+      "StdDev": 0.005697095751345593,
+      "IQR": 0.003799999999999998,
+      "LowerBound": 0.0979,
+      "UpperBound": 0.11309999999999999,
+      "Outliers": [
+        0.115,
+        0.1153,
+        0.1155,
+        0.1159,
+        0.123,
+        0.1245,
+        0.1272
+      ],
+      "OutliersCount": 7,
+      "BoxPlot": "[-==|==--------**-------*-*--*",
+      "Histogram": [
+        {
+          "Range": "0.1 - 0.11 ms",
+          "Count": 36,
+          "Percentage": 72.0
+        },
+        {
+          "Range": "0.11 - 0.11 ms",
+          "Count": 7,
+          "Percentage": 14.0
+        },
+        {
+          "Range": "0.11 - 0.12 ms",
+          "Count": 4,
+          "Percentage": 8.0
+        },
+        {
+          "Range": "0.12 - 0.12 ms",
+          "Count": 0,
+          "Percentage": 0.0
+        },
+        {
+          "Range": "0.12 - 0.13 ms",
+          "Count": 3,
+          "Percentage": 6.0
+        }
+      ],
+      "Cumulative": [
+        {
+          "Label": "Min",
+          "Value": 0.1018,
+          "CumulativePercent": 0.0
+        },
+        {
+          "Label": "Q1",
+          "Value": 0.1036,
+          "CumulativePercent": 25.0
+        },
+        {
+          "Label": "Median",
+          "Value": 0.105,
+          "CumulativePercent": 50.0
+        },
+        {
+          "Label": "Q3",
+          "Value": 0.1074,
+          "CumulativePercent": 75.0
+        },
+        {
+          "Label": "P95",
+          "Value": 0.123,
+          "CumulativePercent": 95.0
+        },
+        {
+          "Label": "P99",
+          "Value": 0.1272,
+          "CumulativePercent": 99.0
+        },
+        {
+          "Label": "Max",
+          "Value": 0.1272,
+          "CumulativePercent": 100.0
+        }
+      ]
+    }
   }
 }

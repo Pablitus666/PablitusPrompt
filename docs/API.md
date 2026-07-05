@@ -1,5 +1,5 @@
-# Pablitus Prompt Framework v1.0 — API Reference Guide
-> **Pablitus Prompt Framework v1.0 API Frozen**
+# Pablitus Prompt Framework v1.2.0 — API Reference Guide
+> **Pablitus Prompt Framework v1.2.0 API Documentation**
 
 This document describes the official public API and core internal APIs of the Pablitus Prompt Framework (PPF).
 
@@ -8,89 +8,273 @@ This document describes the official public API and core internal APIs of the Pa
 ## 1. Public API
 These functions represent the stable public interface of PPF. They will not have breaking signature changes in any v1.x release.
 
+### `Clear-AllPPFCache`
+- **Synopsis**: 
+Clear-AllPPFCache 
+
+
+### `Clear-PPFCache`
+- **Synopsis**: 
+Clear-PPFCache [-Key] <string> [<CommonParameters>]
+
+
+### `Disable-PromptConfigHotReload`
+- **Synopsis**: 
+Disable-PromptConfigHotReload 
+
+
+### `Enable-PromptConfigHotReload`
+- **Synopsis**: 
+Enable-PromptConfigHotReload [-Path] <string> [<CommonParameters>]
+
+
+### `Get-ActiveTheme`
+- **Synopsis**: 
+Get-ActiveTheme 
+
+
+### `Get-PPFCache`
+- **Synopsis**: 
+Get-PPFCache [-Key] <string> [-UseDisk] [<CommonParameters>]
+
+
 ### `Get-Prompt`
-- **Description**: Returns the list of registered segments currently populated in the prompt context.
-- **Syntax**: `Get-Prompt [[-Context] <PromptContext>]`
-- **Output**: `[PromptSegment[]]`
+- **Synopsis**: 
+Get-Prompt [[-Context] <PromptContext>]
 
-### `Get-PromptString`
-- **Description**: Compiles and renders the prompt into a final string using the specified renderer.
-- **Syntax**: `Get-PromptString [[-Context] <PromptContext>] [[-Renderer] <string>]`
-- **Output**: `[string]`
-
-### `Invoke-Prompt`
-- **Description**: Runs the complete lifecycle (hot reload check, before-render event, providers, pipeline steps, segment generation, after-render event) and returns the completed context.
-- **Syntax**: `Invoke-Prompt`
-- **Output**: `[PromptContext]`
-
-### `New-PromptContext`
-- **Description**: Creates a blank context object containing placeholders for all module data.
-- **Syntax**: `New-PromptContext`
-- **Output**: `[PromptContext]`
 
 ### `Get-PromptConfiguration`
-- **Description**: Retrieves the current global configuration object.
-- **Syntax**: `Get-PromptConfiguration`
-- **Output**: `[PromptConfiguration]`
+- **Synopsis**: 
+Get-PromptConfiguration 
 
-### `Set-PromptConfiguration`
-- **Description**: Overwrites the global configuration object.
-- **Syntax**: `Set-PromptConfiguration [-Configuration] <PromptConfiguration>`
-- **Output**: `None`
 
-### `Register-PromptRenderer`
-- **Description**: Registers a custom renderer.
-- **Syntax**: `Register-PromptRenderer [-Name] <string> [-Script] <scriptblock>`
-- **Output**: `None`
+### `Get-PromptHealth`
+- **Synopsis**: 
+Get-PromptHealth [<CommonParameters>]
 
-### `Register-PromptSegment`
-- **Description**: Registers a visual segment with priority and a visibility/render script block.
-- **Syntax**: `Register-PromptSegment [-Name] <string> [-Priority] <int> [-Script] <scriptblock>`
-- **Output**: `None`
 
-### `Register-PromptTheme`
-- **Description**: Registers a visual theme containing colors and icons.
-- **Syntax**: `Register-PromptTheme [-Name] <string> [-Theme] <hashtable>`
-- **Output**: `None`
+### `Get-PromptProviders`
+- **Synopsis**: 
+Get-PromptProviders 
 
-### `Set-PromptTheme`
-- **Description**: Activates a registered theme.
-- **Syntax**: `Set-PromptTheme [-Name] <string>`
-- **Output**: `None`
 
----
+### `Get-PromptRenderers`
+- **Synopsis**: 
+Get-PromptRenderers 
 
-## 2. Internal Core API
-These functions are used by the framework core. They may be refactored or updated in minor releases, but are documented here for transparency.
+
+### `Get-PromptSegments`
+- **Synopsis**: 
+Get-PromptSegments [[-Context] <PromptContext>] [<CommonParameters>]
+
+
+### `Get-PromptString`
+- **Synopsis**: 
+Get-PromptString [[-Context] <PromptContext>] [[-Renderer] <string>]
+
+
+### `Get-PromptTheme`
+- **Synopsis**: 
+Get-PromptTheme [[-Name] <string>]
+
+
+### `Get-PromptThemes`
+- **Synopsis**: 
+Get-PromptThemes 
+
+
+### `Get-SegmentConfiguration`
+- **Synopsis**: 
+Get-SegmentConfiguration [-Name] <string> [<CommonParameters>]
+
 
 ### `Initialize-PPFModules`
-- **Description**: Scans the modules folder, loading providers, services, and segments in the correct order.
-- **Syntax**: `Initialize-PPFModules [[-ModulesPath] <string>]`
+- **Synopsis**: 
+Initialize-PPFModules [[-ModulesPath] <string>]
 
-### `Register-PromptProvider`
-- **Description**: Registers a context provider. Used by modules.
-- **Syntax**: `Register-PromptProvider [-Name] <string> [-Priority] <int> [-Script] <scriptblock>`
 
-### `Invoke-PromptProviders`
-- **Description**: Executes all registered providers against the active context.
-- **Syntax**: `Invoke-PromptProviders [-Context] <PromptContext>`
+### `Invoke-PPFEvent`
+- **Synopsis**: 
+Invoke-PPFEvent [-EventName] <string> [[-EventArgs] <Object>] [<CommonParameters>]
 
-### `Register-PPFPipelineStep`
-- **Description**: Adds a middleware step to the post-provider pipeline.
-- **Syntax**: `Register-PPFPipelineStep [-Name] <string> [-Priority] <int> [-Script] <scriptblock>`
 
 ### `Invoke-PPFPipeline`
-- **Description**: Runs all pipeline middleware.
-- **Syntax**: `Invoke-PPFPipeline [-Context] <PromptContext>`
+- **Synopsis**: 
+Invoke-PPFPipeline [[-Context] <PromptContext>]
 
-### `Get-PPFCache` / `Set-PPFCache`
-- **Description**: Core caching mechanism for slow provider operations. Supports memory and disk caching.
-- **Syntax**: 
-  - `Get-PPFCache [-Key] <string> [-UseDisk]`
-  - `Set-PPFCache [-Key] <string> [-Value] <any> [-TtlSeconds <int>] [-UseDisk]`
 
-### `Register-PPFEventListener` / `Invoke-PPFEvent`
-- **Description**: Simplistic event dispatcher for hooks (e.g. `BeforeRender`, `AfterRender`, `ThemeChanged`).
-- **Syntax**: 
-  - `Register-PPFEventListener [-EventName] <string> [-Script] <scriptblock>`
-  - `Invoke-PPFEvent [-EventName] <string> [-EventArgs] <any>`
+### `Invoke-Prompt`
+- **Synopsis**: 
+Invoke-Prompt 
+
+
+### `Measure-BatteryProvider`
+- **Synopsis**: 
+Measure-BatteryProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-CpuProvider`
+- **Synopsis**: 
+Measure-CpuProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-DockerProvider`
+- **Synopsis**: 
+Measure-DockerProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-DotNetProvider`
+- **Synopsis**: 
+Measure-DotNetProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-GitProvider`
+- **Synopsis**: 
+Measure-GitProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-KubernetesProvider`
+- **Synopsis**: 
+Measure-KubernetesProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-MemoryProvider`
+- **Synopsis**: 
+Measure-MemoryProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-NodeProvider`
+- **Synopsis**: 
+Measure-NodeProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-PathProvider`
+- **Synopsis**: 
+Measure-PathProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-ProjectProvider`
+- **Synopsis**: 
+Measure-ProjectProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-Prompt`
+- **Synopsis**: 
+Measure-Prompt [[-Renderer] <string>] [<CommonParameters>]
+
+
+### `Measure-PromptCacheComparison`
+- **Synopsis**: 
+Measure-PromptCacheComparison [[-Iterations] <int>] [<CommonParameters>]
+
+
+### `Measure-PromptDetailed`
+- **Synopsis**: 
+Measure-PromptDetailed [[-Renderer] <string>] [[-ExportDir] <string>] [[-Iterations] <int>] [<CommonParameters>]
+
+
+### `Measure-PromptProvider`
+- **Synopsis**: 
+Measure-PromptProvider [-Name] <string> [[-Iterations] <int>] [-Cold] [<CommonParameters>]
+
+
+### `Measure-PythonProvider`
+- **Synopsis**: 
+Measure-PythonProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-SessionProvider`
+- **Synopsis**: 
+Measure-SessionProvider [[-Iterations] <int>] [-Cold]
+
+
+### `Measure-WslProvider`
+- **Synopsis**: 
+Measure-WslProvider [[-Iterations] <int>] [-Cold]
+
+
+### `New-PromptContext`
+- **Synopsis**: 
+New-PromptContext 
+
+
+### `New-PromptSegment`
+- **Synopsis**: 
+New-PromptSegment [-Name] <string> [-Text] <string> [[-Icon] <string>] [[-Foreground] <string>] [[-Background] <string>] [<CommonParameters>]
+
+
+### `Register-PPFEventListener`
+- **Synopsis**: 
+Register-PPFEventListener [-EventName] <string> [-Script] <scriptblock> [<CommonParameters>]
+
+
+### `Register-PPFPipelineStep`
+- **Synopsis**: 
+Register-PPFPipelineStep [-Name] <string> [[-Priority] <int>] [-Script] <scriptblock> [<CommonParameters>]
+
+
+### `Register-PromptProvider`
+- **Synopsis**: 
+Register-PromptProvider [-Name] <string> [[-Priority] <int>] [[-Script] <scriptblock>] [<CommonParameters>]
+
+
+### `Register-PromptRenderer`
+- **Synopsis**: 
+Register-PromptRenderer [-Name] <string> [-Script] <scriptblock> [<CommonParameters>]
+
+
+### `Register-PromptSegment`
+- **Synopsis**: 
+Register-PromptSegment [-Name] <string> [[-Priority] <int>] [-Script] <scriptblock> [<CommonParameters>]
+
+
+### `Register-PromptTheme`
+- **Synopsis**: 
+Register-PromptTheme [-Name] <string> [-Palette] <hashtable> [-Icons] <hashtable> [[-Segments] <hashtable>] [<CommonParameters>]
+
+
+### `Resolve-ThemeColor`
+- **Synopsis**: 
+Resolve-ThemeColor [[-ColorName] <string>]
+
+
+### `Resolve-ThemeIcon`
+- **Synopsis**: 
+Resolve-ThemeIcon [[-IconKey] <string>]
+
+
+### `Set-PPFCache`
+- **Synopsis**: 
+Set-PPFCache [-Key] <string> [-Value] <Object> [[-TtlSeconds] <int>] [-UseDisk] [<CommonParameters>]
+
+
+### `Set-PPFLogLevel`
+- **Synopsis**: 
+Set-PPFLogLevel [[-Level] <string>]
+
+
+### `Set-PromptConfiguration`
+- **Synopsis**: 
+Set-PromptConfiguration [[-Configuration] <PromptConfiguration>]
+
+
+### `Set-PromptTheme`
+- **Synopsis**: 
+Set-PromptTheme [-Name] <string> [<CommonParameters>]
+
+
+### `Set-SegmentConfiguration`
+- **Synopsis**: 
+Set-SegmentConfiguration [-Name] <string> [-Configuration] <hashtable> [<CommonParameters>]
+
+
+### `Test-PromptFramework`
+- **Synopsis**: 
+Test-PromptFramework [-RunTests] [<CommonParameters>]
+
+
+### `Write-PPFLog`
+- **Synopsis**: 
+Write-PPFLog [-Level] <string> [-Message] <string> [<CommonParameters>]
+
+

@@ -3,35 +3,39 @@
 # Docker.Service.ps1
 # ============================================================
 
-function Test-DockerActive {
+function Get-DockerInfo {
 
-    if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-        return $false
+    # Fast daemon availability check without spawning processes
+    $daemonAvailable = $false
+    if ($env:DOCKER_HOST) {
+        $daemonAvailable = $true
+    }
+    elseif ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)) {
+        $daemonAvailable = [System.IO.File]::Exists("\\.\pipe\docker_engine")
+    }
+    else {
+        $daemonAvailable = [System.IO.File]::Exists("/var/run/docker.sock") -or [System.IO.File]::Exists("$env:HOME/.docker/run/docker.sock")
     }
 
-    try {
-        $result = docker ps --format "{{.ID}}" -ErrorAction SilentlyContinue 2>$null
-        return $true
+    if (-not $daemonAvailable) {
+        return [pscustomobject]@{ Active = $false; Count = 0 }
     }
-    catch {
-        return $false
+
+    $dockerCfg = Get-SegmentConfiguration -Name "Docker"
+    $timeoutMs = if ($dockerCfg -and $dockerCfg.ContainsKey("TimeoutMs")) { [int]$dockerCfg["TimeoutMs"] } else { 100 }
+    if ($timeoutMs -le 0) { $timeoutMs = 100 }
+
+    # Run docker ps -q with timeout
+    $res = Invoke-PPFExternalCommand -Command "docker" -Arguments @("ps", "-q") -TimeoutMs $timeoutMs
+    if ($null -eq $res -or -not $res.Installed -or $res.TimedOut -or $res.ExitCode -ne 0 -or $null -eq $res.Output) {
+        return [pscustomobject]@{ Active = $false; Count = 0 }
+    }
+
+    $lines = $res.Output -split "`r?`n" | Where-Object { $_.Trim() }
+    return [pscustomobject]@{
+        Active = $true
+        Count  = $lines.Length
     }
 
 }
 
-function Get-DockerRunningContainers {
-
-    if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-        return 0
-    }
-
-    try {
-        $containers = docker ps -q 2>$null
-        if ($containers) {
-            return @($containers).Count
-        }
-    }
-    catch {}
-    return 0
-
-}

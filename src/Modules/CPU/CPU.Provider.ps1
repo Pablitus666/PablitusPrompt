@@ -17,7 +17,7 @@ function Invoke-CpuProvider {
     else {
         $usage = Get-CpuUsage
         $Context.Cpu.Usage = $usage
-        Set-PPFCache -Key $cacheKey -Value $usage -TtlSeconds 15
+        Set-PPFCache -Key $cacheKey -Value $usage -TtlSeconds 1
     }
 
 }
@@ -26,3 +26,4 @@ Register-PromptProvider `
     -Name "CPU" `
     -Priority 910 `
     -Script ${function:Invoke-CpuProvider}
+

@@ -32,6 +32,10 @@ class GitContext {
     [bool]$IsRepository
     [string]$Branch
     [bool]$Dirty
+    [int]$Ahead
+    [int]$Behind
+    [bool]$Detached
+    [string]$Root
 
 }
 

@@ -12,13 +12,7 @@ function Get-ProjectInfo {
 
     $dir = $current
     while ($dir) {
-        if ([System.IO.Directory]::Exists([System.IO.Path]::Combine($dir, ".git"))) {
-            $projectRoot = $dir
-            $projectType = "Git"
-            $projectIcon = ""
-            break
-        }
-        elseif ([System.IO.File]::Exists([System.IO.Path]::Combine($dir, "package.json"))) {
+        if ([System.IO.File]::Exists([System.IO.Path]::Combine($dir, "package.json"))) {
             $projectRoot = $dir
             $projectType = "Node"
             $projectIcon = ""
@@ -48,6 +42,13 @@ function Get-ProjectInfo {
             }
         }
         catch {}
+
+        if ([System.IO.Directory]::Exists([System.IO.Path]::Combine($dir, ".git"))) {
+            $projectRoot = $dir
+            $projectType = "Git"
+            $projectIcon = ""
+            break
+        }
 
         $parent = [System.IO.Path]::GetDirectoryName($dir)
         if ($parent -eq $dir -or -not $parent) {

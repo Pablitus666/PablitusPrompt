@@ -9,6 +9,10 @@ function Invoke-DockerProvider {
         [PromptContext]$Context
     )
 
+    $dockerCfg = Get-SegmentConfiguration -Name "Docker"
+    $ttlSeconds = if ($dockerCfg -and $dockerCfg.ContainsKey("CacheTimeoutMs")) { [int]($dockerCfg["CacheTimeoutMs"] / 1000) } else { 15 }
+    if ($ttlSeconds -le 0) { $ttlSeconds = 15 }
+
     $cacheKey = "DockerStatus"
     $cached = Get-PPFCache -Key $cacheKey -UseDisk
     if ($null -ne $cached) {
@@ -16,20 +20,16 @@ function Invoke-DockerProvider {
         $Context.Docker.RunningContainers = $cached.RunningContainers
     }
     else {
-        $active = Test-DockerActive
-        $containers = 0
-        if ($active) {
-            $containers = Get-DockerRunningContainers
-        }
+        $info = Get-DockerInfo
 
         $data = [pscustomobject]@{
-            Active            = $active
-            RunningContainers = $containers
+            Active            = $info.Active
+            RunningContainers = $info.Count
         }
 
-        $Context.Docker.Active            = $active
-        $Context.Docker.RunningContainers = $containers
-        Set-PPFCache -Key $cacheKey -Value $data -TtlSeconds 15 -UseDisk
+        $Context.Docker.Active            = $info.Active
+        $Context.Docker.RunningContainers = $info.Count
+        Set-PPFCache -Key $cacheKey -Value $data -TtlSeconds $ttlSeconds -UseDisk
     }
 
 }

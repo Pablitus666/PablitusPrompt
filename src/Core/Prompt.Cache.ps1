@@ -7,6 +7,15 @@ $script:PPFMemoryCache = @{}
 $script:CacheDir = Join-Path $env:LOCALAPPDATA "PablitusPrompt"
 $script:DiskCachePath = Join-Path $script:CacheDir "cache.json"
 
+if ($null -eq $global:PPF_CacheHits) { $global:PPF_CacheHits = 0 }
+if ($null -eq $global:PPF_CacheMisses) { $global:PPF_CacheMisses = 0 }
+if ($null -eq $global:PPF_CacheTTLExpired) { $global:PPF_CacheTTLExpired = 0 }
+if ($null -eq $global:PPF_CacheRefreshes) { $global:PPF_CacheRefreshes = 0 }
+
+if ($null -eq $global:PPF_ProviderCacheStats) {
+    $global:PPF_ProviderCacheStats = [ordered]@{}
+}
+
 function Get-PPFCache {
 
     param(
@@ -17,15 +26,22 @@ function Get-PPFCache {
     )
 
     $now = Get-Date
+    $prov = $global:PPF_CurrentExecutingProvider
+    if ($null -ne $prov -and -not $global:PPF_ProviderCacheStats.Contains($prov)) {
+        $global:PPF_ProviderCacheStats[$prov] = @{ Hits = 0; Misses = 0; Expirations = 0; Refreshes = 0 }
+    }
 
     # 1. Check Memory Cache
     if ($script:PPFMemoryCache.ContainsKey($Key)) {
         $entry = $script:PPFMemoryCache[$Key]
         if (-not $entry.Expiry -or $now -lt $entry.Expiry) {
             $global:PPF_CacheHits++
+            if ($null -ne $prov) { $global:PPF_ProviderCacheStats[$prov].Hits++ }
             return $entry.Value
         }
         else {
+            $global:PPF_CacheTTLExpired++
+            if ($null -ne $prov) { $global:PPF_ProviderCacheStats[$prov].Expirations++ }
             $script:PPFMemoryCache.Remove($Key)
         }
     }
@@ -40,10 +56,13 @@ function Get-PPFCache {
                 # Memory cache sync
                 $script:PPFMemoryCache[$Key] = $entry
                 $global:PPF_CacheHits++
+                if ($null -ne $prov) { $global:PPF_ProviderCacheStats[$prov].Hits++ }
                 return $entry.Value
             }
             else {
                 # Evict expired
+                $global:PPF_CacheTTLExpired++
+                if ($null -ne $prov) { $global:PPF_ProviderCacheStats[$prov].Expirations++ }
                 $diskCache.Remove($Key)
                 Save-PPFDiskCache -Cache $diskCache
             }
@@ -51,6 +70,7 @@ function Get-PPFCache {
     }
 
     $global:PPF_CacheMisses++
+    if ($null -ne $prov) { $global:PPF_ProviderCacheStats[$prov].Misses++ }
     return $null
 
 }
@@ -69,9 +89,15 @@ function Set-PPFCache {
         [switch]$UseDisk
     )
 
+    $now = Get-Date
+    $prov = $global:PPF_CurrentExecutingProvider
+    if ($null -ne $prov -and -not $global:PPF_ProviderCacheStats.Contains($prov)) {
+        $global:PPF_ProviderCacheStats[$prov] = @{ Hits = 0; Misses = 0; Expirations = 0; Refreshes = 0 }
+    }
+
     $expiry = $null
     if ($TtlSeconds -gt 0) {
-        $expiry = (Get-Date).AddSeconds($TtlSeconds)
+        $expiry = $now.AddSeconds($TtlSeconds)
     }
 
     $entry = @{
@@ -81,6 +107,8 @@ function Set-PPFCache {
 
     # 1. Memory Cache
     $script:PPFMemoryCache[$Key] = $entry
+    $global:PPF_CacheRefreshes++
+    if ($null -ne $prov) { $global:PPF_ProviderCacheStats[$prov].Refreshes++ }
 
     # 2. Disk Cache
     if ($UseDisk) {
@@ -117,7 +145,16 @@ function Clear-AllPPFCache {
 
     $script:PPFMemoryCache.Clear()
     if (Test-Path $script:DiskCachePath) {
-        Remove-Item $script:DiskCachePath -Force
+        try {
+            Remove-Item $script:DiskCachePath -Force -ErrorAction Stop
+        }
+        catch {
+            # Retry after a small delay to handle transient locks
+            Start-Sleep -Milliseconds 100
+            try {
+                Remove-Item $script:DiskCachePath -Force -ErrorAction SilentlyContinue
+            } catch {}
+        }
     }
 
 }
@@ -128,7 +165,16 @@ function Load-PPFDiskCache {
         return @{}
     }
     try {
-        $json = Get-Content -Raw -Path $script:DiskCachePath -ErrorAction SilentlyContinue
+        $json = $null
+        for ($i = 0; $i -lt 3; $i++) {
+            try {
+                $json = Get-Content -Raw -Path $script:DiskCachePath -ErrorAction Stop
+                break
+            }
+            catch {
+                Start-Sleep -Milliseconds 50
+            }
+        }
         if ($json) {
             return ConvertFrom-Json $json -AsHashtable
         }
@@ -151,7 +197,16 @@ function Save-PPFDiskCache {
             $null = New-Item -ItemType Directory -Path $script:CacheDir -Force
         }
         $json = $Cache | ConvertTo-Json -Depth 5
-        $json | Out-File -FilePath $script:DiskCachePath -Encoding utf8
+        # Attempt to write with retry to handle lock conflicts
+        for ($i = 0; $i -lt 3; $i++) {
+            try {
+                $json | Out-File -FilePath $script:DiskCachePath -Encoding utf8 -ErrorAction Stop
+                break
+            }
+            catch {
+                Start-Sleep -Milliseconds 50
+            }
+        }
     }
     catch {
         Write-Verbose "[PPF] Failed to save disk cache: $_"

@@ -14,6 +14,11 @@ function Import-PromptConfiguration {
         [string]$Path
     )
 
+    $ext = [System.IO.Path]::GetExtension($Path).ToLower()
+    if ($ext -ne ".json" -and $ext -ne ".psd1") {
+        throw "Unsupported configuration format: $ext. Support JSON and PSD1."
+    }
+
     if (-not (Test-Path $Path)) {
         Write-Verbose "[PPF] Config file not found at '$Path'"
         return
@@ -21,18 +26,18 @@ function Import-PromptConfiguration {
 
     Write-Verbose "[PPF] Loading config from '$Path'"
     
-    $configData = $null
-    $ext = [System.IO.Path]::GetExtension($Path).ToLower()
-
-    if ($ext -eq ".json") {
-        $content = Get-Content -Raw -Path $Path
-        $configData = ConvertFrom-Json $content -AsHashtable
+    try {
+        if ($ext -eq ".json") {
+            $content = Get-Content -Raw -Path $Path
+            $configData = ConvertFrom-Json $content -AsHashtable
+        }
+        elseif ($ext -eq ".psd1") {
+            $configData = Import-PowerShellDataFile -Path $Path
+        }
     }
-    elseif ($ext -eq ".psd1") {
-        $configData = Import-PowerShellDataFile -Path $Path
-    }
-    else {
-        throw "Unsupported configuration format: $ext. Support JSON and PSD1."
+    catch {
+        Write-Warning "[PPF] Failed to parse configuration file '$Path': $_"
+        return
     }
 
     if (-not $configData) {

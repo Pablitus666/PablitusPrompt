@@ -8,12 +8,14 @@ class PromptConfiguration {
     [hashtable]$Segments
     [hashtable]$Renderer
     [hashtable]$Theme
+    [hashtable]$Performance
 
     PromptConfiguration() {
 
-        $this.Segments = @{}
-        $this.Renderer = @{}
-        $this.Theme    = @{}
+        $this.Segments    = @{}
+        $this.Renderer    = @{}
+        $this.Theme       = @{}
+        $this.Performance = @{}
 
     }
 
