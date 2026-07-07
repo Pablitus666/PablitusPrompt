@@ -1,0 +1,22 @@
+# Auto detect text files
+* text=auto
+
+# PowerShell
+*.ps1  text eol=crlf
+*.psm1 text eol=crlf
+*.psd1 text eol=crlf
+
+# Markdown
+*.md text
+
+# JSON
+*.json text
+
+# Images
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+
+# Zip
+*.zip binary
