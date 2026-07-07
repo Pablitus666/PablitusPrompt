@@ -13,27 +13,42 @@ on:
 
 jobs:
   test:
+    name: Run Pester Tests
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install Pester 5
+      - name: Setup PowerShell modules
         shell: pwsh
         run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module Pester -Scope CurrentUser -Force -SkipPublisherCheck
 
-      - name: Run Tests
+      - name: Display environment
         shell: pwsh
         run: |
-          Import-Module Pester -MinimumVersion 5.0 -Force
+          $PSVersionTable
+          Get-Module Pester -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1
 
+      - name: Run Pester
+        shell: pwsh
+        run: |
+
+          Import-Module Pester -MinimumVersion 5.0 -Force
           Import-Module "$PWD/src/PablitusPrompt.psm1" -Force
 
+          Write-Host ""
+          Write-Host "Loaded modules:"
           Get-Module Pester
           Get-Module PablitusPrompt
 
-          Invoke-Pester `
-            -Path "$PWD/tests/Prompt.Tests.ps1" `
-            -Output Detailed `
-            -EnableExit
+          $config = New-PesterConfiguration
+
+          $config.Run.Path = "$PWD/tests"
+          $config.Run.Exit = $true
+
+          $config.Output.Verbosity = "Detailed"
+
+          Invoke-Pester -Configuration $config
