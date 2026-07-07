@@ -2,23 +2,43 @@ name: PPF CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches:
+      - main
+      - master
+
   pull_request:
-    branches: [ main, master ]
+    branches:
+      - main
+      - master
 
 jobs:
   test:
-    name: Run Pester Tests (Windows)
     runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
 
-      - name: Run Integration Tests
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PowerShell modules
         shell: pwsh
         run: |
-          $result = Invoke-Pester -Path ./tests/Prompt.Tests.ps1 -PassThru
+          Install-Module Pester -Force -SkipPublisherCheck -Scope CurrentUser
+
+      - name: Run Pester Tests
+        shell: pwsh
+        run: |
+          Import-Module Pester -Force
+
+          $config = New-PesterConfiguration
+          $config.Run.Path = "./tests"
+          $config.Output.Verbosity = "Detailed"
+          $config.TestResult.Enabled = $true
+
+          $result = Invoke-Pester -Configuration $config
+
           if ($result.FailedCount -gt 0) {
-              Write-Error "Pester tests failed!"
-              exit 1
+              throw "$($result.FailedCount) tests failed."
+          }
+
+          if ($result.TotalCount -eq 0) {
+              throw "No tests were discovered."
           }
