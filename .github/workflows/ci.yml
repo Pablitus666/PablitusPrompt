@@ -18,27 +18,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install PowerShell modules
+      - name: Install Pester 5
         shell: pwsh
         run: |
-          Install-Module Pester -Force -SkipPublisherCheck -Scope CurrentUser
+          Install-Module Pester -Scope CurrentUser -Force -SkipPublisherCheck
 
-      - name: Run Pester Tests
+      - name: Run Tests
         shell: pwsh
         run: |
-          Import-Module Pester -Force
+          Import-Module Pester -MinimumVersion 5.0 -Force
 
-          $config = New-PesterConfiguration
-          $config.Run.Path = "./tests"
-          $config.Output.Verbosity = "Detailed"
-          $config.TestResult.Enabled = $true
+          Import-Module "$PWD/src/PablitusPrompt.psm1" -Force
 
-          $result = Invoke-Pester -Configuration $config
+          Get-Module Pester
+          Get-Module PablitusPrompt
 
-          if ($result.FailedCount -gt 0) {
-              throw "$($result.FailedCount) tests failed."
-          }
-
-          if ($result.TotalCount -eq 0) {
-              throw "No tests were discovered."
-          }
+          Invoke-Pester `
+            -Path "$PWD/tests/Prompt.Tests.ps1" `
+            -Output Detailed `
+            -EnableExit
