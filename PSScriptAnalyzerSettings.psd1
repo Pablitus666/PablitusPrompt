@@ -26,6 +26,10 @@
         'PSUseSingularNouns',
 
         # Get-WmiObject is a deliberate fallback for environments without CIM.
-        'PSAvoidUsingWMICmdlet'
+        'PSAvoidUsingWMICmdlet',
+
+        # Fast bootstrap concatenates trusted local module sources and parses
+        # them once in module scope. The content is never user input.
+        'PSAvoidUsingInvokeExpression'
     )
 }

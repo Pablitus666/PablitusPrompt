@@ -6,6 +6,10 @@
 $script:PromptProviders = @()
 $script:PipelineSteps = @()
 
+if ($null -eq $global:PPF_SkipHiddenProviders) {
+    $global:PPF_SkipHiddenProviders = $false
+}
+
 function Register-PromptProvider {
 
     param(
@@ -43,7 +47,53 @@ function Invoke-PromptProviders {
         [PromptContext]$Context
     )
 
-    foreach ($provider in ($script:PromptProviders | Sort-Object Priority)) {
+    $providersToRun = @($script:PromptProviders | Sort-Object Priority)
+
+    if ($global:PPF_SkipHiddenProviders) {
+
+        $providerVisibility = @{}
+        foreach ($candidate in $providersToRun) {
+            $segmentConfig = Get-SegmentConfiguration -Name $candidate.Name
+            $providerVisibility[$candidate.Name] = if ($null -ne $segmentConfig -and $segmentConfig.ContainsKey("Visible")) {
+                [bool]$segmentConfig["Visible"]
+            }
+            else {
+                $true
+            }
+        }
+
+        # Providers whose data is consumed by another provider, even when
+        # their own segment is hidden.
+        $providerDependencies = @{
+            "Python" = @("Path", "Project")
+            "Node"   = @("Path", "Project")
+            "DotNet" = @("Path", "Project")
+        }
+
+        $neededProviders = @{}
+        $addNeededProvider = {
+            param([string]$Name)
+
+            if ($neededProviders.ContainsKey($Name)) { return }
+            $neededProviders[$Name] = $true
+
+            if ($providerDependencies.ContainsKey($Name)) {
+                foreach ($dependency in $providerDependencies[$Name]) {
+                    & $addNeededProvider $dependency
+                }
+            }
+        }
+
+        foreach ($candidate in $providersToRun) {
+            if ($providerVisibility[$candidate.Name]) {
+                & $addNeededProvider $candidate.Name
+            }
+        }
+
+        $providersToRun = @($providersToRun | Where-Object { $neededProviders.ContainsKey($_.Name) })
+    }
+
+    foreach ($provider in $providersToRun) {
         
         $global:PPF_CurrentExecutingProvider = $provider.Name
         if (-not $global:PPF_ProviderCacheStats.Contains($provider.Name)) {

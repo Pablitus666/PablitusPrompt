@@ -5,6 +5,10 @@
 
 $ErrorActionPreference = "Stop"
 
+# Pester instruments script files, not Invoke-Expression bundles, so the
+# compatibility loader is used while tests and coverage are running.
+$env:PPF_USE_MODULAR_LOADER = "1"
+
 $scriptDir = $PSScriptRoot
 if (-not $scriptDir) { $scriptDir = Get-Location }
 
@@ -36,6 +40,9 @@ $srcFiles = Get-ChildItem -Path $srcDir -Recurse -Filter "*.ps1" | Where-Object 
     $_.Name -ne "Microsoft.PowerShell_profile.ps1"
 }
 $ccResult = Invoke-Pester -Path $testsDir -CodeCoverage $srcFiles.FullName -PassThru
+if ($ccResult.FailedCount -gt 0) {
+    throw "¡Fallo en la ejecución de cobertura! ($($ccResult.FailedCount) pruebas fallidas)"
+}
 
 # Pester 5.8 exposes CommandsAnalyzedCount/CommandsMissedCount; older 5.x used
 # NumberOfCommandsAnalyzed/NumberOfCommandsMissed. Support both.
@@ -62,6 +69,9 @@ if ($coveragePct -lt $minCoverage) {
     throw "Cobertura insuficiente: $([math]::Round($coveragePct, 2))% < ${minCoverage}%. El build se detiene."
 }
 Write-Host "¡Objetivo de cobertura cumplido (>90%)!" -ForegroundColor Green
+
+# Benchmarks use the normal fast bootstrap path.
+Remove-Item Env:\PPF_USE_MODULAR_LOADER -ErrorAction SilentlyContinue
 
 # 4. Run Benchmarks
 Write-Host "`n[3/6] Ejecutando Benchmarks de rendimiento..." -ForegroundColor Cyan

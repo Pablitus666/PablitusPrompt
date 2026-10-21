@@ -3,6 +3,9 @@
 # Prompt.Tests.ps1 (Regresion, Pipeline & Renderers)
 # ============================================================
 
+# Pester instruments script files, not the in-memory fast bundle.
+$env:PPF_USE_MODULAR_LOADER = "1"
+
 # Import at discovery time: InModuleScope requires the module to be loaded
 # before Pester resolves the test tree.
 Import-Module (Join-Path $PSScriptRoot "..\src\PablitusPrompt.psd1") -Force
@@ -47,6 +50,36 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             foreach ($segmentName in $expectedSegments) {
                 $segment = $script:PromptSegments | Where-Object Name -eq $segmentName
                 $segment | Should -Not -Be $null
+            }
+        }
+
+        It "Omite providers ocultos pero conserva las dependencias de providers visibles" {
+            $oldTheme = Get-ActiveTheme
+            $oldSkip = $global:PPF_SkipHiddenProviders
+            $kaliTheme = Get-PromptTheme -Name Kali
+            $oldSegmentConfigs = @{}
+            foreach ($segmentName in $kaliTheme.Segments.Keys) {
+                $oldSegmentConfigs[$segmentName] = Get-SegmentConfiguration -Name $segmentName
+            }
+
+            try {
+                Set-PromptTheme -Name Kali
+                $global:PPF_SkipHiddenProviders = $true
+                $context = Invoke-Prompt
+
+                $context.Metrics.ContainsKey("Provider_Memory_TimeMs") | Should -Be $false
+                $context.Metrics.ContainsKey("Provider_Battery_TimeMs") | Should -Be $false
+                $context.Metrics.ContainsKey("Provider_Git_TimeMs") | Should -Be $true
+                $context.Metrics.ContainsKey("Provider_Project_TimeMs") | Should -Be $true
+            }
+            finally {
+                if ($oldTheme) {
+                    Set-PromptTheme -Name $oldTheme.Name
+                }
+                foreach ($segmentName in $oldSegmentConfigs.Keys) {
+                    Set-SegmentConfiguration -Name $segmentName -Configuration $oldSegmentConfigs[$segmentName]
+                }
+                $global:PPF_SkipHiddenProviders = $oldSkip
             }
         }
 
@@ -1119,6 +1152,27 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
         }
     }
 
+    }
+
+    Context "Fast bootstrap path" {
+        It "Carga el modulo con el bundle rapido en un proceso limpio" {
+            $manifestPath = (Resolve-Path (Join-Path $PSScriptRoot "..\src\PablitusPrompt.psd1")).Path
+            $childScript = @"
+Remove-Item Env:\PPF_USE_MODULAR_LOADER -ErrorAction SilentlyContinue
+Import-Module '$manifestPath' -Force
+Set-PromptTheme -Name Kali
+`$context = Invoke-Prompt
+`$text = Get-PromptString -Context `$context -Renderer ANSI
+`$themeCount = (Get-PromptThemes | Measure-Object).Count
+if (`$global:PPF_BootstrapMode -ne 'Fast') { throw "Expected Fast bootstrap, got '`$(`$global:PPF_BootstrapMode)'" }
+if (`$themeCount -ne 5) { throw "Expected 5 themes, got `$themeCount" }
+if (`$text -notmatch '@') { throw "Prompt does not contain user@host: `$text" }
+'FAST_BOOTSTRAP_OK'
+"@
+            $output = & pwsh -NoProfile -NoLogo -Command $childScript 2>&1
+            $LASTEXITCODE | Should -Be 0
+            ($output -join "`n") | Should -Match "FAST_BOOTSTRAP_OK"
+        }
     }
 
     AfterAll {

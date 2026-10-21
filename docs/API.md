@@ -1,5 +1,5 @@
-# Pablitus Prompt Framework v1.4.0 — API Reference Guide
-> **Pablitus Prompt Framework v1.4.0 API Documentation**
+# Pablitus Prompt Framework v1.5.0 — API Reference Guide
+> **Pablitus Prompt Framework v1.5.0 API Documentation**
 
 This document describes the official public API and core internal APIs of the Pablitus Prompt Framework (PPF).
 

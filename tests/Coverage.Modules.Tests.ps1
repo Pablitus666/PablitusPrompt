@@ -3,6 +3,9 @@
 # Coverage.Modules.Tests.ps1
 # ============================================================
 
+# Pester instruments script files, not the in-memory fast bundle.
+$env:PPF_USE_MODULAR_LOADER = "1"
+
 # Import at discovery time: InModuleScope requires the module to be loaded
 # before Pester resolves the test tree.
 Import-Module (Join-Path $PSScriptRoot "..\src\PablitusPrompt.psd1") -Force

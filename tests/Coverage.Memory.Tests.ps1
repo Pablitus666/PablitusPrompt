@@ -3,6 +3,9 @@
 # Coverage.Memory.Tests.ps1
 # ============================================================
 
+# Pester instruments script files, not the in-memory fast bundle.
+$env:PPF_USE_MODULAR_LOADER = "1"
+
 # Import at discovery time: InModuleScope requires the module to be loaded
 # before Pester resolves the test tree.
 Import-Module (Join-Path $PSScriptRoot "..\src\PablitusPrompt.psd1") -Force
@@ -475,6 +478,8 @@ Describe "PPF Coverage - Memory, CPU, Battery & Session" {
 
             It "Devuelve el valor del contenedor compartido" {
                 Mock Start-CpuSampler { }
+                Stop-CpuSampler
+                $global:PPF_CpuSharedData.Stopped = $true
                 $global:PPF_CpuSharedData.Usage = 37
 
                 Get-CpuUsage | Should -Be 37

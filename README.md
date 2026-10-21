@@ -1,4 +1,4 @@
-# Pablitus Prompt Framework (PPF) v1.3.1
+# Pablitus Prompt Framework (PPF) v1.5.0
 > Modular PowerShell prompt framework for PowerShell 7+
 
 Pablitus Prompt Framework (PPF) is a modular framework for building prompts in PowerShell 7.
@@ -43,6 +43,8 @@ Invoke-Prompt
 - Event hooks for `BeforeRender`, `AfterRender`, `ThemeChanged`, `ConfigurationChanged`, and `ModuleLoaded`
 - CPU sampler with runspace-backed background collection
 - Git repository watcher support
+- Fast bootstrap: sources are bundled in memory and parsed once instead of dot-sourcing ~67 files
+- Optional hidden-provider skipping so invisible segments do not pay provider cost
 
 ## Requirements
 
@@ -84,6 +86,9 @@ Add this block to your `$PROFILE` (adjust the path to your clone):
 . C:\PablitusPrompt\src\Bootstrap.ps1
 Set-PromptTheme -Name "Kali"
 
+# Skip providers whose segment is hidden by the active theme.
+$global:PPF_SkipHiddenProviders = $true
+
 function global:prompt {
     $context = Invoke-Prompt
     $prompt = Get-PromptString -Context $context -Renderer "ANSI"
@@ -96,6 +101,25 @@ function global:prompt {
 The `Kali` theme renders `user@host` and a green `$` (cyan `#` for administrators).
 
 Open a new terminal and PPF will render your prompt. Remove the function to go back to the previous prompt.
+
+### Startup performance
+
+`PablitusPrompt.psm1` reads the modular sources in dependency order, concatenates them,
+and parses them once with `Invoke-Expression`. This keeps the source tree modular while
+avoiding the per-file parsing cost at startup. The module exposes the selected mode in
+`$global:PPF_BootstrapMode` (`Fast` or `Modular`).
+
+Use the compatibility loader when you need Pester code coverage (it instruments files,
+not in-memory bundles):
+
+```powershell
+$env:PPF_USE_MODULAR_LOADER = "1"
+Import-Module .\src\PablitusPrompt.psd1 -Force
+```
+
+`$global:PPF_SkipHiddenProviders = $true` skips providers whose segment is hidden by the
+active theme. Visible providers that depend on another provider still run (for example,
+Python keeps the Project provider available). It is off by default.
 
 ## Public API
 

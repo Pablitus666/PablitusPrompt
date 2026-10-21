@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.5.0 (Fast Bootstrap) - 2026-10-21
+
+### Added
+- **Fast in-memory bootstrap**: `PablitusPrompt.psm1` reads the modular sources in dependency order, concatenates them, and parses them once with `Invoke-Expression`. Module import dropped from roughly 900 ms to roughly 300 ms locally while keeping the source tree modular.
+- **Bootstrap mode telemetry**: `$global:PPF_BootstrapMode` reports `Fast` or `Modular`.
+- **Compatibility loader**: set `$env:PPF_USE_MODULAR_LOADER = "1"` to force the original per-file loader. Pester/coverage runs select it automatically because Pester instruments files, not in-memory bundles.
+- **Hidden-provider skipping**: `$global:PPF_SkipHiddenProviders = $true` avoids running providers whose segment is hidden by the active theme. Visible providers keep the dependencies they need (for example, Python keeps Project data available). Off by default.
+
+### Changed
+- `build.ps1` forces the modular loader while running Pester and coverage, then switches back to the fast path for benchmarks.
+- README and installation guide document the bootstrap modes and hidden-provider option.
+
+### Quality
+- 182 Pester tests passing, 0 failures.
+- Code coverage: 91.54% (2695/2944 commands).
+- PSScriptAnalyzer: 0 findings with the project settings.
+
 ## v1.4.0 (Kali Theme) - 2026-10-20
 
 ### Added
