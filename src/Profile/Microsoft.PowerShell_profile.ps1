@@ -7,7 +7,10 @@ $Theme = "$HOME\Documents\PowerShell\Themes\Pablitus.omp.json"
 
 # Inicializar Oh My Posh
 if (Test-Path $Theme) {
-    oh-my-posh init pwsh --config $Theme | Invoke-Expression
+    $initScript = oh-my-posh init pwsh --config $Theme | Out-String
+    if ($initScript) {
+        & ([scriptblock]::Create($initScript))
+    }
 }
 
 # Terminal Icons

@@ -29,13 +29,14 @@ function Invoke-PPFEvent {
         [Parameter(Mandatory)]
         [string]$EventName,
 
-        $EventArgs
+        [Alias('EventArgs')]
+        $EventArguments
     )
 
     if ($script:PPFEventListeners.ContainsKey($EventName)) {
         foreach ($listener in $script:PPFEventListeners[$EventName]) {
             try {
-                & $listener $EventArgs
+                & $listener $EventArguments
             }
             catch {
                 Write-Verbose "[PPF] Event listener for '$EventName' failed: $_"

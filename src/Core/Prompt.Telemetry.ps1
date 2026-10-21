@@ -364,7 +364,6 @@ function Measure-PromptDetailed {
     $providerTimes = @{} 
     $segmentTimes = @{}  
     
-    $lastPromptStr = ""
     $bootstrapTime = $global:PPF_BootstrapTimeMs
 
     # Track cache stats at beginning
@@ -378,13 +377,12 @@ function Measure-PromptDetailed {
         $context = Invoke-Prompt
         
         $renderSw = [System.Diagnostics.Stopwatch]::StartNew()
-        $promptStr = Get-PromptString -Context $context -Renderer $Renderer
+        $null = Get-PromptString -Context $context -Renderer $Renderer
         $renderSw.Stop()
         $sw.Stop()
         
         $totalTimes.Add($sw.Elapsed.TotalMilliseconds)
         $renderTimes.Add($renderSw.Elapsed.TotalMilliseconds)
-        $lastPromptStr = $promptStr
         
         foreach ($key in $context.Metrics.Keys) {
             if ($key -like "Provider_*") {
@@ -1022,7 +1020,7 @@ function Get-PromptHealth {
 
     # 3. Cache
     $memoryCacheCount = if ($script:PPFMemoryCache) { $script:PPFMemoryCache.Count } else { 0 }
-    $diskCache = Load-PPFDiskCache
+    $diskCache = Import-PPFDiskCache
     $diskCacheCount = if ($diskCache) { $diskCache.Count } else { 0 }
 
     # 4. Event Listeners

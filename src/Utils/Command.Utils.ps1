@@ -175,7 +175,7 @@ function Invoke-PPFExternalCommand {
 
     return [pscustomobject]@{
         ExitCode  = $res.ExitCode
-        Output    = if ($res.Output -ne $null) { $res.Output.Trim() } else { $null }
+        Output    = if ($null -ne $res.Output) { $res.Output.Trim() } else { $null }
         Error     = $res.Error
         TimedOut  = $res.TimedOut
         Installed = $true

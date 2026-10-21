@@ -104,7 +104,7 @@ function Get-PPFCache {
 
     # 2. Check Disk Cache
     if ($UseDisk) {
-        $diskCache = Load-PPFDiskCache
+        $diskCache = Import-PPFDiskCache
         if ($diskCache -and $diskCache.ContainsKey($Key)) {
             $entry = $diskCache[$Key]
             $expiry = if ($entry.Expiry) { [datetime]$entry.Expiry } else { $null }
@@ -168,7 +168,7 @@ function Set-PPFCache {
 
     # 2. Disk Cache
     if ($UseDisk) {
-        $diskCache = Load-PPFDiskCache
+        $diskCache = Import-PPFDiskCache
         if (-not $diskCache) {
             $diskCache = @{}
         }
@@ -189,7 +189,7 @@ function Clear-PPFCache {
         $script:PPFMemoryCache.Remove($Key)
     }
 
-    $diskCache = Load-PPFDiskCache
+    $diskCache = Import-PPFDiskCache
     if ($diskCache -and $diskCache.ContainsKey($Key)) {
         $diskCache.Remove($Key)
         Save-PPFDiskCache -Cache $diskCache
@@ -215,7 +215,7 @@ function Clear-AllPPFCache {
 
 }
 
-function Load-PPFDiskCache {
+function Import-PPFDiskCache {
 
     if (-not (Test-Path $script:DiskCachePath)) {
         return @{}

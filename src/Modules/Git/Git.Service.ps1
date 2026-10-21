@@ -269,8 +269,7 @@ function Start-GitWatcher {
         
         # Action when files change: mark repository as dirty
         $action = {
-            param($sender, $e)
-            $path = $e.FullPath
+            $path = $Event.SourceEventArgs.FullPath
             # Ignore changes inside the .git directory
             if ($path -notmatch '\\\.git\\') {
                 $global:PPF_GitWatcherDirty[$RepoRoot] = $true
