@@ -4,7 +4,63 @@
 # ============================================================
 
 $script:PPFMemoryCache = @{}
-$script:CacheDir = Join-Path $env:LOCALAPPDATA "PablitusPrompt"
+
+function script:Get-PPFCacheDirectory {
+
+    $cacheRoot = $null
+
+    try {
+        if ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)) {
+            $cacheRoot = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::LocalApplicationData)
+            if (-not $cacheRoot) { $cacheRoot = $env:LOCALAPPDATA }
+            if (-not $cacheRoot) { $cacheRoot = $env:APPDATA }
+        }
+        elseif ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::OSX)) {
+            if ($env:HOME) {
+                $cacheRoot = Join-Path (Join-Path $env:HOME "Library") "Caches"
+            }
+        }
+        elseif ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Linux)) {
+            if ($env:XDG_CACHE_HOME) {
+                $cacheRoot = $env:XDG_CACHE_HOME
+            }
+            elseif ($env:HOME) {
+                $cacheRoot = Join-Path $env:HOME ".cache"
+            }
+        }
+    }
+    catch {
+    }
+
+    if (-not $cacheRoot) {
+        if ($env:XDG_CACHE_HOME) {
+            $cacheRoot = $env:XDG_CACHE_HOME
+        }
+        elseif ($env:LOCALAPPDATA) {
+            $cacheRoot = $env:LOCALAPPDATA
+        }
+        elseif ($env:HOME) {
+            if (Test-Path (Join-Path $env:HOME "Library")) {
+                $cacheRoot = Join-Path (Join-Path $env:HOME "Library") "Caches"
+            }
+            else {
+                $cacheRoot = Join-Path $env:HOME ".cache"
+            }
+        }
+        else {
+            $cacheRoot = [System.IO.Path]::GetTempPath()
+        }
+    }
+
+    if (-not $cacheRoot) {
+        $cacheRoot = [System.IO.Path]::GetTempPath()
+    }
+
+    return (Join-Path $cacheRoot "PablitusPrompt")
+
+}
+
+$script:CacheDir = Get-PPFCacheDirectory
 $script:DiskCachePath = Join-Path $script:CacheDir "cache.json"
 
 if ($null -eq $global:PPF_CacheHits) { $global:PPF_CacheHits = 0 }
@@ -193,18 +249,39 @@ function Save-PPFDiskCache {
         [hashtable]$Cache
     )
     try {
-        if (-not (Test-Path $script:CacheDir)) {
-            $null = New-Item -ItemType Directory -Path $script:CacheDir -Force
-        }
         $json = $Cache | ConvertTo-Json -Depth 5
-        # Attempt to write with retry to handle lock conflicts
-        for ($i = 0; $i -lt 3; $i++) {
+
+        $candidatePaths = @(
+            @{
+                CacheDir = $script:CacheDir
+                DiskPath = $script:DiskCachePath
+            },
+            @{
+                CacheDir = (Join-Path ([System.IO.Path]::GetTempPath()) "PablitusPrompt")
+                DiskPath = (Join-Path (Join-Path ([System.IO.Path]::GetTempPath()) "PablitusPrompt") "cache.json")
+            }
+        )
+
+        foreach ($candidate in $candidatePaths) {
             try {
-                $json | Out-File -FilePath $script:DiskCachePath -Encoding utf8 -ErrorAction Stop
-                break
+                if (-not (Test-Path $candidate.CacheDir)) {
+                    $null = New-Item -ItemType Directory -Path $candidate.CacheDir -Force
+                }
+
+                # Attempt to write with retry to handle lock conflicts
+                for ($i = 0; $i -lt 3; $i++) {
+                    try {
+                        $json | Out-File -LiteralPath $candidate.DiskPath -Encoding utf8 -ErrorAction Stop
+                        $script:CacheDir = $candidate.CacheDir
+                        $script:DiskCachePath = $candidate.DiskPath
+                        return
+                    }
+                    catch {
+                        Start-Sleep -Milliseconds 50
+                    }
+                }
             }
             catch {
-                Start-Sleep -Milliseconds 50
             }
         }
     }

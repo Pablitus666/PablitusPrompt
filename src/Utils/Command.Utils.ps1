@@ -77,13 +77,26 @@ function Invoke-CommandWithTimeout {
         return $null
     }
 
+    $resolvedCommand = $Command
+    $commandInfo = Get-Command $Command -ErrorAction SilentlyContinue
+    if ($commandInfo -and $commandInfo.CommandType -in @('Application', 'ExternalScript')) {
+        if ($commandInfo.Path) {
+            $resolvedCommand = $commandInfo.Path
+        }
+        elseif ($commandInfo.Source) {
+            $resolvedCommand = $commandInfo.Source
+        }
+    }
+
     $psi = New-Object System.Diagnostics.ProcessStartInfo
-    $psi.FileName = $Command
-    $psi.Arguments = $Arguments -join " "
+    $psi.FileName = $resolvedCommand
     $psi.RedirectStandardOutput = $true
     $psi.RedirectStandardError = $true
     $psi.UseShellExecute = $false
     $psi.CreateNoWindow = $true
+    foreach ($argument in $Arguments) {
+        [void]$psi.ArgumentList.Add($argument)
+    }
 
     try {
         $p = [System.Diagnostics.Process]::Start($psi)
@@ -167,4 +180,4 @@ function Invoke-PPFExternalCommand {
         TimedOut  = $res.TimedOut
         Installed = $true
     }
-}
+}

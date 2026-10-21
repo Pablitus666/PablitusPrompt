@@ -24,6 +24,8 @@ Register-PromptRenderer `
             $segment.Text
         }
 
+        $escapedText = [System.Security.SecurityElement]::Escape([string]$text)
+
         $styles = @()
 
         if ($segment.Foreground) {
@@ -35,10 +37,10 @@ Register-PromptRenderer `
         }
 
         if ($styles.Count -gt 0) {
-            "<span style=""$($styles -join ' ')"">$text</span>"
+            "<span style=""$($styles -join ' ')"">$escapedText</span>"
         }
         else {
-            "<span>$text</span>"
+            "<span>$escapedText</span>"
         }
 
     }

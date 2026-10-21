@@ -5,7 +5,7 @@
     CompanyName = 'Pablitus'
     Copyright = '(c) Pablitus. All rights reserved.'
     Description = 'Pablitus Prompt Framework (PPF)'
-    PowerShellVersion = '5.1'
+    PowerShellVersion = '7.0'
     RootModule = 'PablitusPrompt.psm1'
     
     FunctionsToExport = @(

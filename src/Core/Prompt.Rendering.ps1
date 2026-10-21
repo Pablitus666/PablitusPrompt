@@ -5,6 +5,20 @@
 
 $script:PromptRenderers = [ordered]@{}
 
+function Get-ConfiguredRendererName {
+
+    $config = Get-PromptConfiguration
+    if ($config -and $config.Renderer -and $config.Renderer.ContainsKey("Default")) {
+        $configured = $config.Renderer["Default"]
+        if ($configured -and $script:PromptRenderers.Contains($configured)) {
+            return $configured
+        }
+    }
+
+    return "Plain"
+
+}
+
 function Register-PromptRenderer {
 
     param(
@@ -24,8 +38,12 @@ function Register-PromptRenderer {
 function Get-PromptRenderer {
 
     param(
-        [string]$Name = "Plain"
+        [string]$Name
     )
+
+    if ([string]::IsNullOrWhiteSpace($Name)) {
+        $Name = Get-ConfiguredRendererName
+    }
 
     if (-not $script:PromptRenderers.Contains($Name)) {
         throw "Renderer '$Name' is not registered."
@@ -48,7 +66,7 @@ function Invoke-PromptRenderer {
         [Parameter(Mandatory)]
         [PromptContext]$Context,
 
-        [string]$Renderer = "Plain"
+        [string]$Renderer
 
     )
 
@@ -84,9 +102,13 @@ function Get-PromptString {
 
         [PromptContext]$Context = (Invoke-Prompt),
 
-        [string]$Renderer = "Plain"
+        [string]$Renderer
 
     )
+
+    if ([string]::IsNullOrWhiteSpace($Renderer)) {
+        $Renderer = Get-ConfiguredRendererName
+    }
 
     Invoke-PromptRenderer `
         -Context $Context `

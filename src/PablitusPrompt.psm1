@@ -10,9 +10,43 @@ $global:PPF_InstallRoot = $Root
 # ------------------------------------------------------------
 # Core
 # ------------------------------------------------------------
-Get-ChildItem "$Root\Core\*.ps1" | Sort-Object Name | ForEach-Object {
-    . $_.FullName
+$CorePath = Join-Path $Root "Core"
+$CoreLoadOrder = @(
+    "Prompt.Context.ps1"
+    "Prompt.Builder.ps1"
+    "Prompt.Cache.ps1"
+    "Prompt.Core.ps1"
+    "Prompt.Events.ps1"
+    "Prompt.Kernel.ps1"
+    "Prompt.ModuleLoader.ps1"
+    "Prompt.Pipeline.ps1"
+    "Prompt.API.ps1"
+    "Prompt.Rendering.ps1"
+    "Prompt.Segment.Registry.ps1"
+    "Prompt.Telemetry.ps1"
+    "Prompt.Theme.ps1"
+)
+
+$LoadedCoreFiles = @()
+
+foreach ($CoreFileName in $CoreLoadOrder) {
+    $CoreFilePath = Join-Path $CorePath $CoreFileName
+    if (Test-Path -LiteralPath $CoreFilePath) {
+        $ResolvedCoreFilePath = (Resolve-Path -LiteralPath $CoreFilePath).Path
+        if ($ResolvedCoreFilePath -notin $LoadedCoreFiles) {
+            . $ResolvedCoreFilePath
+            $LoadedCoreFiles += $ResolvedCoreFilePath
+        }
+    }
 }
+
+Get-ChildItem -LiteralPath $CorePath -Filter "*.ps1" -File |
+    Sort-Object Name |
+    Where-Object { $_.FullName -notin $LoadedCoreFiles } |
+    ForEach-Object {
+        . $_.FullName
+        $LoadedCoreFiles += $_.FullName
+    }
 
 # ------------------------------------------------------------
 # Configuration

@@ -13,6 +13,8 @@ if (-not $script:PPF) {
 
         Renderers = @{}
 
+        # Services and Commands are reserved categories kept for module-loader
+        # extensibility. They remain in the registry without special-case logic.
         Services = @{}
 
         Commands = @{}

@@ -122,6 +122,4 @@ function Get-CpuUsage {
     return 0
 }
 
-# Start the sampler on module load
-Start-CpuSampler
-
+# The sampler is started lazily by Get-CpuUsage or explicit Start-CpuSampler calls.

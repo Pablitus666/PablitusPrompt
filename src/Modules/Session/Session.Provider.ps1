@@ -9,15 +9,31 @@ function Invoke-SessionProvider {
         [PromptContext]$Context
     )
 
-    $Context.Session.User = $env:USERNAME
-    $Context.Session.Host = $env:COMPUTERNAME
+    if ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)) {
+        $Context.Session.User = if ($env:USERNAME) { $env:USERNAME } else { [System.Environment]::UserName }
+        $Context.Session.Host = if ($env:COMPUTERNAME) { $env:COMPUTERNAME } else { [System.Net.Dns]::GetHostName() }
 
-    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
-    $principal = [Security.Principal.WindowsPrincipal]::new($identity)
+        $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+        $principal = [Security.Principal.WindowsPrincipal]::new($identity)
 
-    $Context.Session.IsAdmin = $principal.IsInRole(
-        [Security.Principal.WindowsBuiltInRole]::Administrator
-    )
+        $Context.Session.IsAdmin = $principal.IsInRole(
+            [Security.Principal.WindowsBuiltInRole]::Administrator
+        )
+        return
+    }
+
+    $Context.Session.User = if ($env:USER) { $env:USER } elseif ($env:USERNAME) { $env:USERNAME } else { [System.Environment]::UserName }
+    $Context.Session.Host = if ($env:HOSTNAME) { $env:HOSTNAME } else { [System.Net.Dns]::GetHostName() }
+    $Context.Session.IsAdmin = $false
+
+    if (Test-CommandExists id) {
+        $result = Invoke-PPFExternalCommand -Command id -Arguments @('-u') -TimeoutMs 500
+        if ($result -and $result.Installed -and -not $result.TimedOut -and $result.ExitCode -eq 0) {
+            if ($result.Output.Trim() -eq '0') {
+                $Context.Session.IsAdmin = $true
+            }
+        }
+    }
 
 }
 
