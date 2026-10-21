@@ -150,7 +150,7 @@ function script:Get-MemoryUsageFromMacOS {
         }
 
         $availableBytes = ($freePages + $inactivePages + $speculativePages + $purgeablePages) * $pageSize
-        $usedBytes = [math]::Max(0, $totalBytes - $availableBytes)
+        $usedBytes = [math]::Max([double]0, [double]($totalBytes - $availableBytes))
         return [int](($usedBytes / $totalBytes) * 100)
     }
     catch {
