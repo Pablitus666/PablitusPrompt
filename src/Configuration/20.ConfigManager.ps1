@@ -7,6 +7,131 @@ $script:ConfigFilePath = $null
 $script:ConfigFileLastWriteTime = $null
 $script:HotReloadEnabled = $false
 
+function Get-PPFConfigValue {
+
+    param(
+        [System.Collections.IDictionary]$Table,
+        [string]$Name
+    )
+
+    if (-not $Table) {
+        return $null
+    }
+
+    foreach ($key in $Table.Keys) {
+        if ($key -ieq $Name) {
+            return $Table[$key]
+        }
+    }
+
+    return $null
+
+}
+
+function ConvertTo-PPFConfigImportValue {
+
+    param(
+        $Value
+    )
+
+    if ($Value -is [System.Collections.IDictionary]) {
+        $normalized = @{}
+        foreach ($key in $Value.Keys) {
+            $normalized[$key] = ConvertTo-PPFConfigImportValue -Value $Value[$key]
+        }
+        return $normalized
+    }
+
+    if ($Value -is [System.Collections.IEnumerable] -and $Value -isnot [string]) {
+        return @($Value | ForEach-Object { ConvertTo-PPFConfigImportValue -Value $_ })
+    }
+
+    return $Value
+
+}
+
+function ConvertTo-PPFConfigExportValue {
+
+    param(
+        $Value
+    )
+
+    if ($Value -is [System.Collections.IDictionary]) {
+        $ordered = [ordered]@{}
+        foreach ($key in $Value.Keys) {
+            $ordered[$key] = ConvertTo-PPFConfigExportValue -Value $Value[$key]
+        }
+        return $ordered
+    }
+
+    if ($Value -is [System.Collections.IEnumerable] -and $Value -isnot [string]) {
+        return @($Value | ForEach-Object { ConvertTo-PPFConfigExportValue -Value $_ })
+    }
+
+    return $Value
+
+}
+
+function ConvertTo-PPFPsd1ScalarLiteral {
+
+    param(
+        $Value
+    )
+
+    if ($null -eq $Value) {
+        return '$null'
+    }
+
+    if ($Value -is [bool]) {
+        if ($Value) {
+            return '$true'
+        }
+
+        return '$false'
+    }
+
+    if ($Value -is [string]) {
+        return "'" + $Value.Replace("'", "''") + "'"
+    }
+
+    return [string]$Value
+
+}
+
+function ConvertTo-PPFPsd1Literal {
+
+    param(
+        [Parameter(Mandatory)]
+        $Value,
+
+        [int]$Indent = 0
+    )
+
+    $pad = ' ' * $Indent
+
+    if ($Value -is [System.Collections.IDictionary]) {
+        $sb = New-Object System.Text.StringBuilder
+        $null = $sb.AppendLine("@{")
+        foreach ($key in $Value.Keys) {
+            $child = $Value[$key]
+            $childLiteral = ConvertTo-PPFPsd1Literal -Value $child -Indent ($Indent + 4)
+            $null = $sb.AppendLine("${pad}    $key = $childLiteral")
+        }
+        $null = $sb.Append("${pad}}")
+        return $sb.ToString()
+    }
+
+    if ($Value -is [System.Collections.IEnumerable] -and $Value -isnot [string]) {
+        $items = @($Value | ForEach-Object {
+            ConvertTo-PPFPsd1ScalarLiteral -Value $_
+        })
+        return "@($($items -join ', '))"
+    }
+
+    return ConvertTo-PPFPsd1ScalarLiteral -Value $Value
+
+}
+
 function Import-PromptConfiguration {
 
     param(
@@ -44,10 +169,44 @@ function Import-PromptConfiguration {
         return
     }
 
-    # 1. Theme
-    if ($configData.ContainsKey("theme")) {
-        $themeName = $configData["theme"]
-        if (Get-Command Set-PromptTheme -ErrorAction SilentlyContinue) {
+    $config = Get-PromptConfiguration
+    if (-not $config) {
+        return
+    }
+
+    $properties = @($config.PSObject.Properties)
+    $importedSegments = $null
+    foreach ($property in $properties) {
+        $incoming = Get-PPFConfigValue -Table $configData -Name $property.Name
+        if ($null -eq $incoming) {
+            continue
+        }
+
+        # Ensure the incoming value type matches the expected property type
+        $importedValue = ConvertTo-PPFConfigImportValue -Value $incoming
+
+        if ($property.Name -eq "Segments" -and $importedValue -is [hashtable]) {
+            # Keep a snapshot: Set-PromptTheme mutates the live configuration below,
+            # so $config.Segments no longer holds the imported values afterwards.
+            $importedSegments = $importedValue.Clone()
+        }
+
+        # Specific fix for Renderer Hashtable vs String issue
+        if ($property.Name -eq "Renderer" -and $importedValue -is [string]) {
+             $property.Value = @{ "Default" = $importedValue }
+        }
+        # Specific fix for Theme Hashtable vs String issue
+        elseif ($property.Name -eq "Theme" -and $importedValue -is [string]) {
+             $property.Value = @{ "Name" = $importedValue }
+        }
+        else {
+             $property.Value = $importedValue
+        }
+    }
+
+    if ($config.Theme -and $config.Theme.ContainsKey("Name")) {
+        $themeName = $config.Theme["Name"]
+        if ($themeName -and (Get-Command Set-PromptTheme -ErrorAction SilentlyContinue)) {
             try {
                 Set-PromptTheme -Name $themeName
             }
@@ -57,28 +216,36 @@ function Import-PromptConfiguration {
         }
     }
 
-    # 2. Renderer
-    if ($configData.ContainsKey("renderer")) {
-        $rendererName = $configData["renderer"]
-        $config = Get-PromptConfiguration
-        $config.Renderer["Default"] = $rendererName
-    }
-
-    # 3. Segments
-    if ($configData.ContainsKey("segments") -and ($configData["segments"] -is [hashtable])) {
-        foreach ($segName in $configData["segments"].Keys) {
-            $segVal = $configData["segments"][$segName]
+    if ($config.Segments -is [hashtable] -and $importedSegments -is [hashtable]) {
+        # Iterate a snapshot of the imported keys to avoid modification during enumeration
+        $segNames = @($importedSegments.Keys)
+        foreach ($segName in $segNames) {
+            $segVal = $importedSegments[$segName]
             $currentCfg = Get-SegmentConfiguration -Name $segName
 
-            if ($segVal -is [bool]) {
-                $currentCfg.Visible = $segVal
+            # Get-SegmentConfiguration returns the live hashtable reference,
+            # so work on a copy before merging the imported values.
+            if ($currentCfg -is [hashtable]) {
+                $updatedCfg = $currentCfg.Clone()
             }
-            elseif ($segVal -is [hashtable]) {
-                foreach ($key in $segVal.Keys) {
-                    $currentCfg[$key] = $segVal[$key]
+            else {
+                $updatedCfg = @{
+                    Visible    = $true
+                    Icon       = ""
+                    Foreground = "White"
+                    Background = ""
                 }
             }
-            Set-SegmentConfiguration -Name $segName -Configuration $currentCfg
+
+            if ($segVal -is [bool]) {
+                $updatedCfg.Visible = $segVal
+            }
+            elseif ($segVal -is [hashtable]) {
+                foreach ($key in @($segVal.Keys)) {
+                    $updatedCfg[$key] = $segVal[$key]
+                }
+            }
+            Set-SegmentConfiguration -Name $segName -Configuration $updatedCfg
         }
     }
 
@@ -98,52 +265,19 @@ function Export-PromptConfiguration {
     )
 
     $config = Get-PromptConfiguration
-    
-    $activeTheme = Get-ActiveTheme
-    $themeName = if ($activeTheme) { $activeTheme.Name } else { $config.Theme["Name"] }
-    $rendererName = $config.Renderer["Default"]
-
-    $segmentsHash = @{}
-    foreach ($segName in $config.Segments.Keys) {
-        $segmentsHash[$segName] = $config.Segments[$segName]
-    }
-
-    $exportHash = [ordered]@{
-        "theme"    = $themeName
-        "renderer" = $rendererName
-        "segments" = $segmentsHash
+    $exportHash = [ordered]@{}
+    foreach ($property in $config.PSObject.Properties) {
+        $exportHash[$property.Name] = ConvertTo-PPFConfigExportValue -Value $property.Value
     }
 
     $ext = [System.IO.Path]::GetExtension($Path).ToLower()
     if ($ext -eq ".json") {
-        $json = $exportHash | ConvertTo-Json -Depth 5
+        $json = $exportHash | ConvertTo-Json -Depth 10
         $json | Out-File -FilePath $Path -Encoding utf8
     }
     elseif ($ext -eq ".psd1") {
-        $sb = New-Object System.Text.StringBuilder
-        $null = $sb.AppendLine("@{")
-        $null = $sb.AppendLine("    theme = '$themeName'")
-        $null = $sb.AppendLine("    renderer = '$rendererName'")
-        $null = $sb.AppendLine("    segments = @{")
-        foreach ($key in $segmentsHash.Keys) {
-            $val = $segmentsHash[$key]
-            if ($val -is [hashtable]) {
-                $null = $sb.AppendLine("        '$key' = @{")
-                foreach ($subKey in $val.Keys) {
-                    $subVal = $val[$subKey]
-                    if ($subVal -is [bool]) {
-                        $boolStr = if ($subVal) { '$true' } else { '$false' }
-                        $null = $sb.AppendLine("            $subKey = $boolStr")
-                    } else {
-                        $null = $sb.AppendLine("            $subKey = '$subVal'")
-                    }
-                }
-                $null = $sb.AppendLine("        }")
-            }
-        }
-        $null = $sb.AppendLine("    }")
-        $null = $sb.AppendLine("}")
-        $sb.ToString() | Out-File -FilePath $Path -Encoding utf8
+        $psd1 = ConvertTo-PPFPsd1Literal -Value $exportHash
+        $psd1 | Out-File -FilePath $Path -Encoding utf8
     }
     else {
         throw "Unsupported configuration format: $ext. Support JSON and PSD1."
