@@ -22,33 +22,46 @@ Write-Host "Versión detectada: $version" -ForegroundColor Green
 
 # 2. Run Pester Tests
 Write-Host "`n[1/6] Ejecutando pruebas de Pester..." -ForegroundColor Cyan
-$pesterResult = Invoke-Pester -Path (Join-Path $testsDir "Prompt.Tests.ps1") -PassThru
+$pesterResult = Invoke-Pester -Path $testsDir -PassThru
 if ($pesterResult.FailedCount -gt 0) {
-    Write-Error "¡Fallo en las pruebas unitarias/de integración! ($($pesterResult.FailedCount) pruebas fallidas)"
+    throw "¡Fallo en las pruebas unitarias/de integración! ($($pesterResult.FailedCount) pruebas fallidas)"
 }
 Write-Host "Pruebas unitarias completadas con éxito." -ForegroundColor Green
 
 # 3. Code Coverage Validation
 Write-Host "`n[2/6] Validando cobertura de código..." -ForegroundColor Cyan
-$srcFiles = Get-ChildItem -Path $srcDir -Recurse -Filter "*.ps1" | Where-Object { $_.Name -notlike "*.Tests.*" -and $_.Name -ne "Bootstrap.ps1" }
-$ccResult = Invoke-Pester -Path (Join-Path $testsDir "Prompt.Tests.ps1") -CodeCoverage $srcFiles.FullName -PassThru
-
-# Calculate coverage percentage
-$analyzed = $ccResult.CodeCoverage.NumberOfCommandsAnalyzed
-$missed = $ccResult.CodeCoverage.NumberOfCommandsMissed
-$covered = $analyzed - $missed
-$coveragePct = 0.0
-if ($analyzed -gt 0) {
-    $coveragePct = ($covered / $analyzed) * 100
+$srcFiles = Get-ChildItem -Path $srcDir -Recurse -Filter "*.ps1" | Where-Object {
+    $_.Name -notlike "*.Tests.*" -and
+    $_.Name -ne "Bootstrap.ps1" -and
+    $_.Name -ne "Microsoft.PowerShell_profile.ps1"
 }
+$ccResult = Invoke-Pester -Path $testsDir -CodeCoverage $srcFiles.FullName -PassThru
+
+# Pester 5.8 exposes CommandsAnalyzedCount/CommandsMissedCount; older 5.x used
+# NumberOfCommandsAnalyzed/NumberOfCommandsMissed. Support both.
+$coverage = $ccResult.CodeCoverage
+if ($coverage.PSObject.Properties['CommandsAnalyzedCount']) {
+    $analyzed = [int]$coverage.CommandsAnalyzedCount
+    $missed = [int]$coverage.CommandsMissedCount
+}
+else {
+    $analyzed = [int]$coverage.NumberOfCommandsAnalyzed
+    $missed = [int]$coverage.NumberOfCommandsMissed
+}
+
+if ($analyzed -le 0) {
+    throw "La medición de cobertura no analizó ningún comando. Revisa la configuración de Pester/CodeCoverage."
+}
+
+$covered = $analyzed - $missed
+$coveragePct = ($covered / $analyzed) * 100
 
 Write-Host "Cobertura de código: $([math]::Round($coveragePct, 2))% ($covered de $analyzed comandos cubiertos, $missed no cubiertos)" -ForegroundColor Yellow
 $minCoverage = 90.0
 if ($coveragePct -lt $minCoverage) {
-    Write-Warning "¡Alerta! La cobertura ($([math]::Round($coveragePct, 2))%) es inferior al objetivo del ${minCoverage}%."
-} else {
-    Write-Host "¡Objetivo de cobertura cumplido (>90%)!" -ForegroundColor Green
+    throw "Cobertura insuficiente: $([math]::Round($coveragePct, 2))% < ${minCoverage}%. El build se detiene."
 }
+Write-Host "¡Objetivo de cobertura cumplido (>90%)!" -ForegroundColor Green
 
 # 4. Run Benchmarks
 Write-Host "`n[3/6] Ejecutando Benchmarks de rendimiento..." -ForegroundColor Cyan
