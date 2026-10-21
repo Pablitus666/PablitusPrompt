@@ -24,7 +24,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
                 "Test-PromptFramework"
             )
             foreach ($func in $keyFunctions) {
-                (Get-Command $func -ErrorAction SilentlyContinue) | Should Not Be $null
+                (Get-Command $func -ErrorAction SilentlyContinue) | Should -Not -Be $null
             }
         }
 
@@ -33,7 +33,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
 
             foreach ($providerName in $expectedProviders) {
                 $provider = $script:PromptProviders | Where-Object Name -eq $providerName
-                $provider | Should Not Be $null
+                $provider | Should -Not -Be $null
             }
         }
 
@@ -42,26 +42,26 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
 
             foreach ($segmentName in $expectedSegments) {
                 $segment = $script:PromptSegments | Where-Object Name -eq $segmentName
-                $segment | Should Not Be $null
+                $segment | Should -Not -Be $null
             }
         }
 
         It "Ejecuta el paso de Profiling en el Pipeline y añade métricas" {
             $context = Invoke-Prompt
-            $context.Metrics.ContainsKey("ExecutionTimeMs") | Should Be $true
-            $context.Metrics["ExecutionTimeMs"] | Should BeGreaterThan -1
+            $context.Metrics.ContainsKey("ExecutionTimeMs") | Should -Be $true
+            $context.Metrics["ExecutionTimeMs"] | Should -BeGreaterThan -1
         }
 
         It "Permite llamar a Get-PromptSegments de forma aislada sin pasar Context" {
             $segments = Get-PromptSegments
-            $segments | Should Not Be $null
-            $segments.Count | Should BeGreaterThan 0
+            $segments | Should -Not -Be $null
+            $segments.Count | Should -BeGreaterThan 0
         }
 
         It "Permite obtener proveedores con Get-PromptProviders" {
             $providers = Get-PromptProviders
-            $providers | Should Not Be $null
-            $providers.Count | Should BeGreaterThan 0
+            $providers | Should -Not -Be $null
+            $providers.Count | Should -BeGreaterThan 0
         }
 
     }
@@ -73,67 +73,67 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
         It "Tiene registrados todos los renderers previstos" {
             foreach ($rName in $renderers) {
                 $renderer = Get-PromptRenderer -Name $rName
-                $renderer | Should Not Be $null
+                $renderer | Should -Not -Be $null
             }
         }
 
         It "El renderer Plain genera una salida correcta" {
             $context = Invoke-Prompt
             $prompt = Invoke-PromptRenderer -Context $context -Renderer "Plain"
-            $prompt | Should Not BeNullOrEmpty
-            $prompt | Should Not Match "`e\[" # No debe tener códigos ANSI
+            $prompt | Should -Not -BeNullOrEmpty
+            $prompt | Should -Not -Match "`e\[" # No debe tener códigos ANSI
         }
 
         It "El renderer Minimal genera una salida simplificada" {
             $context = Invoke-Prompt
             $prompt = Invoke-PromptRenderer -Context $context -Renderer "Minimal"
-            $prompt | Should Not BeNullOrEmpty
-            $prompt | Should Match "[>#]$" # Debe terminar con char de prompt
+            $prompt | Should -Not -BeNullOrEmpty
+            $prompt | Should -Match "[>#]$" # Debe terminar con char de prompt
         }
 
         It "El renderer JSON genera un JSON válido" {
             $context = Invoke-Prompt
             $prompt = Invoke-PromptRenderer -Context $context -Renderer "JSON"
-            $prompt | Should Not BeNullOrEmpty
+            $prompt | Should -Not -BeNullOrEmpty
             $parsed = $prompt | ConvertFrom-Json -ErrorAction SilentlyContinue
-            $parsed | Should Not Be $null
-            $parsed.Session.User | Should Be $env:USERNAME
+            $parsed | Should -Not -Be $null
+            $parsed.Session.User | Should -Be $env:USERNAME
         }
 
         It "El renderer ANSI contiene secuencias de escape ANSI" {
             $context = Invoke-Prompt
             $prompt = Invoke-PromptRenderer -Context $context -Renderer "ANSI"
-            $prompt | Should Not BeNullOrEmpty
-            $prompt | Should Match "`e\[\d+m"
+            $prompt | Should -Not -BeNullOrEmpty
+            $prompt | Should -Match "`e\[\d+m"
         }
 
         It "El renderer PowerLine contiene el glifo separador triangular de PowerLine" {
             $context = Invoke-Prompt
             $prompt = Invoke-PromptRenderer -Context $context -Renderer "PowerLine"
-            $prompt | Should Not BeNullOrEmpty
-            $prompt | Should Match ""
+            $prompt | Should -Not -BeNullOrEmpty
+            $prompt | Should -Match ""
         }
 
         It "El renderer Markdown genera una salida con formato markdown bold (**)" {
             $context = Invoke-Prompt
             $prompt = Invoke-PromptRenderer -Context $context -Renderer "Markdown"
-            $prompt | Should Not BeNullOrEmpty
-            $prompt | Should Match "\*\*"
+            $prompt | Should -Not -BeNullOrEmpty
+            $prompt | Should -Match "\*\*"
         }
 
         It "El renderer HTML contiene etiquetas HTML span" {
             $context = Invoke-Prompt
             $prompt = Invoke-PromptRenderer -Context $context -Renderer "HTML"
-            $prompt | Should Not BeNullOrEmpty
-            $prompt | Should Match "<span style="
+            $prompt | Should -Not -BeNullOrEmpty
+            $prompt | Should -Match "<span style="
         }
 
         It "El renderer Rich contiene secuencias de escape ANSI y corchetes" {
             $context = Invoke-Prompt
             $prompt = Invoke-PromptRenderer -Context $context -Renderer "Rich"
-            $prompt | Should Not BeNullOrEmpty
-            $prompt | Should Match "\["
-            $prompt | Should Match "➔"
+            $prompt | Should -Not -BeNullOrEmpty
+            $prompt | Should -Match "\["
+            $prompt | Should -Match "➔"
         }
 
     }
@@ -142,34 +142,34 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
 
         It "Tiene registrados temas por defecto (Default, Nord, Dracula, Catppuccin)" {
             $themes = Get-PromptTheme
-            $themes | Should Not Be $null
-            $themes.Count | Should BeGreaterThan 2
+            $themes | Should -Not -Be $null
+            $themes.Count | Should -BeGreaterThan 2
         }
 
         It "Permite cambiar de tema con Set-PromptTheme" {
             Set-PromptTheme -Name "Dracula"
             $active = Get-ActiveTheme
-            $active.Name | Should Be "Dracula"
+            $active.Name | Should -Be "Dracula"
         }
 
         It "Resuelve colores de la paleta dinámicamente" {
             Set-PromptTheme -Name "Nord"
             $resolved = Resolve-ThemeColor -ColorName "Primary"
-            $resolved | Should Be "Blue" # Nord palette Primary is Blue
+            $resolved | Should -Be "Blue" # Nord palette Primary is Blue
 
             Set-PromptTheme -Name "Dracula"
             $resolved = Resolve-ThemeColor -ColorName "Primary"
-            $resolved | Should Be "Magenta" # Dracula palette Primary is Magenta
+            $resolved | Should -Be "Magenta" # Dracula palette Primary is Magenta
         }
 
         It "Resuelve iconos dinámicamente si coinciden con las claves del tema" {
             Set-PromptTheme -Name "Nord"
             $resolved = Resolve-ThemeIcon -IconKey "GitDirty"
-            $resolved | Should Be "" # Nord GitDirty icon
+            $resolved | Should -Be "" # Nord GitDirty icon
 
             Set-PromptTheme -Name "Dracula"
             $resolved = Resolve-ThemeIcon -IconKey "GitDirty"
-            $resolved | Should Be "" # Dracula GitDirty icon
+            $resolved | Should -Be "" # Dracula GitDirty icon
         }
 
     }
@@ -194,16 +194,16 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             Set-SegmentConfiguration -Name "Node" -Configuration @{ Visible = $false }
 
             Export-PromptConfiguration -Path $script:tempJson
-            (Test-Path $script:tempJson) | Should Be $true
+            (Test-Path $script:tempJson) | Should -Be $true
 
             Set-PromptTheme -Name "Default"
             $config.Renderer["Default"] = "Minimal"
             Set-SegmentConfiguration -Name "Node" -Configuration @{ Visible = $true }
 
             Import-PromptConfiguration -Path $script:tempJson
-            $config.Renderer["Default"] | Should Be "Plain"
-            (Get-ActiveTheme).Name | Should Be "Nord"
-            (Get-SegmentConfiguration -Name "Node").Visible | Should Be $false
+            $config.Renderer["Default"] | Should -Be "Plain"
+            (Get-ActiveTheme).Name | Should -Be "Nord"
+            (Get-SegmentConfiguration -Name "Node").Visible | Should -Be $false
         }
 
         It "Exporta e Importa configuraciones PSD1 correctamente" {
@@ -213,15 +213,15 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             Set-SegmentConfiguration -Name "Git" -Configuration @{ Visible = $true; Foreground = "Yellow" }
 
             Export-PromptConfiguration -Path $script:tempPsd1
-            (Test-Path $script:tempPsd1) | Should Be $true
+            (Test-Path $script:tempPsd1) | Should -Be $true
 
             Set-PromptTheme -Name "Default"
             $config.Renderer["Default"] = "Minimal"
 
             Import-PromptConfiguration -Path $script:tempPsd1
-            $config.Renderer["Default"] | Should Be "ANSI"
-            (Get-ActiveTheme).Name | Should Be "Dracula"
-            (Get-SegmentConfiguration -Name "Git").Foreground | Should Be "Yellow"
+            $config.Renderer["Default"] | Should -Be "ANSI"
+            (Get-ActiveTheme).Name | Should -Be "Dracula"
+            (Get-SegmentConfiguration -Name "Git").Foreground | Should -Be "Yellow"
         }
 
         It "Realiza recarga en caliente (Hot Reload) cuando el archivo es modificado" {
@@ -235,7 +235,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             $initHash | ConvertTo-Json | Out-File -FilePath $script:tempJson -Encoding utf8
 
             Enable-PromptConfigHotReload -Path $script:tempJson
-            (Get-ActiveTheme).Name | Should Be "Nord"
+            (Get-ActiveTheme).Name | Should -Be "Nord"
 
             Start-Sleep -Seconds 1
             $updatedHash = @{
@@ -248,8 +248,8 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             $updatedHash | ConvertTo-Json | Out-File -FilePath $script:tempJson -Encoding utf8
 
             $context = Invoke-Prompt
-            (Get-ActiveTheme).Name | Should Be "Dracula"
-            (Get-SegmentConfiguration -Name "Python").Visible | Should Be $false
+            (Get-ActiveTheme).Name | Should -Be "Dracula"
+            (Get-SegmentConfiguration -Name "Python").Visible | Should -Be $false
         }
 
     }
@@ -265,8 +265,8 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             }
 
             Invoke-PPFEvent -EventName "CustomTestEvent" -EventArgs "HelloEvents"
-            $state.called | Should Be $true
-            $state.argVal | Should Be "HelloEvents"
+            $state.called | Should -Be $true
+            $state.argVal | Should -Be "HelloEvents"
         }
 
         It "Dispara eventos integrados automáticamente (BeforeRender, AfterRender, ThemeChanged)" {
@@ -276,14 +276,14 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             }
 
             Set-PromptTheme -Name "Nord"
-            $state.themeEventCalled | Should Be $true
+            $state.themeEventCalled | Should -Be $true
 
             Register-PPFEventListener -EventName "BeforeRender" -Script { $state.beforeCalled = $true }
             Register-PPFEventListener -EventName "AfterRender" -Script { $state.afterCalled = $true }
 
             $null = Invoke-Prompt
-            $state.beforeCalled | Should Be $true
-            $state.afterCalled | Should Be $true
+            $state.beforeCalled | Should -Be $true
+            $state.afterCalled | Should -Be $true
         }
 
     }
@@ -297,14 +297,14 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
         It "Guarda y recupera valores de la caché en memoria" {
             Set-PPFCache -Key "TestKey" -Value "TestVal"
             $val = Get-PPFCache -Key "TestKey"
-            $val | Should Be "TestVal"
+            $val | Should -Be "TestVal"
         }
 
         It "Respeta el Time-To-Live (TTL) en memoria" {
             Set-PPFCache -Key "TtlKey" -Value "TtlVal" -TtlSeconds 1
-            Get-PPFCache -Key "TtlKey" | Should Be "TtlVal"
+            Get-PPFCache -Key "TtlKey" | Should -Be "TtlVal"
             Start-Sleep -Seconds 2
-            Get-PPFCache -Key "TtlKey" | Should Be $null
+            Get-PPFCache -Key "TtlKey" | Should -Be $null
         }
 
         It "Guarda y recupera valores de la caché en disco" {
@@ -313,62 +313,62 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             $script:PPFMemoryCache.Clear()
 
             $val = Get-PPFCache -Key "DiskKey" -UseDisk
-            $val | Should Be "DiskVal"
+            $val | Should -Be "DiskVal"
         }
 
         It "Elimina entradas y limpia la caché correctamente" {
             Set-PPFCache -Key "KeyToClear" -Value "SomeVal"
             Clear-PPFCache -Key "KeyToClear"
-            Get-PPFCache -Key "KeyToClear" | Should Be $null
+            Get-PPFCache -Key "KeyToClear" | Should -Be $null
         }
 
     }
 
     Context "CPU Sampler & Health Diagnostics" {
         It "Inicia y detiene el Sampler CPU sin errores" {
-            { Start-CpuSampler } | Should Not Throw
+            { Start-CpuSampler } | Should -Not -Throw
             $usage = Get-CpuUsage
-            $usage | Should BeGreaterThan -1
-            { Stop-CpuSampler } | Should Not Throw
+            $usage | Should -BeGreaterThan -1
+            { Stop-CpuSampler } | Should -Not -Throw
         }
 
         It "Retorna el diagnóstico del framework en Test-PromptFramework" {
             $diag = Test-PromptFramework
-            $diag | Should Not Be $null
-            $diag.Checks.Count | Should BeGreaterThan 0
+            $diag | Should -Not -Be $null
+            $diag.Checks.Count | Should -BeGreaterThan 0
         }
 
         It "Retorna el estado de salud en Get-PromptHealth" {
             $health = Get-PromptHealth
-            $health | Should Not Be $null
-            $health.ActiveProviders.Count | Should BeGreaterThan 0
+            $health | Should -Not -Be $null
+            $health.ActiveProviders.Count | Should -BeGreaterThan 0
         }
     }
 
     Context "Statistical Benchmarks" {
         It "Ejecuta Measure-PromptDetailed exitosamente" {
             $rep = Measure-PromptDetailed -Iterations 2
-            $rep | Should Not Be $null
-            $rep.TotalStats.Average | Should BeGreaterThan -1
+            $rep | Should -Not -Be $null
+            $rep.TotalStats.Average | Should -BeGreaterThan -1
         }
 
         It "Ejecuta Measure-PromptCacheComparison exitosamente" {
             $comp = Measure-PromptCacheComparison -Iterations 2
-            $comp | Should Not Be $null
-            $comp.SpeedupFactor | Should BeGreaterThan -1
+            $comp | Should -Not -Be $null
+            $comp.SpeedupFactor | Should -BeGreaterThan -1
         }
 
         It "Ejecuta benchmarks individuales exitosamente" {
             $stats = Measure-CpuProvider -Iterations 2
-            $stats | Should Not Be $null
-            $stats.Average | Should BeGreaterThan -1
+            $stats | Should -Not -Be $null
+            $stats.Average | Should -BeGreaterThan -1
         }
     }
 
     Context "Hardening & Coverage Updates (Fase 5)" {
         It "Testea Get-Prompt para recuperar segmentos" {
             $segments = Get-Prompt
-            $segments | Should Not Be $null
+            $segments | Should -Not -Be $null
         }
 
         It "Testea el logger con todos los niveles (Trace, Debug, Info, Warn, Error)" {
@@ -377,15 +377,15 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             
             # Set to TRACE to allow all logs
             Set-PPFLogLevel -Level "TRACE"
-            $script:LogLevel | Should Be "TRACE"
+            $script:LogLevel | Should -Be "TRACE"
             
-            { Write-PPFLog -Level "TRACE" -Message "Test Trace" } | Should Not Throw
-            { Write-PPFLog -Level "DEBUG" -Message "Test Debug" } | Should Not Throw
-            { Write-PPFLog -Level "INFO" -Message "Test Info" } | Should Not Throw
-            { Write-PPFLog -Level "INFORMATION" -Message "Test Info alias" } | Should Not Throw
-            { Write-PPFLog -Level "WARN" -Message "Test Warn" } | Should Not Throw
-            { Write-PPFLog -Level "WARNING" -Message "Test Warn alias" } | Should Not Throw
-            { Write-PPFLog -Level "ERROR" -Message "Test Error" } | Should Not Throw
+            { Write-PPFLog -Level "TRACE" -Message "Test Trace" } | Should -Not -Throw
+            { Write-PPFLog -Level "DEBUG" -Message "Test Debug" } | Should -Not -Throw
+            { Write-PPFLog -Level "INFO" -Message "Test Info" } | Should -Not -Throw
+            { Write-PPFLog -Level "INFORMATION" -Message "Test Info alias" } | Should -Not -Throw
+            { Write-PPFLog -Level "WARN" -Message "Test Warn" } | Should -Not -Throw
+            { Write-PPFLog -Level "WARNING" -Message "Test Warn alias" } | Should -Not -Throw
+            { Write-PPFLog -Level "ERROR" -Message "Test Error" } | Should -Not -Throw
 
             # Restore log level
             Set-PPFLogLevel -Level $oldLevel
@@ -393,8 +393,8 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
 
         It "Ejecuta Measure-Prompt con diferentes renderers" {
             $m = Measure-Prompt -Renderer "Minimal"
-            $m | Should Not Be $null
-            $m.TotalPromptTimeMs | Should BeGreaterThan -1
+            $m | Should -Not -Be $null
+            $m.TotalPromptTimeMs | Should -BeGreaterThan -1
         }
 
         It "Cubre metodos adicionales de cache y disco" {
@@ -402,7 +402,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             $testKey = "TempDiskTest"
             Set-PPFCache -Key $testKey -Value "Val" -UseDisk -TtlSeconds 10
             $val = Get-PPFCache -Key $testKey -UseDisk
-            $val | Should Be "Val"
+            $val | Should -Be "Val"
 
             # Trigger TTL Expirations via Disk Cache manual load/save
             $diskCache = Load-PPFDiskCache
@@ -411,7 +411,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             $script:PPFMemoryCache.Remove($testKey) # Clear memory
 
             $valExpired = Get-PPFCache -Key $testKey -UseDisk
-            $valExpired | Should Be $null
+            $valExpired | Should -Be $null
         }
 
         It "Ejecuta todos los benchmarks individuales de los proveedores" {
@@ -423,7 +423,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
                 $cmdName = "Measure-${b}Provider"
                 if (Get-Command $cmdName -ErrorAction SilentlyContinue) {
                     $res = & $cmdName -Iterations 1
-                    $res | Should Not Be $null
+                    $res | Should -Not -Be $null
                 }
             }
         }
@@ -433,91 +433,91 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             $oldSegments = $cfg.Segments.Clone()
             $cfg.Segments["TestUncoveredSeg"] = @{ Visible = $false }
             $seg = New-PromptSegment -Name "TestUncoveredSeg" -Text "Hello"
-            $seg | Should Be $null
+            $seg | Should -Be $null
             $cfg.Segments = $oldSegments
 
             $seg2 = New-PromptSegment -Name "Session" -Text "User" -Foreground "Red" -Background "Blue"
-            $seg2 | Should Not Be $null
-            $seg2.Foreground | Should Not BeNullOrEmpty
-            $seg2.Background | Should Not BeNullOrEmpty
+            $seg2 | Should -Not -Be $null
+            $seg2.Foreground | Should -Not -BeNullOrEmpty
+            $seg2.Background | Should -Not -BeNullOrEmpty
         }
 
         It "Prueba el registro y recuperacion de componentes PPF (Fase 5)" {
             Register-PPFComponent -Category "Themes" -Name "CoverageTheme" -Value @{ Name = "CoverageTheme" }
             $retTheme = Get-PPFComponent -Category "Themes" -Name "CoverageTheme"
-            $retTheme.Name | Should Be "CoverageTheme"
+            $retTheme.Name | Should -Be "CoverageTheme"
 
             $dummyProv = @{ Name = "DummyProv" }
             Register-PPFComponent -Category "Providers" -Name "DummyProv" -Value $dummyProv
             $dummyProv2 = @{ Name = "DummyProv"; Check = $true }
             Register-PPFComponent -Category "Providers" -Name "DummyProv" -Value $dummyProv2
             $retProv = Get-PPFComponent -Category "Providers" -Name "DummyProv"
-            $retProv.Check | Should Be $true
+            $retProv.Check | Should -Be $true
 
             $dummySeg = @{ Name = "DummySeg" }
             Register-PPFComponent -Category "Segments" -Name "DummySeg" -Value $dummySeg
             $dummySeg2 = @{ Name = "DummySeg"; Check = $true }
             Register-PPFComponent -Category "Segments" -Name "DummySeg" -Value $dummySeg2
             $retSeg = Get-PPFComponent -Category "Segments" -Name "DummySeg"
-            $retSeg.Check | Should Be $true
+            $retSeg.Check | Should -Be $true
 
             $allProvs = Get-PPFComponent -Category "Providers"
-            $allProvs | Should Not Be $null
+            $allProvs | Should -Not -Be $null
             $allThemes = Get-PPFComponent -Category "Themes"
-            $allThemes | Should Not Be $null
+            $allThemes | Should -Not -Be $null
         }
 
         It "Prueba la importacion/exportacion y Hot Reload del ConfigManager" {
-            $t1 = $false; try { Import-PromptConfiguration -Path "test.invalid" } catch { $t1 = $true }; $t1 | Should Be $true
-            $t2 = $false; try { Export-PromptConfiguration -Path "test.invalid" } catch { $t2 = $true }; $t2 | Should Be $true
+            $t1 = $false; try { Import-PromptConfiguration -Path "test.invalid" } catch { $t1 = $true }; $t1 | Should -Be $true
+            $t2 = $false; try { Export-PromptConfiguration -Path "test.invalid" } catch { $t2 = $true }; $t2 | Should -Be $true
 
             $ret = Import-PromptConfiguration -Path "nonexistent.json"
-            $ret | Should Be $null
+            $ret | Should -Be $null
 
             $tempPathJson = Join-Path $env:TEMP "temp_cov_config.json"
             @{ theme = "Nord"; renderer = "Plain"; segments = @{ Session = $true } } | ConvertTo-Json | Out-File $tempPathJson -Encoding utf8
-            $t3 = $false; try { Import-PromptConfiguration -Path $tempPathJson } catch { $t3 = $true }; $t3 | Should Be $false
+            $t3 = $false; try { Import-PromptConfiguration -Path $tempPathJson } catch { $t3 = $true; Write-Host "DEBUG: Import failed: $_" } ; $t3 | Should -Be $false
             Remove-Item $tempPathJson -ErrorAction SilentlyContinue
 
             $tempReload = Join-Path $env:TEMP "temp_cov_reload.json"
             "invalid-json-content" | Out-File $tempReload -Encoding utf8
-            $t4 = $false; try { Enable-PromptConfigHotReload -Path $tempReload } catch { $t4 = $true }; $t4 | Should Be $false
+            $t4 = $false; try { Enable-PromptConfigHotReload -Path $tempReload } catch { $t4 = $true }; $t4 | Should -Be $false
             (Get-Item $tempReload).LastWriteTime = (Get-Date).AddMinutes(1)
-            $t5 = $false; try { Test-PromptConfigReload } catch { $t5 = $true }; $t5 | Should Be $false
-            $t6 = $false; try { Disable-PromptConfigHotReload } catch { $t6 = $true }; $t6 | Should Be $false
+            $t5 = $false; try { Test-PromptConfigReload } catch { $t5 = $true }; $t5 | Should -Be $false
+            $t6 = $false; try { Disable-PromptConfigHotReload } catch { $t6 = $true }; $t6 | Should -Be $false
             Remove-Item $tempReload -ErrorAction SilentlyContinue
         }
 
         It "Prueba el manejo de errores en renderers, providers y segments" {
-            $t1 = $false; try { Get-PromptRenderer -Name "NonExistentRenderer" } catch { $t1 = $true }; $t1 | Should Be $true
+            $t1 = $false; try { Get-PromptRenderer -Name "NonExistentRenderer" } catch { $t1 = $true }; $t1 | Should -Be $true
 
             Register-PromptRenderer -Name "ThrowingRenderer" -Script { throw "Simulated renderer error" }
             $context = New-PromptContext
-            $t2 = $false; try { Invoke-PromptRenderer -Context $context -Renderer "ThrowingRenderer" } catch { $t2 = $true }; $t2 | Should Be $true
+            $t2 = $false; try { Invoke-PromptRenderer -Context $context -Renderer "ThrowingRenderer" } catch { $t2 = $true }; $t2 | Should -Be $true
 
             Register-PromptProvider -Name "ThrowingProvider" -Priority 1 -Script { throw "Simulated provider error" }
             $context2 = Invoke-Prompt
-            $context2.Metrics.ContainsKey("Provider_ThrowingProvider_TimeMs") | Should Be $true
+            $context2.Metrics.ContainsKey("Provider_ThrowingProvider_TimeMs") | Should -Be $true
 
             Register-PromptSegment -Name "ThrowingSegment" -Priority 1 -Script { throw "Simulated segment error" }
             $segs = Get-PromptSegments
-            $segs | Should Not Be $null
+            $segs | Should -Not -Be $null
         }
 
         It "Prueba la generacion de estadisticas de Telemetria con valores vacios y outliers" {
             $statsOutliers = Get-PPFStatistics -Values @(1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 100.0)
-            $statsOutliers.OutliersCount | Should Be 1
-            $statsOutliers.BoxPlot | Should Not BeNullOrEmpty
-            $statsOutliers.Histogram.Count | Should BeGreaterThan 0
+            $statsOutliers.OutliersCount | Should -Be 1
+            $statsOutliers.BoxPlot | Should -Not -BeNullOrEmpty
+            $statsOutliers.Histogram.Count | Should -BeGreaterThan 0
 
             $statsEmpty = Get-PPFStatistics -Values @()
-            $statsEmpty.Min | Should Be 0.0
+            $statsEmpty.Min | Should -Be 0.0
         }
 
         It "Ejecuta Test-PromptFramework con la suite de pruebas completa" {
             $diag = Test-PromptFramework -RunTests
-            $diag | Should Not Be $null
-            $diag.HealthScore | Should BeGreaterThan -1
+            $diag | Should -Not -Be $null
+            $diag.HealthScore | Should -BeGreaterThan -1
         }
     }
 
@@ -536,7 +536,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-NodeVersion
-            $version | Should Be "18.12.1"
+            $version | Should -Be "18.12.1"
         }
 
         It "Maneja elegantemente cuando Node.js no está instalado" {
@@ -551,7 +551,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-NodeVersion
-            $version | Should Be $null
+            $version | Should -Be $null
         }
 
         It "Maneja errores de Node.js de ejecución" {
@@ -566,7 +566,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-NodeVersion
-            $version | Should Be $null
+            $version | Should -Be $null
         }
 
         It "Maneja Node.js con timeout" {
@@ -581,7 +581,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-NodeVersion
-            $version | Should Be $null
+            $version | Should -Be $null
         }
 
         It "Maneja una salida de Node.js con formato inesperado" {
@@ -596,7 +596,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-NodeVersion
-            $version | Should Be "20.0.0-rc.1 with custom patches"
+            $version | Should -Be "20.0.0-rc.1 with custom patches"
         }
 
         # --- Python tests ---
@@ -612,7 +612,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-PythonVersion
-            $version | Should Be "3.13.5"
+            $version | Should -Be "3.13.5"
         }
 
         It "Maneja elegantemente cuando Python no está instalado" {
@@ -627,7 +627,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-PythonVersion
-            $version | Should Be $null
+            $version | Should -Be $null
         }
 
         It "Maneja errores de Python de ejecución" {
@@ -642,7 +642,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-PythonVersion
-            $version | Should Be $null
+            $version | Should -Be $null
         }
 
         It "Maneja Python con timeout" {
@@ -657,7 +657,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-PythonVersion
-            $version | Should Be $null
+            $version | Should -Be $null
         }
 
         It "Maneja Python con formato inesperado" {
@@ -672,7 +672,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-PythonVersion
-            $version | Should Be "Py version: 3.14.0"
+            $version | Should -Be "Py version: 3.14.0"
         }
 
         # --- DotNet tests ---
@@ -688,7 +688,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-DotNetVersion
-            $version | Should Be "8.0.301"
+            $version | Should -Be "8.0.301"
         }
 
         It "Maneja elegantemente cuando DotNet no está instalado" {
@@ -703,7 +703,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-DotNetVersion
-            $version | Should Be $null
+            $version | Should -Be $null
         }
 
         It "Maneja errores de DotNet de ejecución" {
@@ -718,7 +718,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-DotNetVersion
-            $version | Should Be $null
+            $version | Should -Be $null
         }
 
         It "Maneja DotNet con timeout" {
@@ -733,7 +733,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $version = Get-DotNetVersion
-            $version | Should Be $null
+            $version | Should -Be $null
         }
 
         # --- Docker tests ---
@@ -752,8 +752,8 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
                 } -ModuleName PablitusPrompt
 
                 $info = Get-DockerInfo
-                $info.Active | Should Be $false
-                $info.Count | Should Be 0
+                $info.Active | Should -Be $false
+                $info.Count | Should -Be 0
             } finally {
                 $env:DOCKER_HOST = $oldDockerHost
             }
@@ -774,8 +774,8 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
                 } -ModuleName PablitusPrompt
 
                 $info = Get-DockerInfo
-                $info.Active | Should Be $true
-                $info.Count | Should Be 2
+                $info.Active | Should -Be $true
+                $info.Count | Should -Be 2
             } finally {
                 $env:DOCKER_HOST = $oldDockerHost
             }
@@ -796,8 +796,8 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
                 } -ModuleName PablitusPrompt
 
                 $info = Get-DockerInfo
-                $info.Active | Should Be $false
-                $info.Count | Should Be 0
+                $info.Active | Should -Be $false
+                $info.Count | Should -Be 0
             } finally {
                 $env:DOCKER_HOST = $oldDockerHost
             }
@@ -818,8 +818,8 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
                 } -ModuleName PablitusPrompt
 
                 $info = Get-DockerInfo
-                $info.Active | Should Be $false
-                $info.Count | Should Be 0
+                $info.Active | Should -Be $false
+                $info.Count | Should -Be 0
             } finally {
                 $env:DOCKER_HOST = $oldDockerHost
             }
@@ -840,9 +840,9 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $gitStatus = Get-GitStatusAndBranch
-            $gitStatus.IsRepository | Should Be $true
-            $gitStatus.Branch | Should Be "main"
-            $gitStatus.Dirty | Should Be $false
+            $gitStatus.IsRepository | Should -Be $true
+            $gitStatus.Branch | Should -Be "main"
+            $gitStatus.Dirty | Should -Be $false
         }
 
         It "Maneja Git cuando está instalado y el repositorio está sucio con archivos modificados" {
@@ -859,9 +859,9 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $gitStatus = Get-GitStatusAndBranch
-            $gitStatus.IsRepository | Should Be $true
-            $gitStatus.Branch | Should Be "main"
-            $gitStatus.Dirty | Should Be $true
+            $gitStatus.IsRepository | Should -Be $true
+            $gitStatus.Branch | Should -Be "main"
+            $gitStatus.Dirty | Should -Be $true
         }
 
         It "Maneja elegantemente cuando Git no está instalado" {
@@ -878,9 +878,9 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $gitStatus = Get-GitStatusAndBranch
-            $gitStatus.IsRepository | Should Be $true
-            $gitStatus.Branch | Should Be "HEAD"
-            $gitStatus.Dirty | Should Be $false
+            $gitStatus.IsRepository | Should -Be $true
+            $gitStatus.Branch | Should -Be "HEAD"
+            $gitStatus.Dirty | Should -Be $false
         }
 
         It "Maneja errores de Git (ej. repositorio corrupto) y se degrada elegantemente" {
@@ -897,9 +897,9 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $gitStatus = Get-GitStatusAndBranch
-            $gitStatus.IsRepository | Should Be $true
-            $gitStatus.Branch | Should Be "HEAD"
-            $gitStatus.Dirty | Should Be $false
+            $gitStatus.IsRepository | Should -Be $true
+            $gitStatus.Branch | Should -Be "HEAD"
+            $gitStatus.Dirty | Should -Be $false
         }
 
         It "Maneja Git con timeout y se degrada elegantemente" {
@@ -916,9 +916,9 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } -ModuleName PablitusPrompt
 
             $gitStatus = Get-GitStatusAndBranch
-            $gitStatus.IsRepository | Should Be $true
-            $gitStatus.Branch | Should Be "HEAD"
-            $gitStatus.Dirty | Should Be $false
+            $gitStatus.IsRepository | Should -Be $true
+            $gitStatus.Branch | Should -Be "HEAD"
+            $gitStatus.Dirty | Should -Be $false
         }
     }
 
@@ -937,20 +937,20 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             $context = Invoke-Prompt
 
             # 1. Excepción capturada (no explotó)
-            $context | Should Not Be $null
+            $context | Should -Not -Be $null
 
-            ($global:logMsgs -match "Recoverable connection error").Count | Should BeGreaterThan 0
+            ($global:logMsgs -match "Recoverable connection error").Count | Should -BeGreaterThan 0
 
             # 3. Contexto íntegro
-            $context.Timestamp | Should Not Be $null
-            $context.Session.User | Should Be $env:USERNAME
+            $context.Timestamp | Should -Not -Be $null
+            $context.Session.User | Should -Be $env:USERNAME
 
             # 4. Prompt renderizado
             $prompt = Invoke-PromptRenderer -Context $context -Renderer "Plain"
-            $prompt | Should Not BeNullOrEmpty
+            $prompt | Should -Not -BeNullOrEmpty
 
             # 5. Métricas registradas
-            $context.Metrics.ContainsKey("Provider_RecoverableProvider_TimeMs") | Should Be $true
+            $context.Metrics.ContainsKey("Provider_RecoverableProvider_TimeMs") | Should -Be $true
         }
 
         It "Maneja paso Partial: Falla un segmento visual y solo ese segmento desaparece" {
@@ -971,15 +971,15 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             $context = Invoke-Prompt
             
             # El segmento que falló no está, el sano sí
-            ($context.Segments | Where-Object Name -eq "FailingSegment") | Should Be $null
-            ($context.Segments | Where-Object Name -eq "HealthySegment") | Should Not Be $null
+            ($context.Segments | Where-Object Name -eq "FailingSegment") | Should -Be $null
+            ($context.Segments | Where-Object Name -eq "HealthySegment") | Should -Not -Be $null
 
             # Log escrito
-            ($global:logMsgs -match "Visual rendering failure").Count | Should BeGreaterThan 0
+            ($global:logMsgs -match "Visual rendering failure").Count | Should -BeGreaterThan 0
 
             # Prompt renderizado incluye "OK" pero no falla
             $prompt = Invoke-PromptRenderer -Context $context -Renderer "Plain"
-            $prompt | Should Match "OK"
+            $prompt | Should -Match "OK"
         }
 
         It "Maneja paso Fatal: Error explicito al fallar la inicializacion crítica" {
@@ -989,7 +989,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             } catch {
                 $thrown = $true
             }
-            $thrown | Should Be $true
+            $thrown | Should -Be $true
         }
     }
 
@@ -1031,56 +1031,56 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
                     $cleanOutput = $output.Trim()
                     
                     if ($rendererName -in @("JSON", "HTML", "Markdown", "ANSI", "Minimal")) {
-                        $cleanOutput | Should Match $goldens[$rendererName]
+                        $cleanOutput | Should -Match $goldens[$rendererName]
                     } else {
-                        $cleanOutput | Should Be $goldens[$rendererName]
+                        $cleanOutput | Should -Be $goldens[$rendererName]
                     }
                 }
 
                 # Probar prompt de Admin en minimal para cubrir la rama de la línea 27 de minimal
                 $mockContext.Session.IsAdmin = $true
                 $minOutputAdmin = Invoke-PromptRenderer -Context $mockContext -Renderer "Minimal"
-                $minOutputAdmin.Trim() | Should Match "#$"
+                $minOutputAdmin.Trim() | Should -Match "#$"
 
                 # Probar prompt sin segmentos en minimal
                 $mockContext.Segments = @()
                 $minOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "Minimal"
-                $minOutputNoSegs.Trim() | Should Be "#"
+                $minOutputNoSegs.Trim() | Should -Be "#"
 
                 # Probar prompt sin segmentos en plain
                 $plainOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "Plain"
-                $plainOutputNoSegs.Trim() | Should Be ""
+                $plainOutputNoSegs.Trim() | Should -Be ""
 
                 # Probar prompt sin segmentos en HTML
                 $htmlOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "HTML"
-                $htmlOutputNoSegs.Trim() | Should Be ""
+                $htmlOutputNoSegs.Trim() | Should -Be ""
 
                 # Probar prompt sin segmentos en Markdown
                 $mdOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "Markdown"
-                $mdOutputNoSegs.Trim() | Should Be ""
+                $mdOutputNoSegs.Trim() | Should -Be ""
 
                 # Probar prompt sin segmentos en ANSI
                 $ansiOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "ANSI"
-                $ansiOutputNoSegs.Trim() | Should Be ""
+                $ansiOutputNoSegs.Trim() | Should -Be ""
 
                 # Probar prompt sin segmentos en Rich (debe retornar el símbolo de prompt de flecha)
                 $richOutputNoSegs = Invoke-PromptRenderer -Context $mockContext -Renderer "Rich"
-                $richOutputNoSegs.Trim() | Should Be "`e[32m➔`e[0m"
+                $richOutputNoSegs.Trim() | Should -Be "`e[32m➔`e[0m"
 
                 # Probar prompt con un segmento vacío y sin color en ANSI
                 $segEmpty = [PSCustomObject]@{ Name = "Empty"; Text = ""; Icon = $null; Foreground = $null; Background = $null; Visible = $true }
                 $mockContext.Segments = @($segEmpty)
                 $ansiEmpty = Invoke-PromptRenderer -Context $mockContext -Renderer "ANSI"
-                $ansiEmpty.Trim() | Should Be ""
+                $ansiEmpty.Trim() | Should -Be ""
 
                 # Probar prompt con un segmento vacío y sin color en Rich
                 $richEmpty = Invoke-PromptRenderer -Context $mockContext -Renderer "Rich"
-                $richEmpty.Trim() | Should Be "[] `e[32m➔`e[0m"
+                $richEmpty.Trim() | Should -Be "[] `e[32m➔`e[0m"
 
                 # Probar prompt de PowerLine sin segmentos visibles
                 $mockContext.Segments = @()
                 $plEmpty = Invoke-PromptRenderer -Context $mockContext -Renderer "PowerLine"
-                $plEmpty | Should Be "> "
+                $plEmpty | Should -Be "> "
 
                 # PowerLine con segmentos sin background definidos
                 $segNoBg = [PSCustomObject]@{ Name = "TestNoBg"; Text = "NoBg"; Icon = $null; Foreground = "Green"; Background = $null; Visible = $true }
@@ -1088,14 +1088,14 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
                 $mockContext.Segments = @($segNoBg, $segNoBgNext)
                 
                 $plOutput = Invoke-PromptRenderer -Context $mockContext -Renderer "PowerLine"
-                $plOutput | Should Not BeNullOrEmpty
+                $plOutput | Should -Not -BeNullOrEmpty
 
                 # Golden check for PowerShell Objects (PromptContext structure & integrity)
-                $mockContext.Session.User | Should Be "testuser"
-                $mockContext.Session.Host | Should Be "testhost"
-                $mockContext.Segments.Count | Should Be 2
-                $mockContext.Segments[0].Name | Should Be "TestNoBg"
-                $mockContext.Segments[1].Name | Should Be "TestNoBgNext"
+                $mockContext.Session.User | Should -Be "testuser"
+                $mockContext.Session.Host | Should -Be "testhost"
+                $mockContext.Segments.Count | Should -Be 2
+                $mockContext.Segments[0].Name | Should -Be "TestNoBg"
+                $mockContext.Segments[1].Name | Should -Be "TestNoBgNext"
             }
             finally {
                 if ($oldTheme) {
@@ -1111,3 +1111,4 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
         $global:PPF_InsidePester = $null
     }
 }
+
