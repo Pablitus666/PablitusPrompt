@@ -1,71 +1,132 @@
-# Pablitus Prompt Framework (PPF) v1.0
-> **Build once. Render anywhere.**
-> **Pablitus Prompt Framework v1.0 Architecture Frozen**
+# Pablitus Prompt Framework (PPF) v1.2.0
+> Modular PowerShell prompt framework for PowerShell 7+
 
-PPF is a modular, high-performance, extension-friendly framework for building intelligent PowerShell prompts. 
+Pablitus Prompt Framework (PPF) is a modular framework for building prompts in PowerShell 7.
+It separates data collection, context assembly, middleware, segment construction, theme resolution,
+and rendering into distinct layers.
 
-Instead of mixing shell-querying logic with ANSI color formatting, PPF separates the prompt lifecycle into independent components:
+## Overview
 
-```
-    [Providers] (Gather Environment Data)
-         │
-         ▼
-  [PromptContext] (Central State Container)
-         │
-         ▼
-  [Pipeline Steps] (Post-processors / Middleware)
-         │
-         ▼
-  [PromptSegments] (Visual Components Resolution)
-         │
-         ▼
-     [Renderer] (Stateless Formatter)
+```text
+Import-Module
+  -> PablitusPrompt.psd1
+  -> PablitusPrompt.psm1
+  -> Core
+  -> Configuration
+  -> Utils
+  -> Modules
+  -> Themes
+  -> Renderers
+  -> Public API
 ```
 
----
+The runtime flow is:
 
-## Documentation
+```text
+Invoke-Prompt
+  -> New-PromptContext
+  -> Providers
+  -> Pipeline
+  -> Segments
+  -> Renderer
+  -> Get-PromptString
+```
 
-To learn more about PPF, refer to the official documentation guides:
+## Features
 
-- 🏗️ [Architecture Guide](file:///I:/PablitusPrompt/docs/Architecture.md): Deep-dive into boot order, execution pipelines, and lifecycle phases.
-- 🔌 [API Reference](file:///I:/PablitusPrompt/docs/API.md): Documentation of the stable public and internal functions.
-- 🚀 [Developer SDK Guide](file:///I:/PablitusPrompt/docs/SDK.md): Learn how to build custom modules, segments, renderers, and themes.
-- 💻 [Developer Guide](file:///I:/PablitusPrompt/docs/DeveloperGuide.md): Coding standards, testing protocols, and debugging tips.
-- 📦 [Installation Guide](file:///I:/PablitusPrompt/docs/Installation.md): Sourcing the bootstrap file and profile integration.
-- 🎨 [Themes Reference](file:///I:/PablitusPrompt/docs/Themes.md): Colors and icons of the default themes.
-- 📊 [Providers Reference](file:///I:/PablitusPrompt/docs/Providers.md): Details on the 12 built-in providers.
-- 🔍 [Renderers Reference](file:///I:/PablitusPrompt/docs/Renderers.md): Formats supported (PowerLine, JSON, ANSI, Rich, HTML, etc.).
-- 🗺️ [Roadmap](file:///I:/PablitusPrompt/docs/Roadmap.md): Future expansion plans for PPF v2.0.
-- 🤝 [Contributing Guidelines](file:///I:/PablitusPrompt/docs/Contributing.md): How to submit pull requests on the frozen v1.0 codebase.
+- 13 built-in providers: Session, WSL, Path, Project, Git, Docker, Python, Node, DotNet, Kubernetes, Battery, CPU, Memory
+- 13 built-in segments
+- 8 built-in renderers: Plain, Minimal, JSON, ANSI, PowerLine, Markdown, HTML, Rich
+- 4 built-in themes: Default, Nord, Dracula, Catppuccin
+- Memory and disk cache
+- Configuration import/export and hot reload
+- Event hooks for `BeforeRender`, `AfterRender`, `ThemeChanged`, `ConfigurationChanged`, and `ModuleLoaded`
+- CPU sampler with runspace-backed background collection
+- Git repository watcher support
 
----
+## Requirements
 
-## Core Features
+- PowerShell 7.0 or later
+- Windows, Linux, or macOS
 
-- **Decoupled Architecture**: Providers never print output; Renderers never query state.
-- **12 Built-in Providers**: Session, Path, Project, Git, Node, Python, WSL, Docker, Kubernetes, CPU, Memory, and Battery.
-- **8 Built-in Renderers**: Plain, Minimal, JSON, ANSI, PowerLine, Markdown, HTML, and Rich.
-- **4 Beautiful Themes**: Default, Nord, Dracula, and Catppuccin.
-- **Robust Caching**: Built-in memory and disk cache for slow terminal utilities (like Git or Kubernetes lookups).
-- **Configuration Hot-Reload**: Automatically detects profile changes on disk and reloads configuration.
-- **Event Hooks**: Extend functionality dynamically using events like `BeforeRender`, `AfterRender`, or `ThemeChanged`.
+## Installation
 
----
+Import the module manifest:
+
+```powershell
+Import-Module .\src\PablitusPrompt.psd1 -Force
+```
+
+Or bootstrap it from the helper script:
+
+```powershell
+. .\src\Bootstrap.ps1
+```
 
 ## Quick Start
 
-Open your PowerShell profile file (`$PROFILE`) and import the bootstrap script:
 ```powershell
-. C:\PablitusPrompt\src\Bootstrap.ps1
-```
+Import-Module .\src\PablitusPrompt.psd1 -Force
 
-Set the theme and test output:
-```powershell
 Set-PromptTheme -Name "Nord"
-Get-PromptString -Renderer "Rich"
+
+$context = Invoke-Prompt
+$prompt  = Get-PromptString -Context $context
+
+$prompt
 ```
 
----
+## Public API
 
-Created by Pablo
+Common entry points:
+
+- `Get-Prompt`
+- `Invoke-Prompt`
+- `Get-PromptString`
+- `New-PromptContext`
+- `Get-PromptProviders`
+- `Get-PromptSegments`
+- `Get-PromptRenderers`
+- `Get-PromptThemes`
+- `Get-PromptTheme`
+- `Get-ActiveTheme`
+- `Set-PromptTheme`
+- `Measure-Prompt`
+- `Measure-PromptDetailed`
+- `Test-PromptFramework`
+
+## Architecture
+
+PPF is organized into these layers:
+
+- `Core`: prompt lifecycle, registry, cache, events, telemetry, rendering
+- `Configuration`: prompt configuration, defaults, import/export, hot reload
+- `Modules`: providers, services, and segments for each capability
+- `Themes`: palettes, icons, and segment defaults
+- `Renderers`: output formats
+- `Utils`: command execution helpers
+- `Profile`: optional shell profile integration
+- `Tests`: regression and integration coverage
+
+## Notes
+
+- `Get-PromptRenderer` is an internal helper used by the rendering pipeline.
+- `PromptContext` is defined in `src/Core/Prompt.Context.ps1` and is loaded before any API that references it.
+- The `build/` directory contains packaged artifacts and may lag behind `src/` if a fresh build has not been generated.
+
+## Documentation
+
+- `docs/Architecture.md`
+- `docs/API.md`
+- `docs/SDK.md`
+- `docs/DeveloperGuide.md`
+- `docs/Installation.md`
+- `docs/Themes.md`
+- `docs/Providers.md`
+- `docs/Renderers.md`
+- `docs/Roadmap.md`
+- `docs/Contributing.md`
+
+## License
+
+See `LICENSE`.
