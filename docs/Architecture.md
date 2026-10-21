@@ -48,7 +48,7 @@ When PPF is loaded (typically via `Bootstrap.ps1` in the user's profile), it loa
    - **Providers** (`*.Provider.ps1`): Registers context gathers.
    - **Services** (`*.Service.ps1`): Business logic and command wrappers.
    - **Segments** (`*.Segment.ps1`): Visual logic and segment registration.
-5. **`Themes/`**: Loads default themes (`Default`, `Catppuccin`, `Dracula`, `Nord`).
+5. **`Themes/`**: Loads default themes (`Default`, `Catppuccin`, `Dracula`, `Kali`, `Nord`).
 6. **`Renderers/`**: Loads available prompt renderers.
 
 ---

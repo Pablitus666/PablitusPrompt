@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.4.0 (Kali Theme) - 2026-10-20
+
+### Added
+- **Kali theme**: green/cyan/yellow palette, Nerd Font icons, `user@host` session output, and a minimal layout that hides Project, Memory, CPU, Battery, Docker, Kubernetes, DotNet, Node, and WSL.
+- **`ShowHost` session option**: any theme can render `user@host` by setting `ShowHost = $true` in its `Session` segment configuration.
+- The prompt integration examples now include the `$`/`#` indicator and document the Kali theme.
+
+### Changed
+- The default theme list now includes Kali in the README, installation guide, architecture notes, theme reference, and roadmap.
+
 ## v1.3.1 (Prompt Integration) - 2026-10-20
 
 ### Added

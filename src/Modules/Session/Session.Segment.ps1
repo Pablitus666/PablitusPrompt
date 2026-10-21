@@ -15,8 +15,15 @@ Register-PromptSegment `
             return
         }
 
+        $sessionConfig = Get-SegmentConfiguration -Name "Session"
+        $text = $Context.Session.User
+
+        if ($sessionConfig.ShowHost -and $Context.Session.Host) {
+            $text = "$($Context.Session.User)@$($Context.Session.Host)"
+        }
+
         New-PromptSegment `
             -Name "Session" `
-            -Text $Context.Session.User
+            -Text $text
 
     }

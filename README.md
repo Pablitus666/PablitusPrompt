@@ -37,7 +37,7 @@ Invoke-Prompt
 - 13 built-in providers: Session, WSL, Path, Project, Git, Docker, Python, Node, DotNet, Kubernetes, Battery, CPU, Memory
 - 13 built-in segments
 - 8 built-in renderers: Plain, Minimal, JSON, ANSI, PowerLine, Markdown, HTML, Rich
-- 4 built-in themes: Default, Nord, Dracula, Catppuccin
+- 5 built-in themes: Default, Nord, Dracula, Catppuccin, Kali
 - Memory and disk cache
 - Configuration import/export and hot reload
 - Event hooks for `BeforeRender`, `AfterRender`, `ThemeChanged`, `ConfigurationChanged`, and `ModuleLoaded`
@@ -82,12 +82,18 @@ Add this block to your `$PROFILE` (adjust the path to your clone):
 
 ```powershell
 . C:\PablitusPrompt\src\Bootstrap.ps1
-Set-PromptTheme -Name "Nord"
+Set-PromptTheme -Name "Kali"
 
 function global:prompt {
-    Get-PromptString -Renderer "ANSI"
+    $context = Invoke-Prompt
+    $prompt = Get-PromptString -Context $context -Renderer "ANSI"
+    $indicator = if ($context.Session.IsAdmin) { "#" } else { "$" }
+    $indicatorColor = if ($context.Session.IsAdmin) { "`e[36m" } else { "`e[32m" }
+    "$prompt${indicatorColor}${indicator}`e[0m "
 }
 ```
+
+The `Kali` theme renders `user@host` and a green `$` (cyan `#` for administrators).
 
 Open a new terminal and PPF will render your prompt. Remove the function to go back to the previous prompt.
 

@@ -1,5 +1,5 @@
 @{
-    ModuleVersion = '1.3.1'
+    ModuleVersion = '1.4.0'
     GUID = 'bf7aeb6a-3aab-4860-8fb5-04f4e43940ad'
     Author = 'Pablitus'
     CompanyName = 'Pablitus'

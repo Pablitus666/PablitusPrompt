@@ -144,10 +144,20 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
 
     Context "Theme Manager (Fase 3)" {
 
-        It "Tiene registrados temas por defecto (Default, Nord, Dracula, Catppuccin)" {
+        It "Tiene registrados temas por defecto (Default, Nord, Dracula, Catppuccin, Kali)" {
             $themes = Get-PromptTheme
             $themes | Should -Not -Be $null
             $themes.Count | Should -BeGreaterThan 2
+        }
+
+        It "Registra el tema Kali con paleta, usuario@host y segmentos ocultos" {
+            $kali = Get-PromptTheme -Name "Kali"
+            $kali | Should -Not -BeNullOrEmpty
+            $kali.Name | Should -Be "Kali"
+            $kali.Palette["Primary"] | Should -Be "Green"
+            $kali.Segments["Session"]["ShowHost"] | Should -BeTrue
+            $kali.Segments["Memory"]["Visible"] | Should -BeFalse
+            $kali.Segments["Project"]["Visible"] | Should -BeFalse
         }
 
         It "Permite cambiar de tema con Set-PromptTheme" {

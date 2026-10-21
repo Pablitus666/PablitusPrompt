@@ -3,7 +3,7 @@
 
 Themes in PPF define the color palette and icons that segments use to render themselves.
 
-PPF v1.0 ships with 4 default themes located in `src/Themes/`:
+PPF ships with 5 default themes located in `src/Themes/`:
 
 ---
 
@@ -31,7 +31,14 @@ PPF v1.0 ships with 4 default themes located in `src/Themes/`:
 
 ---
 
-## 5. Theme Operations
+## 5. Kali
+- **Palette**: Kali-style terminal colors (Green for the user, Cyan for the path, Yellow for Git and Python, White for regular text).
+- **Icons**: Nerd Font glyphs shared with `Default`: user, folder, branch, and language icons.
+- **Behavior**: shows `user@host` in the session segment and hides `Project`, `Memory`, `CPU`, `Battery`, `Docker`, `Kubernetes`, `DotNet`, `Node`, and `WSL` for a minimal prompt. `ShowHost` can be enabled independently in any theme's `Session` configuration.
+
+---
+
+## 6. Theme Operations
 
 ### Activating a Theme
 To change the active theme, run:

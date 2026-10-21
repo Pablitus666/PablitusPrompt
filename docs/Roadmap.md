@@ -10,7 +10,7 @@ PPF has achieved stable release status v1.0. Below is the progress status and th
 - [x] **Provider System**: Decoupled gathering of context info.
 - [x] **12 Modularized Providers**: Session, Path, Project, Git, Node, Python, WSL, Docker, Kubernetes, CPU, Memory, Battery.
 - [x] **8 Renderers**: Plain, Minimal, JSON, ANSI, PowerLine, Markdown, HTML, Rich.
-- [x] **Theme Engine**: Palette and icon mapping for Default, Nord, Dracula, Catppuccin.
+- [x] **Theme Engine**: Palette and icon mapping for Default, Nord, Dracula, Catppuccin, Kali.
 - [x] **Configuration Manager**: PSD1/JSON imports, exports, and config hot-reloading.
 - [x] **Test Coverage**: Complete integration test suite written in Pester.
 - [x] **Consolidated Source**: Removed redundant registries, files, and empty directories.

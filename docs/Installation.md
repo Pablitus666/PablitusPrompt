@@ -25,11 +25,15 @@ Add the following block to the end of the file to bootstrap the framework and us
 . C:\PablitusPrompt\src\Bootstrap.ps1
 
 # Tema y colores
-Set-PromptTheme -Name "Nord"
+Set-PromptTheme -Name "Kali"
 
 # Reemplazar el prompt de PowerShell por el de PPF
 function global:prompt {
-    Get-PromptString -Renderer "ANSI"
+    $context = Invoke-Prompt
+    $prompt = Get-PromptString -Context $context -Renderer "ANSI"
+    $indicator = if ($context.Session.IsAdmin) { "#" } else { "$" }
+    $indicatorColor = if ($context.Session.IsAdmin) { "`e[36m" } else { "`e[32m" }
+    "$prompt${indicatorColor}${indicator}`e[0m "
 }
 ```
 
@@ -52,7 +56,7 @@ Get-PromptString -Renderer "PowerLine"
 ```
 
 Available renderers: `ANSI`, `HTML`, `JSON`, `Markdown`, `Minimal`, `Plain`, `PowerLine`, `Rich`.
-Available themes: `Default`, `Nord`, `Dracula`, `Catppuccin`.
+Available themes: `Default`, `Nord`, `Dracula`, `Catppuccin`, `Kali`.
 
 To persist your configuration and reload it automatically when the file changes:
 
