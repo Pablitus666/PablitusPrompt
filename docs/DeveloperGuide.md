@@ -48,9 +48,15 @@ All tests are defined in the `tests/` directory:
 - [Prompt.Tests.ps1](file:///I:/PablitusPrompt/tests/Prompt.Tests.ps1): This contains regression, integration, pipeline, theme, config, event, and cache tests.
 
 ### Running Tests
-To run tests, always use PowerShell Core (`pwsh`) to ensure correct parsing of UTF-8 strings:
+To run tests, always use PowerShell Core (`pwsh`) to ensure correct parsing of UTF-8 strings.
+The module must be imported before `Invoke-Pester` because the suite uses `InModuleScope`:
 ```powershell
-pwsh -ExecutionPolicy Bypass -Command "Invoke-Pester -Path tests/Prompt.Tests.ps1"
+pwsh -ExecutionPolicy Bypass -Command "Import-Module ./src/PablitusPrompt.psd1 -Force; Invoke-Pester -Path ./tests"
+```
+
+Static analysis (uses the project settings, which document intentional exceptions):
+```powershell
+pwsh -ExecutionPolicy Bypass -Command "Invoke-ScriptAnalyzer -Path ./src -Recurse -Settings ./PSScriptAnalyzerSettings.psd1"
 ```
 
 ### Adding Tests

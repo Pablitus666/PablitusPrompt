@@ -114,6 +114,25 @@ PPF is organized into these layers:
 - `PromptContext` is defined in `src/Core/Prompt.Context.ps1` and is loaded before any API that references it.
 - The `build/` directory contains packaged artifacts and may lag behind `src/` if a fresh build has not been generated.
 
+## Testing
+
+```powershell
+Import-Module .\src\PablitusPrompt.psd1 -Force
+Invoke-Pester -Path .\tests
+```
+
+Static analysis (project settings document the intentional exceptions):
+
+```powershell
+Invoke-ScriptAnalyzer -Path .\src -Recurse -Settings .\PSScriptAnalyzerSettings.psd1
+```
+
+Build and release (tests, coverage gate >= 90%, benchmarks, API docs, package):
+
+```powershell
+pwsh -File .\build.ps1
+```
+
 ## Documentation
 
 - `docs/Architecture.md`

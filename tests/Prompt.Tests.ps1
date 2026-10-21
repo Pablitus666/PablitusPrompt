@@ -3,6 +3,10 @@
 # Prompt.Tests.ps1 (Regresion, Pipeline & Renderers)
 # ============================================================
 
+# Import at discovery time: InModuleScope requires the module to be loaded
+# before Pester resolves the test tree.
+Import-Module (Join-Path $PSScriptRoot "..\src\PablitusPrompt.psd1") -Force
+
 Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
 
     BeforeAll {
@@ -405,7 +409,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             $val | Should -Be "Val"
 
             # Trigger TTL Expirations via Disk Cache manual load/save
-            $diskCache = Load-PPFDiskCache
+            $diskCache = Import-PPFDiskCache
             $diskCache[$testKey].Expiry = (Get-Date).AddSeconds(-10) # Expire manually
             Save-PPFDiskCache -Cache $diskCache
             $script:PPFMemoryCache.Remove($testKey) # Clear memory

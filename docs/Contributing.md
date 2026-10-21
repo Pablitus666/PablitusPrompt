@@ -31,9 +31,15 @@ Implement your changes following the developer guide. Ensure your files have the
 ```
 
 ### Step 3: Run the Test Suite
-Ensure all tests pass before making a pull request. Tests must be executed using PowerShell Core (`pwsh`):
+Ensure all tests pass before making a pull request. Tests must be executed using PowerShell Core (`pwsh`),
+importing the module first because the suite uses `InModuleScope`:
 ```powershell
-pwsh -ExecutionPolicy Bypass -Command "Invoke-Pester -Path tests/Prompt.Tests.ps1"
+pwsh -ExecutionPolicy Bypass -Command "Import-Module ./src/PablitusPrompt.psd1 -Force; Invoke-Pester -Path ./tests"
+```
+
+Also run the static analyzer with the project settings:
+```powershell
+pwsh -ExecutionPolicy Bypass -Command "Invoke-ScriptAnalyzer -Path ./src -Recurse -Settings ./PSScriptAnalyzerSettings.psd1"
 ```
 
 ### Step 4: Submit PR
