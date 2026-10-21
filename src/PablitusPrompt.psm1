@@ -140,6 +140,8 @@ $PublicFunctions = @(
     "Register-PromptTheme",
     "Enable-PromptConfigHotReload",
     "Disable-PromptConfigHotReload",
+    "Import-PromptConfiguration",
+    "Export-PromptConfiguration",
     "Register-PPFEventListener",
     "Invoke-PPFEvent",
     "Set-PPFCache",

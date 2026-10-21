@@ -946,3 +946,25 @@ contexts:
         }
     }
 }
+
+Describe "PPF Public Configuration API" {
+
+    It "Exporta e importa la configuracion mediante comandos publicos" {
+        $path = Join-Path $env:TEMP ("ppf-public-" + [guid]::NewGuid().ToString('N') + ".json")
+
+        try {
+            Export-PromptConfiguration -Path $path
+            Test-Path -LiteralPath $path | Should -BeTrue
+
+            { Import-PromptConfiguration -Path $path } | Should -Not -Throw
+        }
+        finally {
+            Remove-Item -LiteralPath $path -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Expone los comandos de configuracion en el manifiesto" {
+        Get-Command Import-PromptConfiguration -Module PablitusPrompt | Should -Not -BeNullOrEmpty
+        Get-Command Export-PromptConfiguration -Module PablitusPrompt | Should -Not -BeNullOrEmpty
+    }
+}

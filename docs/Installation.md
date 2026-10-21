@@ -1,7 +1,6 @@
-# Pablitus Prompt Framework v1.0 — Installation Guide
-> **Pablitus Prompt Framework v1.0 Architecture Frozen**
+# Pablitus Prompt Framework v1.3.1 — Installation Guide
 
-PPF is easy to install. Just clone the repository and source the bootstrap file from your PowerShell profile.
+PPF is easy to install: clone the repository, load the bootstrap from your PowerShell profile, and point the `prompt` function at `Get-PromptString`.
 
 ---
 
@@ -19,26 +18,51 @@ Open your profile file in your editor:
 notepad $PROFILE
 ```
 
-Add the following line to the end of the file to bootstrap the framework automatically on terminal startup:
+Add the following block to the end of the file to bootstrap the framework and use it as your prompt:
+
 ```powershell
+# Cargar PPF
 . C:\PablitusPrompt\src\Bootstrap.ps1
+
+# Tema y colores
+Set-PromptTheme -Name "Nord"
+
+# Reemplazar el prompt de PowerShell por el de PPF
+function global:prompt {
+    Get-PromptString -Renderer "ANSI"
+}
 ```
 
-Save and restart your terminal.
+Save and restart your terminal. The prompt is now rendered by PPF.
+
+> If you already use Oh My Posh, the `prompt` function above overrides it. Remove the function (or the whole block) to get the previous prompt back.
 
 ---
 
 ## 3. Customizing the Prompt
-By default, the active renderer is `Plain`. You can change this by adding setting variables or using the configuration commands:
+
+The renderer and theme can be changed at any time:
+
 ```powershell
 # Set theme
 Set-PromptTheme -Name "Dracula"
 
-# Get active prompt string
+# Render with a different output format
 Get-PromptString -Renderer "PowerLine"
 ```
-You can also generate your config file to enable hot-reloading:
+
+Available renderers: `ANSI`, `HTML`, `JSON`, `Markdown`, `Minimal`, `Plain`, `PowerLine`, `Rich`.
+Available themes: `Default`, `Nord`, `Dracula`, `Catppuccin`.
+
+To persist your configuration and reload it automatically when the file changes:
+
 ```powershell
 Export-PromptConfiguration -Path "$HOME\.ppf.json"
 Enable-PromptConfigHotReload -Path "$HOME\.ppf.json"
+```
+
+Load a saved configuration at startup with:
+
+```powershell
+Import-PromptConfiguration -Path "$HOME\.ppf.json"
 ```

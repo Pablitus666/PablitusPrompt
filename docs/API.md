@@ -1,5 +1,5 @@
-# Pablitus Prompt Framework v1.3.0 — API Reference Guide
-> **Pablitus Prompt Framework v1.3.0 API Documentation**
+# Pablitus Prompt Framework v1.3.1 — API Reference Guide
+> **Pablitus Prompt Framework v1.3.1 API Documentation**
 
 This document describes the official public API and core internal APIs of the Pablitus Prompt Framework (PPF).
 
@@ -26,6 +26,11 @@ Disable-PromptConfigHotReload
 ### `Enable-PromptConfigHotReload`
 - **Synopsis**: 
 Enable-PromptConfigHotReload [-Path] <string> [<CommonParameters>]
+
+
+### `Export-PromptConfiguration`
+- **Synopsis**: 
+Export-PromptConfiguration [-Path] <string> [<CommonParameters>]
 
 
 ### `Get-ActiveTheme`
@@ -86,6 +91,11 @@ Get-PromptThemes
 ### `Get-SegmentConfiguration`
 - **Synopsis**: 
 Get-SegmentConfiguration [-Name] <string> [<CommonParameters>]
+
+
+### `Import-PromptConfiguration`
+- **Synopsis**: 
+Import-PromptConfiguration [-Path] <string> [<CommonParameters>]
 
 
 ### `Initialize-PPFModules`

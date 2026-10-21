@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.3.1 (Prompt Integration) - 2026-10-20
+
+### Added
+- `Import-PromptConfiguration` and `Export-PromptConfiguration` are now part of the public API, so the documented persistence and hot-reload workflow actually works.
+- The installation guide and README explain how to replace the PowerShell `prompt` function with PPF.
+
+### Fixed
+- Installation documentation no longer references commands that were not exported.
+
 ## v1.3.0 (Stability & Coverage) - 2026-10-20
 
 ### Added

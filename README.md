@@ -1,4 +1,4 @@
-# Pablitus Prompt Framework (PPF) v1.3.0
+# Pablitus Prompt Framework (PPF) v1.3.1
 > Modular PowerShell prompt framework for PowerShell 7+
 
 Pablitus Prompt Framework (PPF) is a modular framework for building prompts in PowerShell 7.
@@ -75,6 +75,21 @@ $prompt  = Get-PromptString -Context $context
 
 $prompt
 ```
+
+## Use as your PowerShell Prompt
+
+Add this block to your `$PROFILE` (adjust the path to your clone):
+
+```powershell
+. C:\PablitusPrompt\src\Bootstrap.ps1
+Set-PromptTheme -Name "Nord"
+
+function global:prompt {
+    Get-PromptString -Renderer "ANSI"
+}
+```
+
+Open a new terminal and PPF will render your prompt. Remove the function to go back to the previous prompt.
 
 ## Public API
 
