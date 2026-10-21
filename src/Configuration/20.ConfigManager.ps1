@@ -102,6 +102,7 @@ function ConvertTo-PPFPsd1Literal {
 
     param(
         [Parameter(Mandatory)]
+        [AllowNull()]
         $Value,
 
         [int]$Indent = 0
