@@ -1,4 +1,4 @@
-# Pablitus Prompt Framework (PPF) v1.2.0
+# Pablitus Prompt Framework (PPF) v1.3.0
 > Modular PowerShell prompt framework for PowerShell 7+
 
 Pablitus Prompt Framework (PPF) is a modular framework for building prompts in PowerShell 7.

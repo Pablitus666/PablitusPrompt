@@ -1,5 +1,5 @@
-# Pablitus Prompt Framework v1.2.0 — API Reference Guide
-> **Pablitus Prompt Framework v1.2.0 API Documentation**
+# Pablitus Prompt Framework v1.3.0 — API Reference Guide
+> **Pablitus Prompt Framework v1.3.0 API Documentation**
 
 This document describes the official public API and core internal APIs of the Pablitus Prompt Framework (PPF).
 
@@ -95,7 +95,7 @@ Initialize-PPFModules [[-ModulesPath] <string>]
 
 ### `Invoke-PPFEvent`
 - **Synopsis**: 
-Invoke-PPFEvent [-EventName] <string> [[-EventArgs] <Object>] [<CommonParameters>]
+Invoke-PPFEvent [-EventName] <string> [[-EventArguments] <Object>] [<CommonParameters>]
 
 
 ### `Invoke-PPFPipeline`

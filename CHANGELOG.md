@@ -1,5 +1,35 @@
 # Changelog
 
+## v1.3.0 (Stability & Coverage) - 2026-10-20
+
+### Added
+- **Quality gates**: `PSScriptAnalyzerSettings.psd1` documents the intentional exceptions, and CI now runs PSScriptAnalyzer on every push/PR.
+- **Coverage suite**: `tests/Coverage.Memory.Tests.ps1` and `tests/Coverage.Modules.Tests.ps1` add 105 regression tests for memory, CPU, battery, session, git, configuration and the language providers.
+- **Deterministic core load order**: `PablitusPrompt.psm1` loads `Core` in an explicit order before falling back to alphabetical discovery.
+- **Cross-platform cache directories**: Windows (`LocalApplicationData`), macOS (`~/Library/Caches`), Linux (`XDG_CACHE_HOME`) and a temp fallback.
+- **Cross-platform session detection**: Windows identity/administrator detection plus Linux/macOS environment fallbacks.
+- **Cross-platform memory providers**: Windows (CIM/WMI/P-Invoke), Linux (`/proc/meminfo`) and macOS (`sysctl`/`vm_stat`).
+- **Security**: the HTML renderer escapes segment text before emitting markup.
+- **Renderer default**: `Get-PromptString`/`Invoke-PromptRenderer` use the configured renderer when none is passed explicitly.
+
+### Changed
+- `PowerShellVersion` in the module manifest is now `7.0`, matching the documented requirement.
+- External commands are launched with `ProcessStartInfo.ArgumentList`, preserving argument boundaries.
+- Generated `build/` and `benchmarks/benchmark_report.*` artifacts are no longer tracked.
+
+### Fixed
+- `Import-PromptConfiguration` no longer mutates a live hashtable while enumerating it.
+- Imported segment configuration is preserved after the theme is applied.
+- macOS memory usage no longer overflows `Int32` and silently reports 0%.
+- `Export-PromptConfiguration` to PSD1 no longer fails when a dictionary contains a `$null` value.
+- The coverage gate in `build.ps1` uses the Pester 5.8 API and now fails the build below 90%.
+- The test suite runs without pre-importing the module (self-contained discovery).
+
+### Quality
+- 177 Pester tests passing, 0 failures.
+- Code coverage: 91.33% (2611/2859 commands).
+- PSScriptAnalyzer: 0 findings with the project settings.
+
 ## v1.2.0 (Hardening & Optimization) - 2026-07-04
 
 ### Added
