@@ -9,46 +9,49 @@ function Invoke-NodeProvider {
         [PromptContext]$Context
     )
 
-    # 1. Generate local invalidation signature (fast)
-    $nodePath = Get-CommandPath node
-    $nodeVersionFile = Join-Path $Context.Path.Current ".node-version"
-    $nvmrcFile = Join-Path $Context.Path.Current ".nvmrc"
-    $nodeVersionTicks = 0
-    if (Test-Path $nodeVersionFile) {
-        $nodeVersionTicks = (Get-Item $nodeVersionFile).LastWriteTime.Ticks
+    # 1. Cheap project detection first: resolving the executable and reading
+    #    file timestamps is only needed when the segment can actually appear.
+    $current = $Context.Path.Current
+    $nodeVersionFile = Join-Path $current ".node-version"
+    $nvmrcFile = Join-Path $current ".nvmrc"
+
+    $isNodeProj = $Context.Project.Type -eq "Node" -or
+                  [System.IO.File]::Exists((Join-Path $current "package.json")) -or
+                  [System.IO.File]::Exists($nodeVersionFile) -or
+                  [System.IO.File]::Exists($nvmrcFile)
+
+    if (-not $isNodeProj) {
+        $Context.Runtime.Node = $null
+        return
     }
-    elseif (Test-Path $nvmrcFile) {
-        $nodeVersionTicks = (Get-Item $nvmrcFile).LastWriteTime.Ticks
+
+    # 2. Generate local invalidation signature
+    $nodePath = Get-CommandPath node
+    $nodeVersionTicks = 0
+    if ([System.IO.File]::Exists($nodeVersionFile)) {
+        $nodeVersionTicks = [System.IO.File]::GetLastWriteTime($nodeVersionFile).Ticks
+    }
+    elseif ([System.IO.File]::Exists($nvmrcFile)) {
+        $nodeVersionTicks = [System.IO.File]::GetLastWriteTime($nvmrcFile).Ticks
     }
     $sig = "Path:$nodePath|Local:$nodeVersionTicks"
 
-    $cacheKey = "NodeVersion_$($Context.Path.Current)"
+    $cacheKey = "NodeVersion_$current"
     $cached = Get-PPFCache -Key $cacheKey -UseDisk
-    
-    # 2. Check cache match
+
+    # 3. Reuse the cached version when the signature still matches
     if ($null -ne $cached -and $cached.Signature -eq $sig) {
         $Context.Runtime.Node = $cached.Version
+        return
     }
-    else {
-        # 3. Detect Node project presence
-        $isNodeProj = $Context.Project.Type -eq "Node" -or 
-                      (Test-Path (Join-Path $Context.Path.Current "package.json")) -or 
-                      (Test-Path $nodeVersionFile) -or 
-                      (Test-Path $nvmrcFile)
 
-        if ($isNodeProj) {
-            $version = Get-NodeVersion
-            $Context.Runtime.Node = $version
-            $cacheData = [PSCustomObject]@{
-                Signature = $sig
-                Version   = $version
-            }
-            Set-PPFCache -Key $cacheKey -Value $cacheData -TtlSeconds 3600 -UseDisk
-        }
-        else {
-            $Context.Runtime.Node = $null
-        }
+    $version = Get-NodeVersion
+    $Context.Runtime.Node = $version
+    $cacheData = [PSCustomObject]@{
+        Signature = $sig
+        Version   = $version
     }
+    Set-PPFCache -Key $cacheKey -Value $cacheData -TtlSeconds 3600 -UseDisk
 
 }
 

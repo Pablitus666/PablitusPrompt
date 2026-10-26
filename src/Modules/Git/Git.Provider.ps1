@@ -24,8 +24,7 @@ function Invoke-GitProvider {
     $gitCfg = Get-SegmentConfiguration -Name "Git"
     $ttlMs = if ($gitCfg -and $gitCfg.ContainsKey("CacheTimeoutMs")) { [int]$gitCfg["CacheTimeoutMs"] } else { 5000 }
 
-    $gitDir = Get-GitDir
-    $repoRoot = if ($gitDir) { Split-Path $gitDir -Parent } else { $null }
+    $repoRoot = Get-GitRoot
 
     if ($repoRoot) {
         Start-GitWatcher -RepoRoot $repoRoot

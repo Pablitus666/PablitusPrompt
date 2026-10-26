@@ -5,6 +5,7 @@
 
 Register-PromptSegment `
     -Name "Git" `
+    -Priority 400 `
     -Script {
 
         param(
@@ -15,11 +16,16 @@ Register-PromptSegment `
             return
         }
 
+        $gitConfig = Get-SegmentConfiguration -Name "Git"
         $icon = if ($Context.Git.Dirty) {
-            ""
+            $gitConfig["IconDirty"]
         }
         else {
-            ""
+            $gitConfig["IconClean"]
+        }
+
+        if ([string]::IsNullOrEmpty($icon)) {
+            $icon = if ($Context.Git.Dirty) { "*" } else { "git" }
         }
 
         New-PromptSegment `

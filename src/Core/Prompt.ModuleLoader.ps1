@@ -78,6 +78,10 @@ function Initialize-PPFModules {
         if (Get-Command Invoke-PPFEvent -ErrorAction SilentlyContinue) {
             Invoke-PPFEvent -EventName "ModuleLoaded" -EventArgs $moduleName
         }
+
+        if ($global:PPF_LoadedModules -notcontains $moduleName) {
+            $global:PPF_LoadedModules = @($global:PPF_LoadedModules) + $moduleName
+        }
     }
 
     Write-Verbose "[PPF] Modules initialization complete."

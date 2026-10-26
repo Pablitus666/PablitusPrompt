@@ -18,9 +18,19 @@ Clear-AllPPFCache
 Clear-PPFCache [-Key] <string> [<CommonParameters>]
 
 
+### `Disable-PPFDotNetCore`
+- **Synopsis**: 
+Disable-PPFDotNetCore [<CommonParameters>]
+
+
 ### `Disable-PromptConfigHotReload`
 - **Synopsis**: 
 Disable-PromptConfigHotReload 
+
+
+### `Enable-PPFDotNetCore`
+- **Synopsis**: 
+Enable-PPFDotNetCore [-ThemePath] <string> [-IgnoreUnsupported] [<CommonParameters>]
 
 
 ### `Enable-PromptConfigHotReload`
@@ -41,6 +51,11 @@ Get-ActiveTheme
 ### `Get-PPFCache`
 - **Synopsis**: 
 Get-PPFCache [-Key] <string> [-UseDisk] [<CommonParameters>]
+
+
+### `Get-PPFDotNetCoreStatus`
+- **Synopsis**: 
+Get-PPFDotNetCoreStatus 
 
 
 ### `Get-Prompt`
@@ -75,7 +90,7 @@ Get-PromptSegments [[-Context] <PromptContext>] [<CommonParameters>]
 
 ### `Get-PromptString`
 - **Synopsis**: 
-Get-PromptString [[-Context] <PromptContext>] [[-Renderer] <string>]
+Get-PromptString [[-Context] <PromptContext>] [[-Renderer] <string>] [[-CommandLine] <string>] [[-TerminalWidth] <int>] [[-Column] <int>] [-Transient]
 
 
 ### `Get-PromptTheme`
@@ -88,14 +103,29 @@ Get-PromptTheme [[-Name] <string>]
 Get-PromptThemes 
 
 
+### `Get-PromptTooltip`
+- **Synopsis**: 
+Get-PromptTooltip [-Command] <string> [[-TerminalWidth] <int>] [[-Column] <int>] [-NoColor] [<CommonParameters>]
+
+
 ### `Get-SegmentConfiguration`
 - **Synopsis**: 
 Get-SegmentConfiguration [-Name] <string> [<CommonParameters>]
 
 
+### `Import-PPFDotNetTheme`
+- **Synopsis**: 
+Import-PPFDotNetTheme [-Path] <string> [-IgnoreUnsupported] [-Activate] [<CommonParameters>]
+
+
 ### `Import-PromptConfiguration`
 - **Synopsis**: 
 Import-PromptConfiguration [-Path] <string> [<CommonParameters>]
+
+
+### `Import-PromptTheme`
+- **Synopsis**: 
+Import-PromptTheme [-Path] <string[]> [-PassThru] [<CommonParameters>]
 
 
 ### `Initialize-PPFModules`
@@ -276,6 +306,11 @@ Set-PromptTheme [-Name] <string> [<CommonParameters>]
 ### `Set-SegmentConfiguration`
 - **Synopsis**: 
 Set-SegmentConfiguration [-Name] <string> [-Configuration] <hashtable> [<CommonParameters>]
+
+
+### `Test-PPFDotNetCoreAvailable`
+- **Synopsis**: 
+Test-PPFDotNetCoreAvailable [-Refresh] [<CommonParameters>]
 
 
 ### `Test-PromptFramework`

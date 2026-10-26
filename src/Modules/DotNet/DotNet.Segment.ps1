@@ -5,6 +5,7 @@
 
 Register-PromptSegment `
     -Name "DotNet" `
+    -Priority 930 `
     -Script {
 
         param(

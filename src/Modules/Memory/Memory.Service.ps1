@@ -1,30 +1,8 @@
 $script:FastestMemoryMethod = $null
 
-function script:Get-MemoryUsageFromWindows {
-
-    try {
-        if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue) {
-            $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue
-            if ($os -and $os.TotalVisibleMemorySize -gt 0) {
-                return [int]((($os.TotalVisibleMemorySize - $os.FreePhysicalMemory) / $os.TotalVisibleMemorySize) * 100)
-            }
-        }
-    }
-    catch {
-    }
-
-    try {
-        if (Get-Command Get-WmiObject -ErrorAction SilentlyContinue) {
-            $os = Get-WmiObject -Class Win32_OperatingSystem -ErrorAction SilentlyContinue
-            if ($os -and $os.TotalVisibleMemorySize -gt 0) {
-                return [int]((($os.TotalVisibleMemorySize - $os.FreePhysicalMemory) / $os.TotalVisibleMemorySize) * 100)
-            }
-        }
-    }
-    catch {
-    }
-
-    $win32MemorySource = @"
+# Source for the P/Invoke fallback used when CIM/WMI are unavailable. It is
+# compiled lazily (once per session) by Get-MemoryUsageFromWindows.
+$script:Win32MemorySource = @"
 using System;
 using System.Runtime.InteropServices;
 
@@ -60,13 +38,41 @@ public static class PPF_Win32MemoryStatus {
 }
 "@
 
+function script:Get-MemoryUsageFromWindows {
+
+    # 1. CIM is the modern, supported interface.
+    try {
+        if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue) {
+            $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue
+            if ($os -and $os.TotalVisibleMemorySize -gt 0) {
+                return [int]((($os.TotalVisibleMemorySize - $os.FreePhysicalMemory) / $os.TotalVisibleMemorySize) * 100)
+            }
+        }
+    }
+    catch {
+    }
+
+    # 2. WMI is legacy but still present on older Windows versions.
+    try {
+        if (Get-Command Get-WmiObject -ErrorAction SilentlyContinue) {
+            $os = Get-WmiObject -Class Win32_OperatingSystem -ErrorAction SilentlyContinue
+            if ($os -and $os.TotalVisibleMemorySize -gt 0) {
+                return [int]((($os.TotalVisibleMemorySize - $os.FreePhysicalMemory) / $os.TotalVisibleMemorySize) * 100)
+            }
+        }
+    }
+    catch {
+    }
+
+    # 3. Win32 P/Invoke: fastest, but requires Add-Type, so it is the last
+    #    resort when the managed providers cannot return data.
     try {
         if ($null -eq ("PPF_Win32MemoryStatus" -as [type])) {
-            Add-Type -TypeDefinition $win32MemorySource -ErrorAction SilentlyContinue | Out-Null
+            Add-Type -TypeDefinition $script:Win32MemorySource -ErrorAction SilentlyContinue | Out-Null
         }
 
         if ($null -ne ("PPF_Win32MemoryStatus" -as [type])) {
-            return [PPF_Win32MemoryStatus]::GetMemoryLoad()
+            return [int]([PPF_Win32MemoryStatus]::GetMemoryLoad())
         }
     }
     catch {

@@ -11,12 +11,8 @@ function New-PromptContext {
 
 function Invoke-Prompt {
 
-    if (Get-Command Test-PromptConfigReload -ErrorAction SilentlyContinue) {
+    if ($script:HotReloadEnabled) {
         Test-PromptConfigReload
-    }
-
-    if (Get-Command Invoke-PPFEvent -ErrorAction SilentlyContinue) {
-        Invoke-PPFEvent -EventName "BeforeRender" -EventArgs $null
     }
 
     $context = New-PromptContext
@@ -30,9 +26,9 @@ function Invoke-Prompt {
     # Construir segmentos
     Invoke-PromptSegments -Context $context
 
-    if (Get-Command Invoke-PPFEvent -ErrorAction SilentlyContinue) {
-        Invoke-PPFEvent -EventName "AfterRender" -EventArgs $context
-    }
+    # Persist any disk-cache updates produced by the providers. The helper is
+    # a no-op when the cache is clean, so this does not add per-prompt I/O.
+    Sync-PPFDiskCache
 
     return $context
 

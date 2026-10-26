@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>PablitusPrompt.Cli</RootNamespace>
+    <AssemblyName>ppf</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PablitusPrompt.Core\PablitusPrompt.Core.csproj" />
+  </ItemGroup>
+
+</Project>

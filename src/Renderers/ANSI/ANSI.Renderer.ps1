@@ -11,28 +11,7 @@ Register-PromptRenderer `
         [PromptContext]$Context
     )
 
-    $ansiColors = @{
-        "Black"   = "`e[30m"
-        "Red"     = "`e[31m"
-        "Green"   = "`e[32m"
-        "Yellow"  = "`e[33m"
-        "Blue"    = "`e[34m"
-        "Magenta" = "`e[35m"
-        "Cyan"    = "`e[36m"
-        "White"   = "`e[37m"
-        "Reset"   = "`e[0m"
-    }
-
-    $ansiBg = @{
-        "Black"   = "`e[40m"
-        "Red"     = "`e[41m"
-        "Green"   = "`e[42m"
-        "Yellow"  = "`e[43m"
-        "Blue"    = "`e[44m"
-        "Magenta" = "`e[45m"
-        "Cyan"    = "`e[46m"
-        "White"   = "`e[47m"
-    }
+    $reset = "`e[0m"
 
     $parts = foreach ($segment in $Context.Segments) {
 
@@ -40,27 +19,20 @@ Register-PromptRenderer `
             continue
         }
 
-        $fgCode = if ($segment.Foreground -and $ansiColors.ContainsKey($segment.Foreground)) {
-            $ansiColors[$segment.Foreground]
-        } else {
-            ""
-        }
-
-        $bgCode = if ($segment.Background -and $ansiBg.ContainsKey($segment.Background)) {
-            $ansiBg[$segment.Background]
-        } else {
-            ""
-        }
+        $fgCode = ConvertTo-PPFAnsiColor -Color $segment.Foreground
+        $bgCode = ConvertTo-PPFAnsiColor -Color $segment.Background -Background
 
         $text = if ($segment.Icon) {
             "$($segment.Icon) $($segment.Text)"
-        } else {
+        }
+        else {
             $segment.Text
         }
 
         if ($fgCode -or $bgCode) {
-            "${fgCode}${bgCode}${text}$($ansiColors['Reset'])"
-        } else {
+            "${fgCode}${bgCode}${text}${reset}"
+        }
+        else {
             $text
         }
 

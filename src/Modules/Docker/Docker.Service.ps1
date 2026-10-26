@@ -11,7 +11,22 @@ function Get-DockerInfo {
         $daemonAvailable = $true
     }
     elseif ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)) {
-        $daemonAvailable = [System.IO.File]::Exists("\\.\pipe\docker_engine")
+        # Test-Path does not reliably detect named pipes; enumerate the pipe
+        # namespace instead.
+        try {
+            $expectedPipes = @('docker_engine', 'dockerDesktopLinuxEngine', 'dockerDesktopWindowsEngine')
+            $pipeNames = [System.IO.Directory]::GetFiles('\\.\pipe\') |
+                ForEach-Object { [System.IO.Path]::GetFileName($_) }
+            foreach ($expectedPipe in $expectedPipes) {
+                if ($pipeNames -contains $expectedPipe) {
+                    $daemonAvailable = $true
+                    break
+                }
+            }
+        }
+        catch {
+            $daemonAvailable = $false
+        }
     }
     else {
         $daemonAvailable = [System.IO.File]::Exists("/var/run/docker.sock") -or [System.IO.File]::Exists("$env:HOME/.docker/run/docker.sock")
@@ -34,7 +49,7 @@ function Get-DockerInfo {
     $lines = $res.Output -split "`r?`n" | Where-Object { $_.Trim() }
     return [pscustomobject]@{
         Active = $true
-        Count  = $lines.Length
+        Count  = @($lines).Count
     }
 
 }

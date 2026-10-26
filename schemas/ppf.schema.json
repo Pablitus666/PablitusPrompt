@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pablitus.dev/schemas/ppf.schema.json",
+  "title": "Pablitus Prompt Framework Configuration",
+  "description": "Top-level PPF configuration: renderer, cache, templates and either an embedded theme or root-level blocks.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional schema identifier."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+(\\.\\d+){0,3}$",
+      "description": "PPF document version.",
+      "examples": ["1.0"]
+    },
+    "renderer": {
+      "type": "string",
+      "enum": ["plain", "powerline"],
+      "default": "plain",
+      "description": "Renderer used for the prompt."
+    },
+    "finalSpace": {
+      "type": "boolean",
+      "description": "Append a trailing space after the rendered prompt."
+    },
+    "cache": {
+      "$ref": "#/$defs/cache"
+    },
+    "template": {
+      "$ref": "#/$defs/templateConfig"
+    },
+    "transientPrompt": {
+      "$ref": "#/$defs/transientPrompt"
+    },
+    "tooltips": {
+      "type": "array",
+      "description": "Segments rendered at the right edge while a command tip matches.",
+      "items": {
+        "$ref": "#/$defs/tooltip"
+      }
+    },
+    "tooltipsAction": {
+      "$ref": "#/$defs/tooltipsAction"
+    },
+    "theme": {
+      "$ref": "#/$defs/theme"
+    },
+    "blocks": {
+      "type": "array",
+      "description": "Blocks declared directly at the root when no theme is embedded.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/block"
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "required": ["theme"]
+    },
+    {
+      "required": ["blocks"]
+    }
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "colorReference": {
+      "type": "string",
+      "description": "Hex color (#RGB, #RRGGBB, #RRGGBBAA), named ANSI color, palette key or 'transparent'.",
+      "pattern": "^(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{8}|[A-Za-z_][A-Za-z0-9_-]*)$",
+      "examples": ["#5e81ac", "#fff", "cyan", "brightBlack", "text"]
+    },
+    "style": {
+      "type": "string",
+      "enum": ["plain", "powerline", "diamond", "accordion", "minimal"],
+      "default": "plain"
+    },
+    "template": {
+      "type": "string",
+      "description": "Template subset: variables, nested properties, if/else/end, eq/ne/contains/and/or/not, upper/lower/trim/replace/default.",
+      "examples": ["{{ .Path.Display }}", "{{ if ne .ExitCode 0 }}{{ .ExitCode }}{{ end }}"]
+    },
+    "templateConfig": {
+      "type": "object",
+      "description": "Reserved prompt templates, validated in Phase 1.",
+      "properties": {
+        "prompt": {
+          "$ref": "#/$defs/template"
+        },
+        "rightPrompt": {
+          "$ref": "#/$defs/template"
+        },
+        "transientPrompt": {
+          "$ref": "#/$defs/template"
+        }
+      },
+      "additionalProperties": false
+    },
+    "transientPrompt": {
+      "type": "object",
+      "description": "Oh My Posh-compatible transient prompt shown after a command is accepted.",
+      "properties": {
+        "template": { "$ref": "#/$defs/template" },
+        "rightTemplate": { "$ref": "#/$defs/template" },
+        "filler": { "$ref": "#/$defs/template" },
+        "newline": { "type": "boolean", "default": false },
+        "foreground": { "$ref": "#/$defs/colorReference" },
+        "background": { "$ref": "#/$defs/colorReference" }
+      },
+      "additionalProperties": false
+    },
+    "tooltip": {
+      "$ref": "#/$defs/segment",
+      "properties": {
+        "tips": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Command keywords that activate this tooltip.",
+          "items": { "type": "string", "pattern": "\\S+" }
+        }
+      },
+      "required": ["tips"]
+    },
+    "tooltipsAction": {
+      "type": "string",
+      "enum": ["replace", "extend", "prepend"],
+      "default": "replace"
+    },
+    "cache": {
+      "type": "object",
+      "description": "Segment cache configuration for the in-memory scheduler cache. The time and exit segments are not cached by default.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "ttlSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 30,
+          "description": "Default cache TTL in seconds. Zero disables caching for segments without an explicit cacheTtlSeconds."
+        },
+        "maxEntries": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 256,
+          "description": "Maximum number of cached entries."
+        },
+        "directory": {
+          "type": ["string", "null"],
+          "description": "Reserved for a future persistent cache. The Phase 2 scheduler cache is in memory."
+        }
+      },
+      "additionalProperties": true,
+      "examples": [
+        {
+          "enabled": true,
+          "ttlSeconds": 30,
+          "maxEntries": 256
+        }
+      ]
+    },
+    "palette": {
+      "type": "object",
+      "description": "Named colors referenced by segments.",
+      "additionalProperties": {
+        "$ref": "#/$defs/colorReference"
+      }
+    },
+    "segment": {
+      "type": "object",
+      "description": "One segment declaration.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Provider type.",
+          "examples": ["session", "path", "git", "text", "time", "exit"]
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional unique segment name."
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "foreground": {
+          "$ref": "#/$defs/colorReference"
+        },
+        "background": {
+          "$ref": "#/$defs/colorReference"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "template": {
+          "$ref": "#/$defs/template"
+        },
+        "leadingDiamond": {
+          "type": "string"
+        },
+        "trailingDiamond": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Per-segment timeout in milliseconds."
+        },
+        "cacheTtlSeconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": true
+    },
+    "block": {
+      "type": "object",
+      "description": "A prompt block.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["prompt", "rprompt"],
+          "default": "prompt"
+        },
+        "alignment": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "left"
+        },
+        "newline": {
+          "type": "boolean",
+          "default": false
+        },
+        "filler": {
+          "$ref": "#/$defs/template",
+          "description": "Text repeated between the left and right-aligned blocks."
+        },
+        "overflow": {
+          "type": "string",
+          "enum": ["hide", "break"],
+          "description": "Right block behavior when it overflows the left block."
+        },
+        "segments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/segment"
+          }
+        }
+      },
+      "required": ["segments"],
+      "additionalProperties": true
+    },
+    "theme": {
+      "type": "object",
+      "description": "Embedded theme.",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "description": "Theme name."
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+(\\.\\d+){0,3}$"
+        },
+        "source": {
+          "type": "string"
+        },
+        "renderer": {
+          "type": "string",
+          "enum": ["plain", "powerline"]
+        },
+        "finalSpace": {
+          "type": "boolean"
+        },
+        "defaultStyle": {
+          "$ref": "#/$defs/style"
+        },
+        "palette": {
+          "$ref": "#/$defs/palette"
+        },
+        "template": {
+          "$ref": "#/$defs/templateConfig"
+        },
+        "transientPrompt": {
+          "$ref": "#/$defs/transientPrompt"
+        },
+        "tooltips": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tooltip"
+          }
+        },
+        "tooltipsAction": {
+          "$ref": "#/$defs/tooltipsAction"
+        },
+        "blocks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/block"
+          }
+        }
+      },
+      "required": ["blocks"],
+      "additionalProperties": true
+    }
+  },
+  "examples": [
+    {
+      "version": "1.0",
+      "renderer": "powerline",
+      "finalSpace": true,
+      "cache": {
+        "enabled": true,
+        "ttlSeconds": 30,
+        "maxEntries": 256
+      },
+      "theme": {
+        "name": "Example",
+        "palette": {
+          "accent": "#5e81ac"
+        },
+        "blocks": [
+          {
+            "type": "prompt",
+            "alignment": "left",
+            "segments": [
+              {
+                "type": "path",
+                "style": "powerline",
+                "foreground": "#eceff4",
+                "background": "accent",
+                "template": "{{ .Path.Display }}"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

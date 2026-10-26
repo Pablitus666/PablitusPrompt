@@ -67,19 +67,20 @@ function Invoke-CommandWithTimeout {
     param(
         [Parameter(Mandatory)]
         [string]$Command,
-        
-        [string[]]$Arguments = @(),
-        
-        [int]$TimeoutMs = 1000
-    )
 
-    if (-not (Test-CommandExists $Command)) {
-        return $null
-    }
+        [string[]]$Arguments = @(),
+
+        [int]$TimeoutMs = 1000,
+
+        [string]$WorkingDirectory
+    )
 
     $resolvedCommand = $Command
     $commandInfo = Get-Command $Command -ErrorAction SilentlyContinue
-    if ($commandInfo -and $commandInfo.CommandType -in @('Application', 'ExternalScript')) {
+    if (-not $commandInfo) {
+        return $null
+    }
+    if ($commandInfo.CommandType -in @('Application', 'ExternalScript')) {
         if ($commandInfo.Path) {
             $resolvedCommand = $commandInfo.Path
         }
@@ -98,25 +99,69 @@ function Invoke-CommandWithTimeout {
         [void]$psi.ArgumentList.Add($argument)
     }
 
-    try {
-        $p = [System.Diagnostics.Process]::Start($psi)
-        if ($p.WaitForExit($TimeoutMs)) {
-            $stdout = $p.StandardOutput.ReadToEnd()
-            $stderr = $p.StandardError.ReadToEnd()
-            return [pscustomobject]@{
-                ExitCode = $p.ExitCode
-                Output   = $stdout
-                Error    = $stderr
-                TimedOut = $false
-            }
-        } else {
-            $p.Kill()
+    # PowerShell's Set-Location does not change the process working directory,
+    # so child processes must receive it explicitly or they run in the
+    # directory where pwsh.exe was started.
+    $effectiveWorkingDirectory = $WorkingDirectory
+    if ([string]::IsNullOrWhiteSpace($effectiveWorkingDirectory)) {
+        $location = Get-Location
+        if ($location.Provider.Name -eq 'FileSystem') {
+            $effectiveWorkingDirectory = $location.ProviderPath
+        }
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($effectiveWorkingDirectory)) {
+        try {
+            $psi.WorkingDirectory = (Resolve-Path -LiteralPath $effectiveWorkingDirectory -ErrorAction Stop).ProviderPath
+        }
+        catch {
             return [pscustomobject]@{
                 ExitCode = -1
                 Output   = ""
-                Error    = "Process timed out"
-                TimedOut = $true
+                Error    = "Working directory not found: $effectiveWorkingDirectory"
+                TimedOut = $false
             }
+        }
+    }
+
+    try {
+        $p = [System.Diagnostics.Process]::Start($psi)
+        if ($null -eq $p) {
+            return [pscustomobject]@{
+                ExitCode = -1
+                Output   = ""
+                Error    = "Process could not be started"
+                TimedOut = $false
+            }
+        }
+
+        # Read both streams asynchronously: a full stderr buffer can block
+        # the child before it exits and cause false timeouts.
+        $stdoutTask = $p.StandardOutput.ReadToEndAsync()
+        $stderrTask = $p.StandardError.ReadToEndAsync()
+
+        if ($p.WaitForExit($TimeoutMs)) {
+            return [pscustomobject]@{
+                ExitCode = $p.ExitCode
+                Output   = $stdoutTask.GetAwaiter().GetResult()
+                Error    = $stderrTask.GetAwaiter().GetResult()
+                TimedOut = $false
+            }
+        }
+
+        try {
+            $p.Kill($true)
+        }
+        catch {
+            try { $p.Kill() } catch { }
+        }
+        $null = $p.WaitForExit(500)
+
+        return [pscustomobject]@{
+            ExitCode = -1
+            Output   = ""
+            Error    = "Process timed out"
+            TimedOut = $true
         }
     }
     catch {
@@ -127,7 +172,21 @@ function Invoke-CommandWithTimeout {
             TimedOut = $false
         }
     }
+    finally {
+        if ($null -ne $p) {
+            $p.Dispose()
+        }
+    }
 }
+
+# Get-Command performs a full command discovery pass and is comparatively
+# expensive (several milliseconds for some applications). Runtime providers
+# call it on every render, so resolved paths are memoized and invalidated when
+# PATH changes (for example after `nvm use`) or after a short TTL (for tools
+# installed into a directory that is already part of PATH).
+$script:PPFCommandPathCache = @{}
+$script:PPFCommandPathCachePath = $env:PATH
+$script:PPFCommandPathCacheTtlMs = 15000
 
 function Get-CommandPath {
     param(
@@ -135,11 +194,27 @@ function Get-CommandPath {
         [string]$Command
     )
 
-    $cmd = Get-Command $Command -ErrorAction SilentlyContinue
-    if ($cmd) {
-        return $cmd.Source
+    $pathSnapshot = $env:PATH
+    if ($pathSnapshot -ne $script:PPFCommandPathCachePath) {
+        $script:PPFCommandPathCache.Clear()
+        $script:PPFCommandPathCachePath = $pathSnapshot
     }
-    return ""
+
+    $nowTicks = [DateTime]::UtcNow.Ticks
+    $entry = $script:PPFCommandPathCache[$Command]
+    if ($null -ne $entry -and $entry.ExpiresTicks -gt $nowTicks) {
+        return $entry.Value
+    }
+
+    $cmd = Get-Command $Command -ErrorAction SilentlyContinue
+    $resolved = if ($cmd) { $cmd.Source } else { "" }
+
+    $script:PPFCommandPathCache[$Command] = @{
+        Value        = $resolved
+        ExpiresTicks = $nowTicks + ($script:PPFCommandPathCacheTtlMs * [TimeSpan]::TicksPerMillisecond)
+    }
+
+    return $resolved
 }
 
 function Invoke-PPFExternalCommand {
@@ -149,7 +224,9 @@ function Invoke-PPFExternalCommand {
 
         [string[]]$Arguments = @(),
 
-        [int]$TimeoutMs = 1000
+        [int]$TimeoutMs = 1000,
+
+        [string]$WorkingDirectory
     )
 
     if (-not (Test-CommandExists $Command)) {
@@ -162,7 +239,7 @@ function Invoke-PPFExternalCommand {
         }
     }
 
-    $res = Invoke-CommandWithTimeout -Command $Command -Arguments $Arguments -TimeoutMs $TimeoutMs
+    $res = Invoke-CommandWithTimeout -Command $Command -Arguments $Arguments -TimeoutMs $TimeoutMs -WorkingDirectory $WorkingDirectory
     if ($null -eq $res) {
         return [pscustomobject]@{
             ExitCode  = -1
@@ -175,7 +252,9 @@ function Invoke-PPFExternalCommand {
 
     return [pscustomobject]@{
         ExitCode  = $res.ExitCode
-        Output    = if ($null -ne $res.Output) { $res.Output.Trim() } else { $null }
+        # Only trim the trailing newline: leading spaces are significant in
+        # output such as `git status --porcelain` (e.g. " M file").
+        Output    = if ($null -ne $res.Output) { $res.Output.TrimEnd() } else { $null }
         Error     = $res.Error
         TimedOut  = $res.TimedOut
         Installed = $true

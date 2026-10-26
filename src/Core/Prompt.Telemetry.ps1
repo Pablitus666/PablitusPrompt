@@ -12,7 +12,34 @@ if ($null -eq $global:PPF_BootstrapTimeMs) { $global:PPF_BootstrapTimeMs = 0.0 }
 
 # Logging Levels: TRACE, DEBUG, INFO, WARN, ERROR
 $script:LogLevel = "INFO"
-$script:LogDir = Join-Path $env:LOCALAPPDATA "PablitusPrompt\logs"
+$script:LogLevelWeights = @{ "TRACE" = 0; "DEBUG" = 1; "INFO" = 2; "WARN" = 3; "ERROR" = 4 }
+
+function script:Get-PPFLogDirectory {
+
+    if ([System.OperatingSystem]::IsWindows()) {
+        $root = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } elseif ($env:APPDATA) { $env:APPDATA } else { [System.IO.Path]::GetTempPath() }
+        return (Join-Path (Join-Path $root "PablitusPrompt") "logs")
+    }
+
+    if ([System.OperatingSystem]::IsMacOS()) {
+        if ($env:HOME) {
+            return (Join-Path (Join-Path (Join-Path $env:HOME "Library") "Logs") "PablitusPrompt")
+        }
+        return (Join-Path ([System.IO.Path]::GetTempPath()) "PablitusPrompt/logs")
+    }
+
+    if ($env:XDG_STATE_HOME) {
+        return (Join-Path (Join-Path $env:XDG_STATE_HOME "PablitusPrompt") "logs")
+    }
+    if ($env:HOME) {
+        return (Join-Path (Join-Path (Join-Path (Join-Path $env:HOME ".local") "state") "PablitusPrompt") "logs")
+    }
+
+    return (Join-Path ([System.IO.Path]::GetTempPath()) "PablitusPrompt/logs")
+
+}
+
+$script:LogDir = Get-PPFLogDirectory
 $script:LogFile = Join-Path $script:LogDir "prompt.log"
 
 function Set-PPFLogLevel {
@@ -43,8 +70,7 @@ function Write-PPFLog {
     elseif ($normLevel -eq "WARNING") { $normLevel = "WARN" }
 
     # Level weights for filtering
-    $levels = @{ "TRACE" = 0; "DEBUG" = 1; "INFO" = 2; "WARN" = 3; "ERROR" = 4 }
-    if ($levels[$normLevel] -lt $levels[$script:LogLevel]) {
+    if ($script:LogLevelWeights[$normLevel] -lt $script:LogLevelWeights[$script:LogLevel]) {
         return
     }
 
@@ -385,19 +411,19 @@ function Measure-PromptDetailed {
         $renderTimes.Add($renderSw.Elapsed.TotalMilliseconds)
         
         foreach ($key in $context.Metrics.Keys) {
-            if ($key -like "Provider_*") {
+            if ($key -like "Provider_*_TimeMs" -and $key -notlike "*_ReadTimeMs" -and $key -notlike "*_UpdateTimeMs") {
                 $name = $key.Replace("Provider_", "").Replace("_TimeMs", "")
                 if (-not $providerTimes.ContainsKey($name)) {
                     $providerTimes[$name] = New-Object System.Collections.Generic.List[double]
                 }
-                $providerTimes[$name].Add($context.Metrics[$key])
+                $providerTimes[$name].Add([double]$context.Metrics[$key])
             }
-            elseif ($key -like "Segment_*") {
+            elseif ($key -like "Segment_*_TimeMs") {
                 $name = $key.Replace("Segment_", "").Replace("_TimeMs", "")
                 if (-not $segmentTimes.ContainsKey($name)) {
                     $segmentTimes[$name] = New-Object System.Collections.Generic.List[double]
                 }
-                $segmentTimes[$name].Add($context.Metrics[$key])
+                $segmentTimes[$name].Add([double]$context.Metrics[$key])
             }
         }
     }
@@ -771,7 +797,7 @@ function Test-PromptFramework {
         elseif (Get-Command Invoke-Pester -ErrorAction SilentlyContinue) {
             try {
                 $srcParent = Split-Path $root -Parent
-                $testPath = Join-Path $srcParent "tests\Prompt.Tests.ps1"
+                $testPath = Join-Path (Join-Path $srcParent "tests") "Prompt.Tests.ps1"
                 if (Test-Path $testPath) {
                     $pesterRun = Invoke-Pester -Path $testPath -PassThru -ErrorAction SilentlyContinue
                     $checks["Tests"] = "$($pesterRun.PassedCount)/$($pesterRun.TotalCount) PASS"
@@ -858,6 +884,25 @@ function Measure-PromptProvider {
 
     $times = New-Object System.Collections.Generic.List[double]
     $context = New-PromptContext
+
+    # Providers such as Path, Project, Python, Node and DotNet read the
+    # current location from the context, so populate it instead of leaving it
+    # empty (which would resolve relative paths against the process startup
+    # directory).
+    $context.Path.Current = (Get-Location).ProviderPath
+    $context.Path.Friendly = (Get-Location).ProviderPath
+    if (Get-Command Get-ProjectInfo -ErrorAction SilentlyContinue) {
+        try {
+            $projectInfo = Get-ProjectInfo
+            $context.Project.Name = $projectInfo.Name
+            $context.Project.Type = $projectInfo.Type
+            $context.Project.Root = $projectInfo.Root
+            $context.Project.Icon = $projectInfo.Icon
+        }
+        catch {
+            Write-Verbose "[PPF] Could not resolve project info for provider benchmark: $_"
+        }
+    }
 
     # Warm up / check
     if ($Cold) {

@@ -23,6 +23,41 @@ function Test-GitRepository {
 
 }
 
+function Get-GitRoot {
+
+    $currentPath = (Get-Location).Path
+    $cacheKey = "GitRoot_$currentPath"
+    $cached = Get-PPFCache -Key $cacheKey
+    if ($null -ne $cached) {
+        if ($cached -eq "NONE") {
+            return $null
+        }
+        return $cached
+    }
+
+    $root = $null
+    $topLevel = Invoke-Git @("rev-parse", "--show-toplevel")
+    if ($topLevel) {
+        $candidate = ($topLevel | Select-Object -First 1).Trim()
+        # Guard against degraded/mocked output that is not a real path.
+        if ($candidate -and [System.IO.Path]::IsPathRooted($candidate)) {
+            $root = $candidate
+        }
+    }
+
+    if (-not $root) {
+        # Fallback for environments where rev-parse is unavailable.
+        $gitDir = Get-GitDir
+        if ($gitDir) {
+            $root = Split-Path $gitDir -Parent
+        }
+    }
+
+    Set-PPFCache -Key $cacheKey -Value $(if ($root) { $root } else { "NONE" }) -TtlSeconds 30
+    return $root
+
+}
+
 function Get-GitStatusAndBranch {
 
     if (-not (Test-GitRepository)) {
@@ -37,8 +72,7 @@ function Get-GitStatusAndBranch {
         }
     }
 
-    $gitDir = Get-GitDir
-    $root = if ($gitDir) { Split-Path $gitDir -Parent } else { $null }
+    $root = Get-GitRoot
 
     $output = Invoke-Git @(
         "status",
@@ -61,7 +95,7 @@ function Get-GitStatusAndBranch {
 
     $branchLine = $lines[0]
     $branchName = $branchLine.Replace("## ", "").Trim()
-    
+
     $ahead = 0
     $behind = 0
     if ($branchName -match '\[([^\]]+)\]') {
@@ -75,17 +109,27 @@ function Get-GitStatusAndBranch {
         $branchName = $branchName.Substring(0, $branchName.IndexOf(" [")).Trim()
     }
 
-    if ($branchName.Contains("...")) {
+    $detached = $false
+    if ($branchName -match '^No commits yet on (.+)$') {
+        # Unborn branch: git prints a sentence instead of the branch name.
+        $branchName = $Matches[1].Trim()
+    }
+    elseif ($branchName -match '^Initial commit on (.+)$') {
+        $branchName = $Matches[1].Trim()
+    }
+    elseif ($branchName -match '^HEAD \(no branch\)$' -or $branchName -match '^no branch$') {
+        $detached = $true
+    }
+    elseif ($branchName.Contains("...")) {
         $branchName = $branchName.Substring(0, $branchName.IndexOf("..."))
     }
 
-    $detached = $false
-    if ($branchName -match "no branch" -or $branchName -eq "HEAD") {
-        $detached = $true
+    if ($detached) {
         $sha = Invoke-Git @("rev-parse", "--short", "HEAD")
         if ($sha) {
-            $branchName = $sha.Trim()
-        } else {
+            $branchName = ($sha | Select-Object -First 1).Trim()
+        }
+        else {
             $branchName = "HEAD (no branch)"
         }
     }
@@ -178,10 +222,7 @@ function Get-GitStatus {
 
 }
 
-$script:GitDirCache = @{}
-
 function Get-GitDir {
-
     $currentPath = (Get-Location).Path
     $cacheKey = "GitDir_$currentPath"
     $cached = Get-PPFCache -Key $cacheKey
@@ -254,34 +295,106 @@ if ($null -eq $global:PPF_GitWatchers) {
     $global:PPF_GitWatcherDirty = [ordered]@{} # Repository Root -> Boolean
 }
 
+# Watchers are cheap but not free. Keeping one per visited repository for
+# the whole session would eventually exhaust file handles, so evict the
+# oldest repository when the cap is reached.
+$script:MaxGitWatchers = 8
+
+function Stop-GitWatcher {
+    param(
+        [Parameter(Mandatory)]
+        [string]$RepoRoot
+    )
+
+    if ($null -eq $global:PPF_GitWatchers -or -not $global:PPF_GitWatchers.Contains($RepoRoot)) {
+        return
+    }
+
+    $watcherEntry = $global:PPF_GitWatchers[$RepoRoot]
+    try {
+        if ($watcherEntry.Handlers) {
+            foreach ($handler in $watcherEntry.Handlers) {
+                Unregister-Event -SourceIdentifier $handler.Name -ErrorAction SilentlyContinue
+            }
+        }
+        if ($watcherEntry.Watcher) {
+            $watcherEntry.Watcher.EnableRaisingEvents = $false
+            $watcherEntry.Watcher.Dispose()
+        }
+    }
+    catch {
+    }
+
+    $global:PPF_GitWatchers.Remove($RepoRoot)
+    if ($null -ne $global:PPF_GitWatcherDirty) {
+        $global:PPF_GitWatcherDirty.Remove($RepoRoot)
+    }
+}
+
 function Start-GitWatcher {
     param(
         [string]$RepoRoot
     )
+
+    if ([string]::IsNullOrWhiteSpace($RepoRoot)) {
+        return
+    }
+
+    if ($null -eq $global:PPF_GitWatchers) {
+        $global:PPF_GitWatchers = [ordered]@{}
+    }
+    if ($null -eq $global:PPF_GitWatcherDirty) {
+        $global:PPF_GitWatcherDirty = [ordered]@{}
+    }
+
     if ($global:PPF_GitWatchers.Contains($RepoRoot)) {
         return
     }
+
+    # Evict the least-recently added watcher before adding a new one.
+    while ($global:PPF_GitWatchers.Count -ge $script:MaxGitWatchers) {
+        $existingRoots = @($global:PPF_GitWatchers.Keys)
+        if ($existingRoots.Count -eq 0) {
+            break
+        }
+        Stop-GitWatcher -RepoRoot $existingRoots[0]
+    }
+
     try {
         $watcher = New-Object System.IO.FileSystemWatcher
         $watcher.Path = $RepoRoot
         $watcher.IncludeSubdirectories = $true
         $watcher.EnableRaisingEvents = $true
-        
+
         # Action when files change: mark repository as dirty
         $action = {
-            $path = $Event.SourceEventArgs.FullPath
-            # Ignore changes inside the .git directory
-            if ($path -notmatch '\\\.git\\') {
-                $global:PPF_GitWatcherDirty[$RepoRoot] = $true
+            $watcherData = $Event.MessageData
+            $changedPath = $Event.SourceEventArgs.FullPath
+            if (-not $watcherData -or -not $watcherData.RepoRoot -or $null -eq $global:PPF_GitWatcherDirty) {
+                return
+            }
+
+            try {
+                $relativePath = [System.IO.Path]::GetRelativePath($watcherData.RepoRoot, $changedPath)
+                $gitSegment = ".git" + [System.IO.Path]::DirectorySeparatorChar
+                if ($relativePath -ne ".git" -and -not $relativePath.StartsWith($gitSegment, [System.StringComparison]::OrdinalIgnoreCase)) {
+                    $global:PPF_GitWatcherDirty[$watcherData.RepoRoot] = $true
+                }
+            }
+            catch {
+                # The path may disappear while the event is being processed;
+                # treat it as a change and let the next scan decide.
+                $global:PPF_GitWatcherDirty[$watcherData.RepoRoot] = $true
             }
         }
-        
+
+        $messageData = @{ RepoRoot = $RepoRoot }
         $handlers = @()
-        $handlers += Register-ObjectEvent -InputObject $watcher -EventName "Changed" -Action $action
-        $handlers += Register-ObjectEvent -InputObject $watcher -EventName "Created" -Action $action
-        $handlers += Register-ObjectEvent -InputObject $watcher -EventName "Deleted" -Action $action
-        $handlers += Register-ObjectEvent -InputObject $watcher -EventName "Renamed" -Action $action
-        
+        $handlers += Register-ObjectEvent -InputObject $watcher -EventName "Changed" -MessageData $messageData -Action $action
+        $handlers += Register-ObjectEvent -InputObject $watcher -EventName "Created" -MessageData $messageData -Action $action
+        $handlers += Register-ObjectEvent -InputObject $watcher -EventName "Deleted" -MessageData $messageData -Action $action
+        $handlers += Register-ObjectEvent -InputObject $watcher -EventName "Renamed" -MessageData $messageData -Action $action
+
         $global:PPF_GitWatchers[$RepoRoot] = @{
             Watcher = $watcher
             Handlers = $handlers
@@ -294,22 +407,16 @@ function Start-GitWatcher {
 }
 
 function Stop-AllGitWatchers {
-    if ($null -ne $global:PPF_GitWatchers) {
-        foreach ($root in $global:PPF_GitWatchers.Keys) {
-            $w = $global:PPF_GitWatchers[$root]
-            try {
-                if ($w.Handlers) {
-                    foreach ($h in $w.Handlers) {
-                        Unregister-Event -SourceIdentifier $h.Name -ErrorAction SilentlyContinue
-                    }
-                }
-                if ($w.Watcher) {
-                    $w.Watcher.EnableRaisingEvents = $false
-                    $w.Watcher.Dispose()
-                }
-            } catch {}
-        }
-        $global:PPF_GitWatchers.Clear()
+    if ($null -eq $global:PPF_GitWatchers) {
+        return
+    }
+
+    foreach ($root in @($global:PPF_GitWatchers.Keys)) {
+        Stop-GitWatcher -RepoRoot $root
+    }
+
+    $global:PPF_GitWatchers.Clear()
+    if ($null -ne $global:PPF_GitWatcherDirty) {
         $global:PPF_GitWatcherDirty.Clear()
     }
 }

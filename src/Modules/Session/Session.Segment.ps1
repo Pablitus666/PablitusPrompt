@@ -5,6 +5,7 @@
 
 Register-PromptSegment `
     -Name "Session" `
+    -Priority 100 `
     -Script {
 
         param(

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://pablitus.dev/schemas/theme.schema.json",
+  "name": "Nord",
+  "version": "1.0",
+  "source": "pablitus",
+  "renderer": "powerline",
+  "finalSpace": true,
+  "defaultStyle": "powerline",
+  "palette": {
+    "text": "#eceff4",
+    "darkText": "#2e3440",
+    "sessionBg": "#5e81ac",
+    "pathBg": "#434c5e",
+    "gitBg": "#a3be8c",
+    "timeBg": "#ebcb8b"
+  },
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": false,
+      "segments": [
+        {
+          "type": "session",
+          "name": "session",
+          "style": "powerline",
+          "foreground": "darkText",
+          "background": "sessionBg",
+          "template": "{{ .UserName }}@{{ .HostName }}"
+        },
+        {
+          "type": "path",
+          "name": "path",
+          "style": "powerline",
+          "foreground": "text",
+          "background": "pathBg",
+          "template": "{{ .Path.Display }}"
+        },
+        {
+          "type": "git",
+          "name": "git",
+          "style": "powerline",
+          "foreground": "darkText",
+          "background": "gitBg",
+          "template": "{{ if .Git.Branch }} {{ .Git.Branch }}{{ end }}"
+        },
+        {
+          "type": "time",
+          "name": "time",
+          "style": "diamond",
+          "foreground": "darkText",
+          "background": "timeBg",
+          "template": "{{ .Time }}"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "exit",
+          "name": "exit",
+          "style": "plain",
+          "foreground": "#bf616a",
+          "template": "{{ if ne .ExitCode 0 }}✘ {{ .ExitCode }} {{ end }}"
+        },
+        {
+          "type": "text",
+          "name": "prompt-symbol",
+          "style": "plain",
+          "foreground": "#88c0d0",
+          "template": "❯ "
+        }
+      ]
+    }
+  ]
+}

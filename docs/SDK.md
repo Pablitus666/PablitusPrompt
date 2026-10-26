@@ -105,27 +105,69 @@ Register-PromptRenderer -Name "Minimal" -Script {
 ---
 
 ## 3. Registering a Custom Theme
-Themes define colors and icons. You can register custom themes from anywhere in your scripts using `Register-PromptTheme`.
+Themes define colors and icons. You can register a theme directly, import it
+from a `.Theme.ps1` file, or let PPF discover it in `src/Themes/`.
 
 ### Example: Registering the "Sunset" Theme
 ```powershell
-$sunSetTheme = @{
-    Colors = @{
-        Primary   = "Red"
-        Secondary = "Yellow"
-        Success   = "Green"
-        Docker    = "Magenta"
-    }
-    Icons = @{
-        Docker    = "🐳"
-        GitDirty  = "✗"
-        GitClean  = "✓"
-    }
-}
+Register-PromptTheme `
+    -Name "Sunset" `
+    -Palette @{
+        "Background" = "Black"
+        "Foreground" = "White"
+        "Primary"    = "Red"
+        "Secondary"  = "Yellow"
+        "Success"    = "Green"
+        "Warning"    = "Yellow"
+        "Error"      = "Red"
 
-Register-PromptTheme -Name "Sunset" -Theme $sunSetTheme
+        "Text"      = "#fff4e6"
+        "DarkText"  = "#2b1b17"
+        "SessionBg" = "#ff8a65"
+        "PathBg"    = "#ffd54f"
+        "GitBg"     = "#81c784"
+        "TimeBg"    = "#ba68c8"
+    } `
+    -Icons @{
+        "Session"  = ""
+        "Path"     = ""
+        "GitClean" = ""
+        "GitDirty" = ""
+        "Time"     = [string][char]0xF017
+    } `
+    -Segments @{
+        "Session" = @{
+            Visible         = $true
+            Icon            = "Session"
+            Foreground      = "DarkText"
+            Background      = "SessionBg"
+            LeadingDiamond  = ""
+            PowerlineSymbol = ""
+        }
+        "Path" = @{
+            Visible         = $true
+            Icon            = "Path"
+            Foreground      = "DarkText"
+            Background      = "PathBg"
+            PathStyle       = "Folder"
+            PowerlineSymbol = ""
+        }
+        "Time" = @{
+            Visible         = $true
+            Icon            = "Time"
+            Foreground      = "DarkText"
+            Background      = "TimeBg"
+            TrailingDiamond = ""
+            PowerlineSymbol = ""
+        }
+    }
+
 Set-PromptTheme -Name "Sunset"
 ```
+
+To keep a theme outside the repository, save it as `Sunset.Theme.ps1` and load
+it with `Import-PromptTheme -Path .\Sunset.Theme.ps1`. See
+[Themes](Themes.md#8-creating-custom-themes) for the full contract.
 
 ---
 
@@ -140,3 +182,70 @@ Register-PPFEventListener -EventName "AfterRender" -Script {
     Write-Debug "[PPF Log] Prompt rendered in $time ms."
 }
 ```
+
+---
+
+## 5. Custom Segments in .NET Mode
+
+Custom segment scriptblocks work in both engines. In the legacy PowerShell
+engine they run directly. In the opt-in .NET engine they run in a dedicated
+PowerShell runspace through the plugin host.
+
+You do not need a second registration for .NET mode. Keep using
+`Register-PromptSegment`:
+
+```powershell
+Register-PromptSegment -Name "Deploy" -Priority 120 -Script {
+    param([PromptContext]$Context)
+
+    $config = Get-SegmentConfiguration -Name "Deploy"
+    if (-not $config.Visible) {
+        return $null
+    }
+
+    New-PromptSegment `
+        -Name "Deploy" `
+        -Text "deploy:$($config.Environment)" `
+        -Foreground $config.Foreground
+}
+```
+
+Reference it from a PPF JSON theme by type name:
+
+```json
+{
+  "type": "Deploy",
+  "name": "deploy",
+  "style": "plain",
+  "foreground": "#ffffff",
+  "timeoutMs": 1500,
+  "properties": {
+    "environment": "production",
+    "nested": { "region": "us-east-1" }
+  }
+}
+```
+
+The host maps the .NET context to the legacy `PromptContext`, applies the
+segment's `properties` with `Set-SegmentConfiguration`, and sets `$PWD` to the
+rendered path. Available data includes `$Context.Session`, `$Context.Path`,
+`$Context.Git`, `$Context.Timestamp`, `$Context.Metrics`, and
+`$global:LASTEXITCODE`.
+
+Rules and limitations:
+
+- The segment type must match the name used in `Register-PromptSegment`.
+  Matching is case-insensitive.
+- Native .NET types (`session`, `path`, `git`, `text`, `time`, `exit`) cannot be
+  overridden by a custom segment with the same name.
+- A returning `PromptSegment` is converted to the .NET result. Returning
+  `$null` or no segment makes the segment invisible.
+- Exceptions are isolated: the prompt continues and the failing segment is
+  hidden.
+- `timeoutMs` is enforced by the scheduler. The default plugin timeout is
+  2000 ms.
+- Plugins run with the permissions of the current user. The runspace is an
+  isolation boundary for module state, not a security sandbox.
+- The plugin host does not run `BeforeRender` / `AfterRender` in .NET mode.
+
+See [ADR 0003](adr/0003-powershell-plugin-host.md) for the full contract.

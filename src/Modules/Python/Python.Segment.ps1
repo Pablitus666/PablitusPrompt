@@ -5,6 +5,7 @@
 
 Register-PromptSegment `
     -Name "Python" `
+    -Priority 500 `
     -Script {
 
         param(

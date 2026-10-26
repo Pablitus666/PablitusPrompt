@@ -12,9 +12,30 @@ on:
       - master
 
 jobs:
+  dotnet-core:
+    name: Build and test .NET core
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build .NET core
+        run: dotnet build dotnet/PablitusPrompt.sln -c Release
+
+      - name: Test .NET core
+        run: dotnet test dotnet/PablitusPrompt.sln -c Release --no-build
+
   test:
-    name: Run Pester Tests
+    name: PowerShell and .NET integration
     runs-on: windows-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
@@ -27,10 +48,19 @@ jobs:
           Install-Module Pester -Scope CurrentUser -Force -SkipPublisherCheck
           Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -SkipPublisherCheck
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
       - name: Run PSScriptAnalyzer
         shell: pwsh
         run: |
-          $results = Invoke-ScriptAnalyzer -Path ./src -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
+          $results = @(
+            Invoke-ScriptAnalyzer -Path ./src -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
+            Invoke-ScriptAnalyzer -Path ./scripts -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
+            Invoke-ScriptAnalyzer -Path ./tests/DotNet.Parity.Tests.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
+          ) | Where-Object { $null -ne $_ }
           if ($results) {
             $results | Format-Table -AutoSize
             throw "PSScriptAnalyzer found $($results.Count) issue(s)."
@@ -41,7 +71,20 @@ jobs:
         shell: pwsh
         run: |
           $PSVersionTable
+          dotnet --info
           Get-Module Pester -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1
+
+      - name: Build .NET core
+        shell: pwsh
+        run: dotnet build dotnet/PablitusPrompt.sln -c Release
+
+      - name: Test .NET core
+        shell: pwsh
+        run: dotnet test dotnet/PablitusPrompt.sln -c Release --no-build
+
+      - name: Publish .NET core for the PowerShell adapter
+        shell: pwsh
+        run: ./scripts/Build-PPFDotNetCore.ps1 -NoRestore
 
       - name: Run Pester
         shell: pwsh
@@ -63,3 +106,45 @@ jobs:
           $config.Output.Verbosity = "Detailed"
 
           Invoke-Pester -Configuration $config
+
+      - name: Measure .NET core and plugin host
+        shell: pwsh
+        run: |
+          ./scripts/Measure-PPFDotNetCore.ps1 `
+            -Iterations 20 `
+            -WarmupIterations 3 `
+            -OutputPath "$env:RUNNER_TEMP/ppf-dotnet-benchmark.json"
+
+      - name: Validate .nuspec and package NuGet
+        shell: pwsh
+        run: |
+          # Validar que el .nuspec es XML bien formado
+          [xml]$nuspec = Get-Content -LiteralPath "./PablitusPrompt.nuspec" -Raw
+          Write-Host "nuspec valid: id=$($nuspec.package.metadata.id) version=$($nuspec.package.metadata.version)"
+
+          # Ejecutar build completo (genera ZIP y .nupkg)
+          ./build.ps1
+
+      - name: Upload NuGet package artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ppf-nupkg
+          path: artifacts/PablitusPrompt.*.nupkg
+          if-no-files-found: warn
+
+      - name: Upload ZIP package artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ppf-zip
+          path: artifacts/PablitusPrompt-*.zip
+          if-no-files-found: warn
+
+      - name: Upload benchmark artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ppf-dotnet-benchmark
+          path: ${{ runner.temp }}/ppf-dotnet-benchmark.json
+          if-no-files-found: warn

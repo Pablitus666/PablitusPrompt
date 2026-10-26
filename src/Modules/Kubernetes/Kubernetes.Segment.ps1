@@ -5,7 +5,7 @@
 
 Register-PromptSegment `
     -Name "Kubernetes" `
-    -Priority 600 `
+    -Priority 800 `
     -Script {
 
         param(

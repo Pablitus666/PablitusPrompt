@@ -1,5 +1,29 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- **`Import-PromptTheme`**: import one or more external `.Theme.ps1` files, or a directory containing them, without modifying the repository. `-PassThru` returns the newly registered themes.
+- **Custom theme example**: `examples/Themes/Sunset.Theme.ps1` plus a complete theme-authoring reference in `docs/Themes.md`.
+
+### Changed
+- **Nord, Catppuccin and Kali are PowerLine-ready**: each theme now defines truecolor block backgrounds, explicit foregrounds, a leading session diamond, a trailing time diamond, and a compact folder path. The three themes keep their legacy ANSI palette aliases for compatibility.
+- **Faster prompt hot path**:
+  - `Get-CommandPath` memoizes executable resolution and invalidates the entry when `PATH` changes or after 15 seconds, so the Node, Python and .NET providers no longer run `Get-Command` on every render.
+  - Those providers now check project markers before resolving an executable or reading file timestamps, and the .NET check no longer enumerates the directory twice.
+  - ANSI color conversion and contrast resolution are memoized; the PowerLine renderer builds its visible-segment list without a pipeline.
+  - Provider, segment and pipeline registries keep a priority-sorted view that is rebuilt only when a registration changes.
+  - `[datetime]::Now` replaces `Get-Date` in the cache, context and profiling hot paths.
+  - Provider, segment and renderer logging checks the active log level before calling `Write-PPFLog`, and renderers dispatch events directly instead of resolving `Invoke-PPFEvent` with `Get-Command` on every render.
+  - Warm rendering is now roughly 10–13 ms (median ≈11 ms) with PowerLine and ≈10 ms with Plain on the local test machine, down from roughly 30–45 ms; `Invoke-Prompt` alone takes ≈8 ms.
+- Theme documentation now covers `Import-PromptTheme`, the PowerLine segment contract, and the custom-theme workflow.
+- **Deeper PowerLine palettes**: Dracula, Nord, Catppuccin and Kali now use deeper path blocks and higher-contrast accents, reducing the pastel look while keeping each theme visually distinct. The Time segment now uses the Nerd Font clock icon (`U+F017`).
+- **Documentation refresh**: `README.md` and `RELEASE_DESCRIPTION.md` were reorganized around the example README structure, with badges adapted to PPF, the preview/screenshot references, and the About metadata.
+
+### Quality
+- 192 Pester tests passing, 0 failures.
+- PSScriptAnalyzer: 0 findings with the project settings.
+
 ## v1.5.0 (Fast Bootstrap) - 2026-10-21
 
 ### Added

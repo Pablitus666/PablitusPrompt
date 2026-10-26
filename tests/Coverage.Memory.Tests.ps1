@@ -92,6 +92,9 @@ Describe "PPF Coverage - Memory, CPU, Battery & Session" {
 
             It "Select-FastestMemoryMethod usa WMI cuando CIM no existe" {
                 Mock Get-Command { } -ParameterFilter { $Name -eq "Get-CimInstance" }
+                Mock Get-Command {
+                    [pscustomobject]@{ Name = "Get-WmiObject" }
+                } -ParameterFilter { $Name -eq "Get-WmiObject" }
                 $script:FastestMemoryMethod = $null
 
                 Select-FastestMemoryMethod

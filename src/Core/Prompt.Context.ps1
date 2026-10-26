@@ -133,7 +133,7 @@ class PromptContext {
 
         $this.Segments = [System.Collections.Generic.List[PromptSegment]]::new()
 
-        $this.Timestamp = Get-Date
+        $this.Timestamp = [datetime]::Now
         $this.Metrics = @{}
 
     }

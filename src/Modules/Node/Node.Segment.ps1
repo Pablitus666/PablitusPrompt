@@ -5,6 +5,7 @@
 
 Register-PromptSegment `
     -Name "Node" `
+    -Priority 600 `
     -Script {
 
         param(

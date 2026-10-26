@@ -4,6 +4,8 @@
 # ============================================================
 
 $script:PPFMemoryCache = @{}
+$script:PPFDiskCacheInMem = $null
+$script:PPFDiskCacheDirty = $false
 
 function script:Get-PPFCacheDirectory {
 
@@ -81,7 +83,7 @@ function Get-PPFCache {
         [switch]$UseDisk
     )
 
-    $now = Get-Date
+    $now = [datetime]::Now
     $prov = $global:PPF_CurrentExecutingProvider
     if ($null -ne $prov -and -not $global:PPF_ProviderCacheStats.Contains($prov)) {
         $global:PPF_ProviderCacheStats[$prov] = @{ Hits = 0; Misses = 0; Expirations = 0; Refreshes = 0 }
@@ -102,7 +104,7 @@ function Get-PPFCache {
         }
     }
 
-    # 2. Check Disk Cache
+    # 2. Check Disk Cache (In-Memory copy)
     if ($UseDisk) {
         $diskCache = Import-PPFDiskCache
         if ($diskCache -and $diskCache.ContainsKey($Key)) {
@@ -120,7 +122,7 @@ function Get-PPFCache {
                 $global:PPF_CacheTTLExpired++
                 if ($null -ne $prov) { $global:PPF_ProviderCacheStats[$prov].Expirations++ }
                 $diskCache.Remove($Key)
-                Save-PPFDiskCache -Cache $diskCache
+                $script:PPFDiskCacheDirty = $true
             }
         }
     }
@@ -145,7 +147,7 @@ function Set-PPFCache {
         [switch]$UseDisk
     )
 
-    $now = Get-Date
+    $now = [datetime]::Now
     $prov = $global:PPF_CurrentExecutingProvider
     if ($null -ne $prov -and -not $global:PPF_ProviderCacheStats.Contains($prov)) {
         $global:PPF_ProviderCacheStats[$prov] = @{ Hits = 0; Misses = 0; Expirations = 0; Refreshes = 0 }
@@ -166,14 +168,11 @@ function Set-PPFCache {
     $global:PPF_CacheRefreshes++
     if ($null -ne $prov) { $global:PPF_ProviderCacheStats[$prov].Refreshes++ }
 
-    # 2. Disk Cache
+    # 2. Disk Cache (In-Memory)
     if ($UseDisk) {
         $diskCache = Import-PPFDiskCache
-        if (-not $diskCache) {
-            $diskCache = @{}
-        }
         $diskCache[$Key] = $entry
-        Save-PPFDiskCache -Cache $diskCache
+        $script:PPFDiskCacheDirty = $true
     }
 
 }
@@ -192,7 +191,7 @@ function Clear-PPFCache {
     $diskCache = Import-PPFDiskCache
     if ($diskCache -and $diskCache.ContainsKey($Key)) {
         $diskCache.Remove($Key)
-        Save-PPFDiskCache -Cache $diskCache
+        $script:PPFDiskCacheDirty = $true
     }
 
 }
@@ -200,6 +199,9 @@ function Clear-PPFCache {
 function Clear-AllPPFCache {
 
     $script:PPFMemoryCache.Clear()
+    $script:PPFDiskCacheInMem = @{}
+    $script:PPFDiskCacheDirty = $false
+
     if (Test-Path $script:DiskCachePath) {
         try {
             Remove-Item $script:DiskCachePath -Force -ErrorAction Stop
@@ -217,9 +219,15 @@ function Clear-AllPPFCache {
 
 function Import-PPFDiskCache {
 
-    if (-not (Test-Path $script:DiskCachePath)) {
-        return @{}
+    if ($null -ne $script:PPFDiskCacheInMem) {
+        return $script:PPFDiskCacheInMem
     }
+
+    if (-not (Test-Path $script:DiskCachePath)) {
+        $script:PPFDiskCacheInMem = @{}
+        return $script:PPFDiskCacheInMem
+    }
+
     try {
         $json = $null
         for ($i = 0; $i -lt 3; $i++) {
@@ -231,25 +239,42 @@ function Import-PPFDiskCache {
                 Start-Sleep -Milliseconds 50
             }
         }
-        if ($json) {
-            return ConvertFrom-Json $json -AsHashtable
+        if (-not [string]::IsNullOrWhiteSpace($json)) {
+            $parsed = ConvertFrom-Json $json -AsHashtable -ErrorAction Stop
+            # A corrupted or unexpected payload must not replace the cache
+            # with a non-dictionary object.
+            if ($parsed -is [System.Collections.IDictionary]) {
+                $script:PPFDiskCacheInMem = $parsed
+                return $script:PPFDiskCacheInMem
+            }
+            Write-Verbose "[PPF] Ignoring disk cache with unexpected format."
         }
     }
     catch {
         Write-Verbose "[PPF] Failed to load disk cache: $_"
     }
-    return @{}
+
+    $script:PPFDiskCacheInMem = @{}
+    return $script:PPFDiskCacheInMem
 
 }
 
 function Save-PPFDiskCache {
 
     param(
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $false)]
         [hashtable]$Cache
     )
+
+    # Use the passed cache or the in-memory one
+    $dataToSave = if ($null -ne $Cache) { $Cache } else { $script:PPFDiskCacheInMem }
+
+    if ($null -eq $dataToSave -or (-not $script:PPFDiskCacheDirty -and $null -eq $Cache)) {
+        return
+    }
+
     try {
-        $json = $Cache | ConvertTo-Json -Depth 5
+        $json = $dataToSave | ConvertTo-Json -Depth 5
 
         $candidatePaths = @(
             @{
@@ -268,15 +293,23 @@ function Save-PPFDiskCache {
                     $null = New-Item -ItemType Directory -Path $candidate.CacheDir -Force
                 }
 
-                # Attempt to write with retry to handle lock conflicts
+                # Write to a temporary file and move it into place so readers
+                # never observe a partially written cache. Retry on transient
+                # lock conflicts.
                 for ($i = 0; $i -lt 3; $i++) {
+                    $tempPath = "{0}.{1}.tmp" -f $candidate.DiskPath, [guid]::NewGuid().ToString("N")
                     try {
-                        $json | Out-File -LiteralPath $candidate.DiskPath -Encoding utf8 -ErrorAction Stop
+                        $json | Out-File -LiteralPath $tempPath -Encoding utf8 -ErrorAction Stop
+                        [System.IO.File]::Move($tempPath, $candidate.DiskPath, $true)
                         $script:CacheDir = $candidate.CacheDir
                         $script:DiskCachePath = $candidate.DiskPath
+                        $script:PPFDiskCacheDirty = $false
                         return
                     }
                     catch {
+                        if (Test-Path -LiteralPath $tempPath) {
+                            Remove-Item -LiteralPath $tempPath -Force -ErrorAction SilentlyContinue
+                        }
                         Start-Sleep -Milliseconds 50
                     }
                 }
@@ -289,4 +322,12 @@ function Save-PPFDiskCache {
         Write-Verbose "[PPF] Failed to save disk cache: $_"
     }
 
+}
+
+function Sync-PPFDiskCache {
+    # Persist pending disk-cache changes. This is a no-op when nothing has
+    # changed, so it is safe to call on every prompt render.
+    if ($script:PPFDiskCacheDirty) {
+        Save-PPFDiskCache
+    }
 }

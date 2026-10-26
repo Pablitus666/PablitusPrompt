@@ -1,0 +1,101 @@
+{
+  "$schema": "https://pablitus.dev/schemas/ppf.schema.json",
+  "version": "1.0",
+  "renderer": "plain",
+  "finalSpace": true,
+  "cache": {
+    "enabled": true,
+    "ttlSeconds": 30,
+    "maxEntries": 256
+  },
+  "template": {
+    "prompt": "{{ .UserName }}@{{ .HostName }} ❯ ",
+    "rightPrompt": "{{ .Path.Folder }}",
+    "transientPrompt": "{{ .Shell }}> "
+  },
+  "transientPrompt": {
+    "template": "{{ if .Interrupted }}^C {{ end }}{{ .Shell }}> ",
+    "rightTemplate": "{{ .Path.Folder }}",
+    "filler": ".",
+    "newline": true,
+    "foreground": "#ffffff",
+    "background": "transparent"
+  },
+  "tooltipsAction": "extend",
+  "tooltips": [
+    {
+      "type": "text",
+      "tips": ["git", "g"],
+      "style": "diamond",
+      "foreground": "#ffffff",
+      "background": "#ff0000",
+      "template": "git"
+    },
+    {
+      "type": "text",
+      "tips": ["terraform"],
+      "style": "plain",
+      "foreground": "#e0af68",
+      "template": "aws"
+    }
+  ],
+  "theme": {
+    "name": "Fase3C",
+    "version": "1.0",
+    "source": "pablitus",
+    "renderer": "plain",
+    "finalSpace": true,
+    "palette": {
+      "text": "#eceff4",
+      "sessionBg": "#5e81ac",
+      "pathBg": "#434c5e",
+      "accent": "#88c0d0"
+    },
+    "template": {
+      "transientPrompt": "{{ .Shell }}> ",
+      "rightTemplate": "{{ .Path.Folder }}",
+      "filler": ".",
+      "newline": true
+    },
+    "tooltipsAction": "replace",
+    "tooltips": [
+      {
+        "type": "text",
+        "tips": ["git"],
+        "template": "git"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "session",
+            "style": "plain",
+            "foreground": "text",
+            "template": "{{ .UserName }}@{{ .HostName }}"
+          },
+          {
+            "type": "path",
+            "style": "plain",
+            "foreground": "accent",
+            "template": "{{ .Path.Display }}"
+          }
+        ]
+      },
+      {
+        "type": "rprompt",
+        "alignment": "right",
+        "filler": ".",
+        "overflow": "hide",
+        "segments": [
+          {
+            "type": "text",
+            "template": "{{ .Path.Folder }}"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -6,6 +6,7 @@
 $script:BootstrapStart = [System.Diagnostics.Stopwatch]::StartNew()
 $Root = $PSScriptRoot
 $global:PPF_InstallRoot = $Root
+$global:PPF_LoadedModules = @()
 
 # ------------------------------------------------------------
 # Fast bootstrap
@@ -131,21 +132,21 @@ $PPFModularBootstrap = {
             $LoadedCoreFiles += $_.FullName
         }
 
-    Get-ChildItem "$Root\Configuration\*.ps1" | Sort-Object Name | ForEach-Object {
+    Get-ChildItem -Path (Join-Path $Root "Configuration") -Filter "*.ps1" | Sort-Object Name | ForEach-Object {
         . $_.FullName
     }
 
-    Get-ChildItem "$Root\Utils\*.ps1" | Sort-Object Name | ForEach-Object {
+    Get-ChildItem -Path (Join-Path $Root "Utils") -Filter "*.ps1" | Sort-Object Name | ForEach-Object {
         . $_.FullName
     }
 
-    . Initialize-PPFModules -ModulesPath "$Root\Modules"
+    . Initialize-PPFModules -ModulesPath (Join-Path $Root "Modules")
 
-    Get-ChildItem "$Root\Themes\*.Theme.ps1" | Sort-Object Name | ForEach-Object {
+    Get-ChildItem -Path (Join-Path $Root "Themes") -Filter "*.Theme.ps1" | Sort-Object Name | ForEach-Object {
         . $_.FullName
     }
 
-    Get-ChildItem "$Root\Renderers\*\*.ps1" | Sort-Object FullName | ForEach-Object {
+    Get-ChildItem -Path (Join-Path (Join-Path $Root "Renderers") "*") -Filter "*.ps1" -Recurse | Sort-Object FullName | ForEach-Object {
         . $_.FullName
     }
 }
@@ -169,6 +170,23 @@ else {
         }
 
         Invoke-Expression $PPFBuilder.ToString()
+
+        # The fast loader also emits ModuleLoaded events (and records the
+        # loaded modules) so its observable behaviour matches the modular one.
+        $modulesRoot = [System.IO.Path]::Combine($Root, "Modules")
+        if ([System.IO.Directory]::Exists($modulesRoot)) {
+            $moduleNames = @(
+                [System.IO.Directory]::GetDirectories($modulesRoot) |
+                    Sort-Object |
+                    ForEach-Object { [System.IO.Path]::GetFileName($_) }
+            )
+            $global:PPF_LoadedModules = $moduleNames
+            if (Get-Command Invoke-PPFEvent -ErrorAction SilentlyContinue) {
+                foreach ($moduleName in $moduleNames) {
+                    Invoke-PPFEvent -EventName "ModuleLoaded" -EventArgs $moduleName
+                }
+            }
+        }
     }
     catch {
         throw "PPF fast bootstrap failed: $($_.Exception.Message) Start PowerShell with `$env:PPF_USE_MODULAR_LOADER = '1' to use the compatibility loader."
@@ -182,6 +200,18 @@ $script:BootstrapStart.Stop()
 $global:PPF_BootstrapTimeMs = $script:BootstrapStart.Elapsed.TotalMilliseconds
 if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
     Write-PPFLog -Level "INFO" -Message "PPF bootstrapped via Module in $($global:PPF_BootstrapTimeMs) ms."
+}
+
+# ------------------------------------------------------------
+# Theme baseline
+#
+# Capture the pristine segment configuration once the whole module is
+# loaded. If this were captured lazily on the first theme switch, any
+# user configuration applied before that point would become the baseline
+# and could never be restored.
+# ------------------------------------------------------------
+if (Get-Command Get-PPFThemeBaseline -ErrorAction SilentlyContinue) {
+    $null = Get-PPFThemeBaseline
 }
 
 # ------------------------------------------------------------
@@ -201,6 +231,7 @@ $PublicFunctions = @(
     "Get-PromptThemes",
     "Get-PromptTheme",
     "Get-ActiveTheme",
+    "Import-PromptTheme",
     "Set-PromptTheme",
     "Measure-Prompt",
     "Measure-PromptDetailed",
@@ -243,7 +274,13 @@ $PublicFunctions = @(
     "Clear-PPFCache",
     "Clear-AllPPFCache",
     "Write-PPFLog",
-    "Set-PPFLogLevel"
+    "Set-PPFLogLevel",
+    "Test-PPFDotNetCoreAvailable",
+    "Enable-PPFDotNetCore",
+    "Disable-PPFDotNetCore",
+    "Get-PPFDotNetCoreStatus",
+    "Import-PPFDotNetTheme",
+    "Get-PromptTooltip"
 )
 
 Export-ModuleMember -Function $PublicFunctions
@@ -253,6 +290,12 @@ Export-ModuleMember -Function $PublicFunctions
 # ------------------------------------------------------------
 if ($null -ne $MyInvocation.MyCommand.Module) {
     $MyInvocation.MyCommand.Module.OnRemove = {
+        if (Get-Command Clear-PPFDotNetPluginProviders -ErrorAction SilentlyContinue) {
+            Clear-PPFDotNetPluginProviders
+        }
+        if (Get-Command Sync-PPFDiskCache -ErrorAction SilentlyContinue) {
+            Sync-PPFDiskCache
+        }
         if (Get-Command Stop-CpuSampler -ErrorAction SilentlyContinue) {
             Stop-CpuSampler
         }

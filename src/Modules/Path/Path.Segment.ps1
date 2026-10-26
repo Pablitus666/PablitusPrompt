@@ -5,6 +5,7 @@
 
 Register-PromptSegment `
     -Name "Path" `
+    -Priority 200 `
     -Script {
 
         param(
@@ -15,8 +16,18 @@ Register-PromptSegment `
             return
         }
 
+        $pathConfig = Get-SegmentConfiguration -Name "Path"
+        $text = $Context.Path.Friendly
+
+        if ($pathConfig.ContainsKey("PathStyle") -and $pathConfig.PathStyle -eq "Folder") {
+            $leaf = Split-Path -Path $Context.Path.Current -Leaf
+            if (-not [string]::IsNullOrWhiteSpace($leaf)) {
+                $text = $leaf
+            }
+        }
+
         New-PromptSegment `
             -Name "Path" `
-            -Text $Context.Path.Friendly
+            -Text $text
 
     }

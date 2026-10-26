@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>PablitusPrompt.Core</RootNamespace>
+    <AssemblyName>PablitusPrompt.Core</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PablitusPrompt.Core.Tests" />
+  </ItemGroup>
+
+</Project>

@@ -5,6 +5,7 @@
 
 Register-PromptSegment `
     -Name "Project" `
+    -Priority 300 `
     -Script {
 
         param(

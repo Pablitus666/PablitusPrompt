@@ -11,77 +11,129 @@ Register-PromptRenderer `
         [PromptContext]$Context
     )
 
-    $ansiColors = @{
-        "Black"   = "30"
-        "Red"     = "31"
-        "Green"   = "32"
-        "Yellow"  = "33"
-        "Blue"    = "34"
-        "Magenta" = "35"
-        "Cyan"    = "36"
-        "White"   = "37"
+    $visibleSegments = [System.Collections.Generic.List[PromptSegment]]::new()
+    foreach ($segment in $Context.Segments) {
+        if ($segment.Visible) {
+            $visibleSegments.Add($segment)
+        }
     }
-
-    $ansiBg = @{
-        "Black"   = "40"
-        "Red"     = "41"
-        "Green"   = "42"
-        "Yellow"  = "43"
-        "Blue"    = "44"
-        "Magenta" = "45"
-        "Cyan"    = "46"
-        "White"   = "47"
-    }
-
-    $visibleSegments = @($Context.Segments | Where-Object Visible)
 
     if ($visibleSegments.Count -eq 0) {
         return "> "
     }
 
-    $result = ""
+    $reset = "`e[0m"
+    $powerlineGlyph = ""
+    $result = [System.Text.StringBuilder]::new()
+
     for ($i = 0; $i -lt $visibleSegments.Count; $i++) {
+
         $current = $visibleSegments[$i]
-        $next = if ($i + 1 -lt $visibleSegments.Count) { $visibleSegments[$i+1] } else { $null }
+        $next = if ($i + 1 -lt $visibleSegments.Count) { $visibleSegments[$i + 1] } else { $null }
+        $config = Get-SegmentConfiguration -Name $current.Name
 
-        # Determinar color de fondo
-        $currentBg = if ($current.Background) { $current.Background } else { $current.Foreground }
-        if (-not $currentBg -or -not $ansiBg.ContainsKey($currentBg)) { $currentBg = "Blue" }
-
-        # Determinar color de texto (contraste adaptativo)
-        $currentFg = if ($currentBg -in @("Yellow", "Cyan", "White", "Green")) { "Black" } else { "White" }
-
-        # Determinar color de fondo del siguiente segmento
-        $nextBg = $null
-        if ($null -ne $next) {
-            $nextBg = if ($next.Background) { $next.Background } else { $next.Foreground }
-            if (-not $nextBg -or -not $ansiBg.ContainsKey($nextBg)) { $nextBg = "Blue" }
+        # The segment background is explicit when available. Legacy themes
+        # only set Foreground and expect it to become the block background.
+        $currentBg = if ($current.Background) {
+            $current.Background
+        }
+        elseif ($current.Foreground) {
+            $current.Foreground
+        }
+        else {
+            "Blue"
         }
 
-        # Construir contenido del bloque
+        $currentFg = if ($current.Background -and $current.Foreground) {
+            $current.Foreground
+        }
+        else {
+            Get-PPFContrastColor -Color $currentBg
+        }
+
+        $nextBg = $null
+        if ($null -ne $next) {
+            $nextBg = if ($next.Background) {
+                $next.Background
+            }
+            elseif ($next.Foreground) {
+                $next.Foreground
+            }
+            else {
+                "Blue"
+            }
+        }
+
+        $hasConfig = $config -is [System.Collections.IDictionary]
+
+        $leadingDiamond = if ($hasConfig -and $config.Contains("LeadingDiamond")) {
+            [string]$config["LeadingDiamond"]
+        }
+        else {
+            ""
+        }
+
+        $trailingDiamond = if ($hasConfig -and $config.Contains("TrailingDiamond")) {
+            [string]$config["TrailingDiamond"]
+        }
+        else {
+            ""
+        }
+
+        $powerlineSymbol = if ($hasConfig -and $config.Contains("PowerlineSymbol") -and
+            -not [string]::IsNullOrEmpty([string]$config["PowerlineSymbol"])) {
+            [string]$config["PowerlineSymbol"]
+        }
+        else {
+            $powerlineGlyph
+        }
+
+        # A diamond opens the block without inheriting the console background.
+        if ($i -eq 0 -and -not [string]::IsNullOrEmpty($leadingDiamond)) {
+            $null = $result.Append((ConvertTo-PPFAnsiColor -Color $currentBg))
+            $null = $result.Append($leadingDiamond)
+        }
+
         $text = if ($current.Icon) {
             " $($current.Icon) $($current.Text) "
-        } else {
+        }
+        else {
             " $($current.Text) "
         }
 
-        $fgCode = "`e[" + $ansiColors[$currentFg] + "m"
-        $bgCode = "`e[" + $ansiBg[$currentBg] + "m"
-        $result += "${fgCode}${bgCode}${text}"
+        $null = $result.Append((ConvertTo-PPFAnsiColor -Color $currentFg))
+        $null = $result.Append((ConvertTo-PPFAnsiColor -Color $currentBg -Background))
+        $null = $result.Append($text)
 
-        # Renderizar el glifo separador triangular de PowerLine ()
-        $sepSep = ""
-        $sepFgCode = "`e[" + ( [int]$ansiColors[$currentBg] ) + "m" # El color de fondo actual pasa a ser foreground del glifo
-        $sepBgCode = if ($null -ne $nextBg) {
-            "`e[" + $ansiBg[$nextBg] + "m"
-        } else {
-            "`e[0m" # Reset del fondo de consola si es el final
+        $isLast = $null -eq $next
+
+        if ($isLast -and -not [string]::IsNullOrEmpty($trailingDiamond)) {
+            # Close a diamond-shaped block with the matching half circle.
+            $null = $result.Append((ConvertTo-PPFAnsiColor -Color $currentBg))
+            $null = $result.Append($trailingDiamond)
+            $null = $result.Append($reset)
+        }
+        else {
+            # The separator foreground inherits the current block colour and
+            # its background points at the next block (or resets at the end).
+            $separatorBackground = if ($null -ne $nextBg) {
+                ConvertTo-PPFAnsiColor -Color $nextBg -Background
+            }
+            else {
+                $reset
+            }
+
+            $null = $result.Append((ConvertTo-PPFAnsiColor -Color $currentBg))
+            $null = $result.Append($separatorBackground)
+            $null = $result.Append($powerlineSymbol)
         }
 
-        $result += "${sepFgCode}${sepBgCode}${sepSep}"
     }
 
-    $result += "`e[0m "
-    return $result
+    $null = $result.Append($reset)
+    $null = $result.Append(" ")
+
+    return $result.ToString()
 
 }
+

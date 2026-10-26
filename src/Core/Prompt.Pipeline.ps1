@@ -4,7 +4,25 @@
 # ============================================================
 
 $script:PromptProviders = @()
+$script:PromptProvidersSorted = $null
 $script:PipelineSteps = @()
+$script:PipelineStepsSorted = $null
+
+# The sorted views are rebuilt only when a registration changes. Sorting on
+# every render costs more than the render itself for this few entries.
+function Get-SortedPromptProviders {
+    if ($null -eq $script:PromptProvidersSorted) {
+        $script:PromptProvidersSorted = @($script:PromptProviders | Sort-Object Priority)
+    }
+    return $script:PromptProvidersSorted
+}
+
+function Get-SortedPipelineSteps {
+    if ($null -eq $script:PipelineStepsSorted) {
+        $script:PipelineStepsSorted = @($script:PipelineSteps | Sort-Object Priority)
+    }
+    return $script:PipelineStepsSorted
+}
 
 if ($null -eq $global:PPF_SkipHiddenProviders) {
     $global:PPF_SkipHiddenProviders = $false
@@ -33,11 +51,13 @@ function Register-PromptProvider {
         Script   = $Script
     }
 
+    $script:PromptProvidersSorted = $null
+
 }
 
 function Get-PromptProviders {
 
-    return $script:PromptProviders | Sort-Object Priority
+    return @(Get-SortedPromptProviders)
 
 }
 
@@ -47,7 +67,7 @@ function Invoke-PromptProviders {
         [PromptContext]$Context
     )
 
-    $providersToRun = @($script:PromptProviders | Sort-Object Priority)
+    $providersToRun = Get-SortedPromptProviders
 
     if ($global:PPF_SkipHiddenProviders) {
 
@@ -108,7 +128,7 @@ function Invoke-PromptProviders {
 
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         try {
-            if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
+            if ($script:LogLevel -eq "DEBUG" -or $script:LogLevel -eq "TRACE") {
                 Write-PPFLog -Level "DEBUG" -Message "Invoking Provider '$($provider.Name)'..."
             }
             & $provider.Script $Context
@@ -133,7 +153,7 @@ function Invoke-PromptProviders {
             $Context.Metrics["Provider_$($provider.Name)_ReadTimeMs"] = if ($hasHit -and -not $hasMiss) { $elapsed } else { 0.0 }
             $Context.Metrics["Provider_$($provider.Name)_UpdateTimeMs"] = if ($hasMiss -or $hasRefresh -or $hasExpiration) { $elapsed } else { 0.0 }
 
-            if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
+            if ($script:LogLevel -eq "TRACE") {
                 Write-PPFLog -Level "TRACE" -Message "Provider '$($provider.Name)' took $($elapsed) ms (CacheHit: $hasHit, CacheMiss: $hasMiss, TTLExpired: $hasExpiration, Refresh: $hasRefresh)."
             }
         }
@@ -158,9 +178,7 @@ function Invoke-PromptProviders {
             $Context.Metrics["Provider_$($provider.Name)_Refresh"] = $hasRefresh
             $Context.Metrics["Provider_$($provider.Name)_ReadTimeMs"] = if ($hasHit -and -not $hasMiss) { $elapsed } else { 0.0 }
             $Context.Metrics["Provider_$($provider.Name)_UpdateTimeMs"] = if ($hasMiss -or $hasRefresh -or $hasExpiration) { $elapsed } else { 0.0 }
-            if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
-                Write-PPFLog -Level "ERROR" -Message "Provider '$($provider.Name)' failed: $_"
-            }
+            Write-PPFLog -Level "ERROR" -Message "Provider '$($provider.Name)' failed: $_"
         }
         finally {
             $global:PPF_CurrentExecutingProvider = $null
@@ -192,6 +210,8 @@ function Register-PPFPipelineStep {
         Script   = $Script
     }
 
+    $script:PipelineStepsSorted = $null
+
 }
 
 function Invoke-PPFPipeline {
@@ -200,7 +220,7 @@ function Invoke-PPFPipeline {
         [PromptContext]$Context
     )
 
-    foreach ($step in ($script:PipelineSteps | Sort-Object Priority)) {
+    foreach ($step in (Get-SortedPipelineSteps)) {
 
         try {
             & $step.Script $Context
@@ -216,5 +236,5 @@ function Invoke-PPFPipeline {
 # Registrar paso de Profiling por defecto
 Register-PPFPipelineStep -Name "Profiling" -Priority 999 -Script {
     param([PromptContext]$Context)
-    $Context.Metrics["ExecutionTimeMs"] = ((Get-Date) - $Context.Timestamp).TotalMilliseconds
+    $Context.Metrics["ExecutionTimeMs"] = ([datetime]::Now - $Context.Timestamp).TotalMilliseconds
 }

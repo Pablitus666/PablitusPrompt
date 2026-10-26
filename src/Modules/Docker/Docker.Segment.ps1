@@ -5,7 +5,7 @@
 
 Register-PromptSegment `
     -Name "Docker" `
-    -Priority 500 `
+    -Priority 700 `
     -Script {
 
         param(

@@ -27,7 +27,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
                 "Initialize-PPFModules", "Register-PPFPipelineStep", "Invoke-PPFPipeline",
                 "Get-Prompt", "Get-PromptProviders", "Get-PromptSegments", 
                 "Get-PromptRenderers", "Get-PromptThemes", "Get-ActiveTheme", 
-                "Set-PromptTheme", "Measure-Prompt", "Measure-PromptDetailed", 
+                "Import-PromptTheme", "Set-PromptTheme", "Measure-Prompt", "Measure-PromptDetailed", 
                 "Test-PromptFramework"
             )
             foreach ($func in $keyFunctions) {
@@ -45,7 +45,7 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
         }
 
         It "Registra los segmentos modularizados" {
-            $expectedSegments = @("Session", "Project", "Path", "Git", "Python", "Node", "Docker", "WSL", "Battery", "CPU", "Memory", "Kubernetes", "DotNet")
+            $expectedSegments = @("Session", "Project", "Path", "Git", "Python", "Node", "Docker", "WSL", "Battery", "CPU", "Memory", "Kubernetes", "DotNet", "Time")
 
             foreach ($segmentName in $expectedSegments) {
                 $segment = $script:PromptSegments | Where-Object Name -eq $segmentName
@@ -219,6 +219,83 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             $resolved | Should -Be "" # Dracula GitDirty icon
         }
 
+        It "Expone bloques PowerLine truecolor con diamantes en Nord, Catppuccin y Kali" {
+            $oldTheme = Get-ActiveTheme
+
+            try {
+                foreach ($themeName in @("Nord", "Catppuccin", "Kali")) {
+                    Set-PromptTheme -Name $themeName
+                    $theme = Get-PromptTheme -Name $themeName
+
+                    foreach ($segmentName in $theme.Segments.Keys) {
+                        $override = $theme.Segments[$segmentName]
+                        if (-not $override.Visible) {
+                            continue
+                        }
+
+                        $override.ContainsKey("Foreground") | Should -BeTrue
+                        $override.ContainsKey("Background") | Should -BeTrue
+                        $theme.Palette.ContainsKey($override["Foreground"]) | Should -BeTrue
+                        $theme.Palette.ContainsKey($override["Background"]) | Should -BeTrue
+                        $theme.Palette[$override["Background"]] | Should -Match '^#[0-9a-fA-F]{6}$'
+                    }
+
+                    $context = Invoke-Prompt
+                    $prompt = Get-PromptString -Context $context -Renderer "PowerLine"
+                    $prompt | Should -Match "`e\[38;2;"
+                    $prompt | Should -Match "`e\[48;2;"
+                    $prompt | Should -Match ""
+                    $prompt | Should -Match ""
+                }
+            }
+            finally {
+                if ($oldTheme) {
+                    Set-PromptTheme -Name $oldTheme.Name
+                }
+            }
+        }
+
+        It "Importa temas personalizados desde un archivo .Theme.ps1" {
+            $oldTheme = Get-ActiveTheme
+            $testThemeName = "ImportedTheme$([guid]::NewGuid().ToString('N'))"
+            $themePath = Join-Path $TestDrive "$testThemeName.Theme.ps1"
+            $themeScript = @'
+Register-PromptTheme `
+    -Name "__NAME__" `
+    -Palette @{
+        "Background" = "Black"
+        "Foreground" = "White"
+        "Primary"    = "Cyan"
+    } `
+    -Icons @{
+        "Session" = ">"
+    } `
+    -Segments @{
+        "Session" = @{
+            Visible    = $true
+            Icon       = "Session"
+            Foreground = "Primary"
+        }
+    }
+'@
+            $themeScript.Replace("__NAME__", $testThemeName) |
+                Set-Content -LiteralPath $themePath -Encoding utf8
+
+            try {
+                $imported = Import-PromptTheme -Path $themePath -PassThru
+                $imported | Should -Not -BeNullOrEmpty
+                $imported.Name | Should -Be $testThemeName
+
+                Set-PromptTheme -Name $testThemeName
+                (Get-ActiveTheme).Name | Should -Be $testThemeName
+            }
+            finally {
+                if ($oldTheme) {
+                    Set-PromptTheme -Name $oldTheme.Name
+                }
+            }
+        }
+
     }
 
     Context "Configuration Manager (Fase 4)" {
@@ -328,7 +405,9 @@ Describe "Pablitus Prompt Framework - Regression & Integration Tests" {
             Register-PPFEventListener -EventName "BeforeRender" -Script { $state.beforeCalled = $true }
             Register-PPFEventListener -EventName "AfterRender" -Script { $state.afterCalled = $true }
 
-            $null = Invoke-Prompt
+            $context = Invoke-Prompt
+            # Rendering happens in Get-PromptString, so both hooks fire there.
+            $null = Get-PromptString -Context $context -Renderer "Plain"
             $state.beforeCalled | Should -Be $true
             $state.afterCalled | Should -Be $true
         }

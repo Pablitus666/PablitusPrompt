@@ -5,7 +5,7 @@
 
 Register-PromptSegment `
     -Name "WSL" `
-    -Priority 110 `
+    -Priority 150 `
     -Script {
 
         param(

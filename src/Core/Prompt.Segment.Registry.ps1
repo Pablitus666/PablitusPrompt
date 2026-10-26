@@ -4,6 +4,17 @@
 # ============================================================
 
 $script:PromptSegments = @()
+$script:PromptSegmentsSorted = $null
+$script:PromptSegmentsVersion = 0
+
+function Get-SortedPromptSegments {
+
+    if ($null -eq $script:PromptSegmentsSorted) {
+        $script:PromptSegmentsSorted = @($script:PromptSegments | Sort-Object Priority)
+    }
+    return $script:PromptSegmentsSorted
+
+}
 
 function Register-PromptSegment {
 
@@ -33,6 +44,9 @@ function Register-PromptSegment {
 
     }
 
+    $script:PromptSegmentsSorted = $null
+    $script:PromptSegmentsVersion = [int]$script:PromptSegmentsVersion + 1
+
 }
 
 function Get-PromptSegments {
@@ -52,11 +66,11 @@ function Get-PromptSegments {
 
     $segments = [System.Collections.Generic.List[PromptSegment]]::new()
 
-    foreach ($entry in ($script:PromptSegments | Sort-Object Priority)) {
+    foreach ($entry in (Get-SortedPromptSegments)) {
 
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         try {
-            if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
+            if ($script:LogLevel -eq "DEBUG" -or $script:LogLevel -eq "TRACE") {
                 Write-PPFLog -Level "DEBUG" -Message "Evaluating Segment '$($entry.Name)'..."
             }
             $segment = & $entry.Script $Context
@@ -69,7 +83,7 @@ function Get-PromptSegments {
             if ($null -ne $segment) {
                 $null = $segments.Add($segment)
             }
-            if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
+            if ($script:LogLevel -eq "TRACE") {
                 Write-PPFLog -Level "TRACE" -Message "Segment '$($entry.Name)' took $($sw.Elapsed.TotalMilliseconds) ms (Visible: $($null -ne $segment))."
             }
         }
@@ -78,9 +92,7 @@ function Get-PromptSegments {
             if ($null -ne $Context.Metrics) {
                 $Context.Metrics["Segment_$($entry.Name)_TimeMs"] = $sw.Elapsed.TotalMilliseconds
             }
-            if (Get-Command Write-PPFLog -ErrorAction SilentlyContinue) {
-                Write-PPFLog -Level "ERROR" -Message "Segment '$($entry.Name)' failed: $_"
-            }
+            Write-PPFLog -Level "ERROR" -Message "Segment '$($entry.Name)' failed: $_"
         }
 
     }

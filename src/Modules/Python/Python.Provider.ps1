@@ -9,45 +9,48 @@ function Invoke-PythonProvider {
         [PromptContext]$Context
     )
 
-    # 1. Generate local invalidation signature (fast)
-    $pythonPath = Get-CommandPath python
-    $pyvenvCfg = Join-Path $Context.Path.Current "venv\pyvenv.cfg"
-    if (-not (Test-Path $pyvenvCfg)) {
-        $pyvenvCfg = Join-Path $Context.Path.Current ".venv\pyvenv.cfg"
+    # 1. Cheap project detection first: resolving the executable and reading
+    #    file timestamps is only needed when the segment can actually appear.
+    $current = $Context.Path.Current
+    $venvCfg = Join-Path $current (Join-Path "venv" "pyvenv.cfg")
+    $dotVenvCfg = Join-Path $current (Join-Path ".venv" "pyvenv.cfg")
+
+    $pyvenvCfg = if ([System.IO.File]::Exists($venvCfg)) { $venvCfg } else { $dotVenvCfg }
+
+    $isPythonProj = $Context.Project.Type -eq "Python" -or
+                    [System.IO.File]::Exists((Join-Path $current "requirements.txt")) -or
+                    [System.IO.File]::Exists((Join-Path $current "pyproject.toml")) -or
+                    [System.IO.File]::Exists($pyvenvCfg)
+
+    if (-not $isPythonProj) {
+        $Context.Runtime.Python = $null
+        return
     }
+
+    # 2. Generate local invalidation signature
+    $pythonPath = Get-CommandPath python
     $pyvenvTicks = 0
-    if (Test-Path $pyvenvCfg) {
-        $pyvenvTicks = (Get-Item $pyvenvCfg).LastWriteTime.Ticks
+    if ([System.IO.File]::Exists($pyvenvCfg)) {
+        $pyvenvTicks = [System.IO.File]::GetLastWriteTime($pyvenvCfg).Ticks
     }
     $sig = "Path:$pythonPath|Local:$pyvenvTicks"
 
-    $cacheKey = "PythonVersion_$($Context.Path.Current)"
+    $cacheKey = "PythonVersion_$current"
     $cached = Get-PPFCache -Key $cacheKey -UseDisk
-    
-    # 2. Check cache match
+
+    # 3. Reuse the cached version when the signature still matches
     if ($null -ne $cached -and $cached.Signature -eq $sig) {
         $Context.Runtime.Python = $cached.Version
+        return
     }
-    else {
-        # 3. Detect Python project presence
-        $isPythonProj = $Context.Project.Type -eq "Python" -or 
-                        (Test-Path (Join-Path $Context.Path.Current "requirements.txt")) -or 
-                        (Test-Path (Join-Path $Context.Path.Current "pyproject.toml")) -or 
-                        (Test-Path $pyvenvCfg)
 
-        if ($isPythonProj) {
-            $version = Get-PythonVersion
-            $Context.Runtime.Python = $version
-            $cacheData = [PSCustomObject]@{
-                Signature = $sig
-                Version   = $version
-            }
-            Set-PPFCache -Key $cacheKey -Value $cacheData -TtlSeconds 3600 -UseDisk
-        }
-        else {
-            $Context.Runtime.Python = $null
-        }
+    $version = Get-PythonVersion
+    $Context.Runtime.Python = $version
+    $cacheData = [PSCustomObject]@{
+        Signature = $sig
+        Version   = $version
     }
+    Set-PPFCache -Key $cacheKey -Value $cacheData -TtlSeconds 3600 -UseDisk
 
 }
 

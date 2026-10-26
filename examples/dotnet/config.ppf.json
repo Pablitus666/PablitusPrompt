@@ -1,0 +1,97 @@
+{
+  "$schema": "https://pablitus.dev/schemas/ppf.schema.json",
+  "version": "1.0",
+  "renderer": "powerline",
+  "finalSpace": true,
+  "cache": {
+    "enabled": true,
+    "ttlSeconds": 30,
+    "maxEntries": 256,
+    "directory": null
+  },
+  "template": {
+    "prompt": "{{ .UserName }}",
+    "rightPrompt": "{{ .Path.Folder }}",
+    "transientPrompt": "❯"
+  },
+  "theme": {
+    "name": "Nord Inline",
+    "version": "1.0",
+    "source": "pablitus",
+    "renderer": "powerline",
+    "finalSpace": true,
+    "palette": {
+      "text": "#eceff4",
+      "darkText": "#2e3440",
+      "sessionBg": "#5e81ac",
+      "pathBg": "#434c5e",
+      "gitBg": "#a3be8c",
+      "timeBg": "#ebcb8b",
+      "error": "#bf616a",
+      "accent": "#88c0d0"
+    },
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "newline": false,
+        "segments": [
+          {
+            "type": "session",
+            "name": "session",
+            "style": "powerline",
+            "foreground": "darkText",
+            "background": "sessionBg",
+            "template": "{{ upper .UserName }}"
+          },
+          {
+            "type": "path",
+            "name": "path",
+            "style": "powerline",
+            "foreground": "text",
+            "background": "pathBg",
+            "template": "{{ .Path.Display }}"
+          },
+          {
+            "type": "git",
+            "name": "git",
+            "style": "powerline",
+            "foreground": "darkText",
+            "background": "gitBg",
+            "template": "{{ if .Git.Branch }} {{ .Git.Branch }}{{ end }}",
+            "timeoutMs": 1500
+          },
+          {
+            "type": "time",
+            "name": "time",
+            "style": "powerline",
+            "foreground": "darkText",
+            "background": "timeBg",
+            "template": "{{ .Time }}"
+          }
+        ]
+      },
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "newline": true,
+        "segments": [
+          {
+            "type": "exit",
+            "name": "exit",
+            "style": "plain",
+            "foreground": "error",
+            "template": "{{ if ne .ExitCode 0 }}✘ {{ .ExitCode }} {{ end }}"
+          },
+          {
+            "type": "text",
+            "name": "prompt-symbol",
+            "style": "plain",
+            "foreground": "accent",
+            "template": "❯ "
+          }
+        ]
+      }
+    ]
+  }
+}

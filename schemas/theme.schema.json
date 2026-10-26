@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pablitus.dev/schemas/theme.schema.json",
+  "title": "Pablitus Prompt Framework Theme",
+  "description": "Declarative PPF theme: palette, blocks and segments rendered by the .NET core.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional schema identifier."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable theme name.",
+      "examples": ["Nord", "Imported theme"]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+(\\.\\d+){0,3}$",
+      "description": "PPF document version.",
+      "examples": ["1.0"]
+    },
+    "source": {
+      "type": "string",
+      "description": "Optional provenance label.",
+      "examples": ["pablitus", "oh-my-posh"]
+    },
+    "renderer": {
+      "type": "string",
+      "enum": ["plain", "powerline"],
+      "description": "Suggested renderer for this theme."
+    },
+    "finalSpace": {
+      "type": "boolean",
+      "description": "Append a trailing space after the rendered prompt."
+    },
+    "defaultStyle": {
+      "type": "string",
+      "enum": ["plain", "powerline", "diamond", "accordion", "minimal"],
+      "description": "Default segment style when a segment omits style."
+    },
+    "palette": {
+      "type": "object",
+      "description": "Named colors referenced by segments.",
+      "additionalProperties": {
+        "$ref": "#/$defs/colorReference"
+      },
+      "examples": [
+        {
+          "text": "#eceff4",
+          "background": "#2e3440",
+          "accent": "cyan"
+        }
+      ]
+    },
+    "template": {
+      "$ref": "#/$defs/templateConfig"
+    },
+    "transientPrompt": { "$ref": "#/$defs/transientPrompt" },
+    "tooltips": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/tooltip" }
+    },
+    "tooltipsAction": { "$ref": "#/$defs/tooltipsAction" },
+    "blocks": {
+      "type": "array",
+      "description": "Ordered prompt blocks.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/block"
+      }
+    }
+  },
+  "required": ["blocks"],
+  "additionalProperties": true,
+  "$defs": {
+    "colorReference": {
+      "type": "string",
+      "description": "Hex color (#RGB, #RRGGBB, #RRGGBBAA), named ANSI color, palette key or 'transparent'.",
+      "pattern": "^(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{8}|[A-Za-z_][A-Za-z0-9_-]*)$",
+      "examples": ["#5e81ac", "#fff", "cyan", "brightBlack", "text"]
+    },
+    "style": {
+      "type": "string",
+      "description": "Segment presentation style.",
+      "enum": ["plain", "powerline", "diamond", "accordion", "minimal"],
+      "default": "plain"
+    },
+    "template": {
+      "type": "string",
+      "description": "Oh My Posh compatible template subset (variables, if/else, eq/ne/contains/and/or/not, upper/lower/trim/replace/default).",
+      "examples": ["{{ .UserName }}@{{ .HostName }}", "{{ if .Git.Branch }} {{ .Git.Branch }}{{ end }}"]
+    },
+    "templateConfig": {
+      "type": "object",
+      "description": "Reserved prompt templates. They are validated in Phase 1 and wired in a later phase.",
+      "properties": {
+        "prompt": {
+          "$ref": "#/$defs/template"
+        },
+        "rightPrompt": {
+          "$ref": "#/$defs/template"
+        },
+        "transientPrompt": {
+          "$ref": "#/$defs/template"
+        }
+      },
+      "additionalProperties": false
+    },
+    "segment": {
+      "type": "object",
+      "description": "One segment declaration. The provider type lives in 'type'.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Provider type: session, path, git, text, time, exit or a registered plugin type.",
+          "examples": ["session", "path", "git", "text", "time", "exit"]
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional unique segment name. Generated from type and position when omitted."
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "foreground": {
+          "$ref": "#/$defs/colorReference"
+        },
+        "background": {
+          "$ref": "#/$defs/colorReference"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Optional glyph prepended to the segment text."
+        },
+        "template": {
+          "$ref": "#/$defs/template"
+        },
+        "leadingDiamond": {
+          "type": "string",
+          "description": "Leading glyph for diamond blocks."
+        },
+        "trailingDiamond": {
+          "type": "string",
+          "description": "Trailing glyph for diamond blocks."
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "When false the segment is not scheduled."
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Per-segment timeout in milliseconds."
+        },
+        "cacheTtlSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Per-segment cache time-to-live in seconds. Overrides the global TTL; zero disables caching for this segment."
+        },
+        "properties": {
+          "type": "object",
+          "description": "Provider-specific properties.",
+          "additionalProperties": true
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": true,
+      "examples": [
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#8AE234",
+          "template": "{{ .UserName }}@{{ .HostName }}"
+        }
+      ]
+    },
+    "block": {
+      "type": "object",
+      "description": "A prompt block. Newline blocks start on a new line.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["prompt", "rprompt"],
+          "default": "prompt",
+          "description": "Block kind."
+        },
+        "alignment": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "left",
+          "description": "Block alignment."
+        },
+        "newline": {
+          "type": "boolean",
+          "default": false,
+          "description": "Start this block on a new line."
+        },
+        "filler": { "$ref": "#/$defs/template" },
+        "overflow": {
+          "type": "string",
+          "enum": ["hide", "break"],
+          "description": "Right block behavior on overflow."
+        },
+        "segments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/segment"
+          }
+        }
+      },
+      "required": ["segments"],
+      "additionalProperties": true
+    },
+    "transientPrompt": {
+      "type": "object",
+      "description": "Oh My Posh-compatible transient prompt shown after a command is accepted.",
+      "properties": {
+        "template": { "$ref": "#/$defs/template" },
+        "rightTemplate": { "$ref": "#/$defs/template" },
+        "filler": { "$ref": "#/$defs/template" },
+        "newline": { "type": "boolean", "default": false },
+        "foreground": { "$ref": "#/$defs/colorReference" },
+        "background": { "$ref": "#/$defs/colorReference" }
+      },
+      "additionalProperties": false
+    },
+    "tooltip": {
+      "$ref": "#/$defs/segment",
+      "properties": {
+        "tips": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Command keywords that activate this tooltip.",
+          "items": { "type": "string", "pattern": "\\S+" }
+        }
+      },
+      "required": ["tips"]
+    },
+    "tooltipsAction": {
+      "type": "string",
+      "enum": ["replace", "extend", "prepend"],
+      "default": "replace"
+    }
+  },
+  "examples": [
+    {
+      "name": "Minimal",
+      "renderer": "plain",
+      "finalSpace": true,
+      "blocks": [
+        {
+          "type": "prompt",
+          "alignment": "left",
+          "segments": [
+            {
+              "type": "path",
+              "style": "plain",
+              "foreground": "cyan",
+              "template": "{{ .Path.Display }}"
+            },
+            {
+              "type": "text",
+              "style": "plain",
+              "template": " ❯ "
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

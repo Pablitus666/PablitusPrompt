@@ -9,47 +9,50 @@ function Invoke-DotNetProvider {
         [PromptContext]$Context
     )
 
-    # 1. Generate local invalidation signature (fast)
+    # 1. Cheap project detection first: resolving the executable and reading
+    #    file timestamps is only needed when the segment can actually appear.
+    $current = $Context.Path.Current
+    $globalJson = Join-Path $current "global.json"
+
+    $isDotNetProj = $Context.Project.Type -eq ".NET" -or [System.IO.File]::Exists($globalJson)
+
+    if (-not $isDotNetProj -and [System.IO.Directory]::Exists($current)) {
+        try {
+            $isDotNetProj = [System.IO.Directory]::GetFiles($current, "*.*proj").Length -gt 0 -or
+                            [System.IO.Directory]::GetFiles($current, "*.sln").Length -gt 0
+        }
+        catch {}
+    }
+
+    if (-not $isDotNetProj) {
+        $Context.Runtime.DotNet = $null
+        return
+    }
+
+    # 2. Generate local invalidation signature
     $dotnetPath = Get-CommandPath dotnet
-    $globalJson = Join-Path $Context.Path.Current "global.json"
     $globalJsonTicks = 0
-    if (Test-Path $globalJson) {
-        $globalJsonTicks = (Get-Item $globalJson).LastWriteTime.Ticks
+    if ([System.IO.File]::Exists($globalJson)) {
+        $globalJsonTicks = [System.IO.File]::GetLastWriteTime($globalJson).Ticks
     }
     $sig = "Path:$dotnetPath|Local:$globalJsonTicks"
 
-    $cacheKey = "DotNetVersion_$($Context.Path.Current)"
+    $cacheKey = "DotNetVersion_$current"
     $cached = Get-PPFCache -Key $cacheKey -UseDisk
-    
-    # 2. Check cache match
+
+    # 3. Reuse the cached version when the signature still matches
     if ($null -ne $cached -and $cached.Signature -eq $sig) {
         $Context.Runtime.DotNet = $cached.Version
+        return
     }
-    else {
-        # 3. Detect DotNet project presence
-        $hasProjFiles = $false
-        try {
-            if (Test-Path $Context.Path.Current) {
-                $hasProjFiles = @([System.IO.Directory]::EnumerateFiles($Context.Path.Current, "*.*proj")).Count -gt 0 -or
-                                @([System.IO.Directory]::EnumerateFiles($Context.Path.Current, "*.sln")).Count -gt 0
-            }
-        } catch {}
 
-        $isDotNetProj = $Context.Project.Type -eq ".NET" -or (Test-Path $globalJson) -or $hasProjFiles
-
-        if ($isDotNetProj) {
-            $version = Get-DotNetVersion
-            $Context.Runtime.DotNet = $version
-            $cacheData = [PSCustomObject]@{
-                Signature = $sig
-                Version   = $version
-            }
-            Set-PPFCache -Key $cacheKey -Value $cacheData -TtlSeconds 3600 -UseDisk
-        }
-        else {
-            $Context.Runtime.DotNet = $null
-        }
+    $version = Get-DotNetVersion
+    $Context.Runtime.DotNet = $version
+    $cacheData = [PSCustomObject]@{
+        Signature = $sig
+        Version   = $version
     }
+    Set-PPFCache -Key $cacheKey -Value $cacheData -TtlSeconds 3600 -UseDisk
 
 }
 

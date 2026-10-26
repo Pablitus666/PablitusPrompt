@@ -1,0 +1,163 @@
+{
+  "$schema": "https://pablitus.dev/schemas/ppf.schema.json",
+  "version": "1.0",
+  "renderer": "plain",
+  "finalSpace": true,
+  "cache": {
+    "enabled": true,
+    "ttlSeconds": 30,
+    "maxEntries": 256
+  },
+  "template": {
+    "prompt": "{{ .UserName }}@{{ .HostName }} ❯ ",
+    "rightPrompt": "{{ .Path.Folder }}",
+    "transientPrompt": "{{ .Shell }}> "
+  },
+  "transientPrompt": {
+    "template": "{{ if .Interrupted }}^C {{ end }}{{ .Shell }}> ",
+    "rightTemplate": "{{ .Path.Folder }}",
+    "filler": ".",
+    "newline": true,
+    "foreground": "#cdd6f4",
+    "background": "#1e1e2e"
+  },
+  "tooltipsAction": "extend",
+  "tooltips": [
+    {
+      "type": "text",
+      "tips": ["git", "g"],
+      "style": "diamond",
+      "foreground": "#cdd6f4",
+      "background": "#f38ba8",
+      "template": "git"
+    },
+    {
+      "type": "text",
+      "tips": ["docker", "d"],
+      "style": "plain",
+      "foreground": "#cdd6f4",
+      "background": "#fab387",
+      "template": "docker"
+    },
+    {
+      "type": "text",
+      "tips": ["npm", "node"],
+      "style": "plain",
+      "foreground": "#cdd6f4",
+      "background": "#89b4fa",
+      "template": "node"
+    }
+  ],
+  "theme": {
+    "name": "Pablitus",
+    "version": "1.0",
+    "source": "pablitus",
+    "renderer": "plain",
+    "finalSpace": true,
+    "palette": {
+      "Background": "#1e1e2e",
+      "Foreground": "#cdd6f4",
+      "Primary": "#89b4fa",
+      "Secondary": "#fab387",
+      "Success": "#a6e3a1",
+      "Warning": "#f9e2af",
+      "Error": "#f38ba8",
+      "SessionBg": "#89b4fa",
+      "SessionFg": "#1e1e2e",
+      "PathBg": "#a6e3a1",
+      "PathFg": "#1e1e2e",
+      "GitBg": "#89b4fa",
+      "GitFg": "#1e1e2e",
+      "TimeBg": "#f38ba8",
+      "TimeFg": "#1e1e2e",
+      "Accent": "#b4befe",
+      "Surface": "#313244"
+    },
+    "template": {
+      "transientPrompt": "{{ .Shell }}> ",
+      "rightTemplate": "{{ .Path.Folder }}",
+      "filler": ".",
+      "newline": true
+    },
+    "tooltipsAction": "extend",
+    "tooltips": [
+      {
+        "type": "text",
+        "tips": ["git", "g"],
+        "style": "diamond",
+        "foreground": "#cdd6f4",
+        "background": "#f38ba8",
+        "template": "git"
+      },
+      {
+        "type": "text",
+        "tips": ["docker", "d"],
+        "style": "plain",
+        "foreground": "#cdd6f4",
+        "background": "#fab387",
+        "template": "docker"
+      },
+      {
+        "type": "text",
+        "tips": ["npm", "node"],
+        "style": "plain",
+        "foreground": "#cdd6f4",
+        "background": "#89b4fa",
+        "template": "node"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "session",
+            "name": "session",
+            "style": "plain",
+            "foreground": "#1e1e2e",
+            "background": "#89b4fa",
+            "template": "{{ .UserName }}@{{ .HostName }}"
+          },
+          {
+            "type": "path",
+            "name": "path",
+            "style": "plain",
+            "foreground": "#1e1e2e",
+            "background": "#a6e3a1",
+            "template": "{{ .Path.Display }}"
+          },
+          {
+            "type": "git",
+            "name": "git",
+            "style": "plain",
+            "foreground": "#1e1e2e",
+            "background": "#89b4fa",
+            "template": "{{ if .Git.Branch }} {{ .Git.Branch }}{{ end }}",
+            "timeoutMs": 1500
+          },
+          {
+            "type": "time",
+            "name": "time",
+            "style": "plain",
+            "foreground": "#1e1e2e",
+            "background": "#f38ba8",
+            "template": "{{ .Time }}"
+          }
+        ]
+      },
+      {
+        "type": "rprompt",
+        "alignment": "right",
+        "filler": ".",
+        "overflow": "hide",
+        "segments": [
+          {
+            "type": "text",
+            "template": "{{ .Path.Folder }}"
+          }
+        ]
+      }
+    ]
+  }
+}
