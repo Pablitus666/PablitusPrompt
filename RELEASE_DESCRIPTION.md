@@ -39,6 +39,25 @@ El resultado es un prompt propio, comprensible y extensible, sin depender de ser
 - **Núcleo .NET:** `PromptEngine.RenderTransient()` y `PromptEngine.RenderTooltipAsync()` renderizan estas funcionalidades de forma determinista y testeable.
 - **CLI:** `ppf render --transient`, `ppf render --tooltip <comando>`, `ppf render --terminal-width <n>`.
 
+#### Ejemplos rápidos
+
+```powershell
+# Habilitar el núcleo .NET (requerido para Fase 3C)
+$env:PPF_USE_DOTNET_CORE = "1"
+Import-Module PablitusPrompt -Force
+
+# Right prompt: se combina con el prompt principal usando TerminalWidth
+Get-PromptString -TerminalWidth 80
+
+# Prompt transitorio: se muestra tras aceptar un comando
+Get-PromptString -Transient -TerminalWidth 80
+
+# Tooltip activado por la palabra clave "git", alineado a derecha desde la columna 5
+Get-PromptTooltip -Command "git" -TerminalWidth 80 -Column 5
+```
+
+`tooltipsAction` controla cómo se combina el tooltip con el right prompt actual: `replace` (predeterminado, reemplaza), `extend` (añade al final) o `prepend` (antepone al inicio).
+
 ---
 
 ## 🆕 Fase 3D — Multi-shell y packaging
@@ -56,9 +75,6 @@ El resultado es un prompt propio, comprensible y extensible, sin depender de ser
 
 ## 🚀 Guía de instalación
 
----
-
-## 🚀 Guía de instalación
 
 ### 📦 Requisitos
 

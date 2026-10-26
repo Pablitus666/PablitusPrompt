@@ -16,7 +16,7 @@ PPF funciona de forma local, no depende de servicios externos para renderizar el
 ![Providers](https://img.shields.io/badge/providers-13-5391FE?style=flat)
 ![Segments](https://img.shields.io/badge/segments-14-informational?style=flat)
 ![Renderers](https://img.shields.io/badge/renderers-8-orange?style=flat)
-![Themes](https://img.shields.io/badge/themes-5-9B59B6?style=flat)
+![Themes](https://img.shields.io/badge/themes-7-9B59B6?style=flat)
 ![Output](https://img.shields.io/badge/output-PowerLine%20%2F%20ANSI%20%2F%20HTML-blueviolet?style=flat)
 ![Cache](https://img.shields.io/badge/cache-Memory%20%2B%20Disk-success?style=flat)
 ![Mode](https://img.shields.io/badge/mode-100%25%20Local-brightgreen?style=flat)
@@ -37,7 +37,7 @@ PPF funciona de forma local, no depende de servicios externos para renderizar el
 - **13 proveedores** integrados para contexto, entorno y estado del sistema.
 - **14 segmentos** visuales reutilizables.
 - **8 renderers** de salida: Plain, Minimal, JSON, ANSI, PowerLine, Markdown, HTML y Rich.
-- **5 temas** integrados: Default, Nord, Dracula, Catppuccin y Kali.
+- **7 temas** integrados: Default, Nord, Dracula, Catppuccin, Kali, Pablitus y Pablitus Dark.
 - Bloques PowerLine truecolor para Dracula, Nord, Catppuccin y Kali.
 - Segmento de hora con icono de reloj de Nerd Font (`U+F017`).
 - Importación de temas personalizados sin modificar el repositorio.
@@ -124,6 +124,8 @@ El renderer `PowerLine` requiere una **Nerd Font** instalada y seleccionada en l
 | `Dracula` | Paleta oficial Dracula | Session, Path, Git, Node y Time. |
 | `Catppuccin` | Catppuccin Mocha | Session, Path, Git, Python, Node y Time. |
 | `Kali` | Verde, cian y ámbar | Session con `user@host`, Path, Git, Python y Time. |
+| `Pablitus` | PowerLine truecolor oscuro | Session, Path, Git y Time con diamantes y Nerd Font; Project oculto. Tema oficial de PPF. |
+| `Pablitus Dark` | PowerLine truecolor muy oscuro | Session, Path, Git y Time con diamantes; transient prompt con `right_template` y `filler`. Tema oficial oscuro de PPF. |
 
 Los temas PowerLine comparten la misma gramática visual de bloques, pero cada uno define su propia paleta, contraste y acentos. El segmento `Time` usa el icono de reloj de Nerd Font (`U+F017`).
 
@@ -550,47 +552,156 @@ La salida exacta depende del tema, del directorio actual, de las herramientas in
 
 ## Fase 3C: Prompt transitorio, tooltips y right prompt
 
-Desde la versión 1.5.0, PPF incluye soporte para tres funcionalidades avanzadas de la línea de comandos:
+Desde la versión 1.5.0, PPF incluye soporte para tres funcionalidades avanzadas de la línea de comandos inspiradas en Oh My Posh:
+
+- **Right prompt**: un bloque alineado a la derecha del prompt principal.
+- **Prompt transitorio**: un prompt simplificado que se muestra tras aceptar un comando, liberando espacio en pantalla.
+- **Tooltips**: segmentos right-aligned que aparecen al escribir palabras clave (por ejemplo, `git`, `docker`).
+
+### Requisito: núcleo .NET
+
+Estas funciones se renderizan con el núcleo .NET de PPF y requieren el modo opt-in:
+
+```powershell
+$env:PPF_USE_DOTNET_CORE = "1"
+Import-Module PablitusPrompt -Force
+```
+
+El ancho de terminal, la línea de comandos y la columna del cursor se pasan desde el llamador (CLI o adaptador de PowerShell); el núcleo .NET no consulta la consola, por lo que el resultado es determinista y testeable. Si el núcleo no está disponible, PPF hace fallback al motor de PowerShell.
 
 ### Right prompt
 
-Un bloque alineado a la derecha del prompt principal. Se configura con un bloque `type: "rprompt"` en el tema o configuración JSON:
+Se configura con un bloque `type: "rprompt"` (o `alignment: "right"`) en un tema declarativo JSON:
 
 ```json
 {
-  "type": "rprompt",
-  "alignment": "right",
-  "filler": ".",
-  "overflow": "hide",
-  "segments": [
-    { "type": "text", "template": "{{ .Path.Folder }}" }
+  "name": "MiTema",
+  "renderer": "powerline",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        { "type": "session", "template": "{{ .UserName }}@{{ .HostName }}", "style": "plain" },
+        { "type": "path", "template": "{{ .Path.Display }}", "style": "plain" }
+      ]
+    },
+    {
+      "type": "rprompt",
+      "alignment": "right",
+      "filler": "·",
+      "overflow": "hide",
+      "segments": [
+        { "type": "text", "template": "{{ .Path.Folder }}", "style": "plain" }
+      ]
+    }
   ]
 }
 ```
 
-Se renderiza mediante `Get-PromptString -TerminalWidth <n>` o automáticamente cuando el núcleo .NET conoce el ancho de terminal.
+Cuando se conoce el ancho de terminal, el núcleo combina ambos bloques con el `filler` repetido o un movimiento absoluto de cursor:
+
+```powershell
+Get-PromptString -TerminalWidth 80
+```
+
+`overflow: hide` oculta el right prompt si desborda el ancho disponible; `overflow: break` lo lleva a una nueva línea.
 
 ### Prompt transitorio
 
-Un prompt simplificado que se muestra tras aceptar un comando, liberando espacio en pantalla. Se configura con `template.transientPrompt`:
+Un prompt simplificado que se muestra tras aceptar un comando:
 
 ```powershell
 Get-PromptString -Transient -TerminalWidth 80
 ```
 
-Soporta `template`, `right_template`, `filler`, `newline`, `foreground` y `background`.
+Soporta `template`, `right_template`, `filler`, `newline`, `foreground` y `background`. Devuelve `$null` si el tema activo no define un `transientPrompt`.
 
 ### Tooltips
 
-Segmentos right-aligned que se muestran al escribir palabras clave específicas (`tips`). Útil para mostrar información contextual mientras escribes comandos como `git`, `docker`, etc.
+Segmentos right-aligned que se muestran al escribir palabras clave específicas (`tips`). Útil para mostrar información contextual mientras escribes comandos como `git` o `docker`:
 
 ```powershell
 Get-PromptTooltip -Command "git" -TerminalWidth 80 -Column 5
 ```
 
-Soporta `tooltips_action` con valores `replace` (predeterminado), `extend` o `prepend` respecto al right prompt actual.
+Devuelve el texto del tooltip alineado a la derecha, o `$null` si no hay coincidencia con ninguna palabra clave configurada.
 
-Todos estos_features requieren el núcleo .NET activo (`PPF_USE_DOTNET_CORE=1`) y el ancho de terminal se pasa desde el llamador para mantener el renderizado determinista.
+#### `tooltips_action`: replace / extend / prepend
+
+Controla cómo se combina el tooltip con el right prompt actual:
+
+| Valor | Comportamiento | Predeterminado |
+| --- | --- | --- |
+| `replace` | Reemplaza el right prompt actual por el tooltip. | Sí |
+| `extend` | Añade el tooltip al final del right prompt. | No |
+| `prepend` | Antepone el tooltip al inicio del right prompt. | No |
+
+Se configura en el tema con `tooltipsAction`:
+
+```json
+{
+  "tooltips": [
+    {
+      "tips": ["git"],
+      "type": "text",
+      "template": "rama: {{ .Git.Branch }}",
+      "style": "plain"
+    }
+  ],
+  "tooltipsAction": "replace"
+}
+```
+
+Ejemplo de tema JSON completo con right prompt, prompt transitorio y tooltips:
+
+```json
+{
+  "name": "MiTema",
+  "renderer": "powerline",
+  "transientPrompt": {
+    "template": "{{ .Path.Folder }} ❯ ",
+    "right_template": "{{ .Time }}",
+    "filler": "-",
+    "foreground": "#cdd6f4",
+    "background": "#1e1e2e"
+  },
+  "tooltips": [
+    {
+      "tips": ["git"],
+      "type": "text",
+      "template": "git: {{ .Git.Branch }}",
+      "style": "plain"
+    },
+    {
+      "tips": ["docker"],
+      "type": "text",
+      "template": "docker: {{ .Docker.Containers }}",
+      "style": "plain"
+    }
+  ],
+  "tooltipsAction": "extend",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        { "type": "session", "template": "{{ .UserName }}", "style": "plain" },
+        { "type": "path", "template": "{{ .Path.Display }}", "style": "plain" }
+      ]
+    },
+    {
+      "type": "rprompt",
+      "alignment": "right",
+      "filler": "·",
+      "overflow": "hide",
+      "segments": [
+        { "type": "text", "template": "{{ .Path.Folder }}", "style": "plain" }
+      ]
+    }
+  ]
+}
+```
 
 ---
 
@@ -598,13 +709,19 @@ Todos estos_features requieren el núcleo .NET activo (`PPF_USE_DOTNET_CORE=1`) 
 
 ### Cambiar de tema
 
+PPF incluye 7 temas oficiales. Ejemplos de cambio de tema:
+
 ```powershell
-Set-PromptTheme -Name "Dracula"
+Set-PromptTheme -Name "Default"
 Set-PromptTheme -Name "Nord"
+Set-PromptTheme -Name "Dracula"
 Set-PromptTheme -Name "Catppuccin"
 Set-PromptTheme -Name "Kali"
-Set-PromptTheme -Name "Default"
+Set-PromptTheme -Name "Pablitus"
+Set-PromptTheme -Name "Pablitus Dark"
 ```
+
+Los temas oficiales `Pablitus` y `Pablitus Dark` usan PowerLine truecolor con diamantes, el segmento `Time` con el glifo de reloj de Nerd Font (`U+F017`) y paletas optimizadas para terminales claras y oscuras. `Pablitus Dark` además demuestra las capacidades de Fase 3C (transient prompt con `right_template` y `filler`).
 
 ### Consultar temas
 
