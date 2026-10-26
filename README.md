@@ -16,7 +16,7 @@ PPF funciona de forma local, no depende de servicios externos para renderizar el
 ![Providers](https://img.shields.io/badge/providers-13-5391FE?style=flat)
 ![Segments](https://img.shields.io/badge/segments-14-informational?style=flat)
 ![Renderers](https://img.shields.io/badge/renderers-8-orange?style=flat)
-![Themes](https://img.shields.io/badge/themes-7-9B59B6?style=flat)
+![Themes](https://img.shields.io/badge/themes-8-9B59B6?style=flat)
 ![Output](https://img.shields.io/badge/output-PowerLine%20%2F%20ANSI%20%2F%20HTML-blueviolet?style=flat)
 ![Cache](https://img.shields.io/badge/cache-Memory%20%2B%20Disk-success?style=flat)
 ![Mode](https://img.shields.io/badge/mode-100%25%20Local-brightgreen?style=flat)
@@ -37,7 +37,7 @@ PPF funciona de forma local, no depende de servicios externos para renderizar el
 - **13 proveedores** integrados para contexto, entorno y estado del sistema.
 - **14 segmentos** visuales reutilizables.
 - **8 renderers** de salida: Plain, Minimal, JSON, ANSI, PowerLine, Markdown, HTML y Rich.
-- **7 temas** integrados: Default, Nord, Dracula, Catppuccin, Kali, Pablitus y Pablitus Dark.
+- **8 temas** integrados: Default, Nord, Dracula, Catppuccin, Kali, Pablitus, Pablitus Dark y Pablitus Light.
 - Bloques PowerLine truecolor para Dracula, Nord, Catppuccin y Kali.
 - Segmento de hora con icono de reloj de Nerd Font (`U+F017`).
 - Importación de temas personalizados sin modificar el repositorio.
@@ -709,7 +709,7 @@ Ejemplo de tema JSON completo con right prompt, prompt transitorio y tooltips:
 
 ### Cambiar de tema
 
-PPF incluye 7 temas oficiales. Ejemplos de cambio de tema:
+PPF incluye 8 temas oficiales. Ejemplos de cambio de tema:
 
 ```powershell
 Set-PromptTheme -Name "Default"
@@ -719,9 +719,10 @@ Set-PromptTheme -Name "Catppuccin"
 Set-PromptTheme -Name "Kali"
 Set-PromptTheme -Name "Pablitus"
 Set-PromptTheme -Name "Pablitus Dark"
+Set-PromptTheme -Name "Pablitus Light"
 ```
 
-Los temas oficiales `Pablitus` y `Pablitus Dark` usan PowerLine truecolor con diamantes, el segmento `Time` con el glifo de reloj de Nerd Font (`U+F017`) y paletas optimizadas para terminales claras y oscuras. `Pablitus Dark` además demuestra las capacidades de Fase 3C (transient prompt con `right_template` y `filler`).
+Los temas oficiales `Pablitus`, `Pablitus Dark` y `Pablitus Light` usan PowerLine truecolor con diamantes, el segmento `Time` con el glifo de reloj de Nerd Font (`U+F017`) y paletas optimizadas para terminales claras y oscuras. `Pablitus Dark` además demuestra las capacidades de Fase 3C (transient prompt con `right_template` y `filler`); `Pablitus Light` usa una paleta clara/neón con diamantes magenta y cian.
 
 ### Consultar temas
 

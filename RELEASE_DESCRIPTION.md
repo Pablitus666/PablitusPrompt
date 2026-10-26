@@ -16,7 +16,7 @@ El resultado es un prompt propio, comprensible y extensible, sin depender de ser
 - **13 proveedores integrados:** Session, WSL, Path, Project, Git, Docker, Python, Node, DotNet, Kubernetes, Battery, CPU y Memory.
 - **14 segmentos visuales:** Session, Project, Path, Git, Python, Node, Docker, WSL, Battery, CPU, Memory, Kubernetes, DotNet y Time.
 - **8 renderers:** Plain, Minimal, JSON, ANSI, PowerLine, Markdown, HTML y Rich.
-- **5 temas integrados:** Default, Nord, Dracula, Catppuccin y Kali.
+- **8 temas integrados:** Default, Nord, Dracula, Catppuccin, Kali, Pablitus, Pablitus Dark y Pablitus Light.
 - **PowerLine truecolor:** bloques con fondos de 24 bits, separadores triangulares y diamantes de apertura/cierre para Dracula, Nord, Catppuccin y Kali.
 - **Temas personalizados:** `Import-PromptTheme` permite importar archivos o directorios completos sin modificar el repositorio.
 - **Segmento Time con reloj:** el segmento usa el glifo de reloj de Nerd Font (`U+F017`).
@@ -136,6 +136,9 @@ Set-PromptTheme -Name "Nord"
 Set-PromptTheme -Name "Catppuccin"
 Set-PromptTheme -Name "Kali"
 Set-PromptTheme -Name "Default"
+Set-PromptTheme -Name "Pablitus"
+Set-PromptTheme -Name "Pablitus Dark"
+Set-PromptTheme -Name "Pablitus Light"
 ```
 
 ### 🛠️ Temas personalizados
@@ -164,7 +167,7 @@ El contrato completo está documentado en `docs/Themes.md` y hay un ejemplo en `
 - **Proveedores:** 13 integrados.
 - **Segmentos:** 14 integrados.
 - **Renderers:** 8 integrados.
-- **Temas:** 5 integrados.
+- **Temas:** 8 integrados.
 - **Salida destacada:** PowerLine truecolor, ANSI, JSON, Markdown y HTML.
 - **Caché:** memoria y disco.
 - **Configuración:** JSON, PSD1 y hot reload.
