@@ -298,6 +298,126 @@ Register-PromptTheme `
 
     }
 
+    Context "Tema caliente / Hot Theme Switching (Fase 3E)" {
+
+        BeforeAll {
+            $script:hotThemeOriginal = Get-ActiveTheme
+        }
+
+        AfterAll {
+            if ($script:hotThemeOriginal) {
+                Set-PromptTheme -Name $script:hotThemeOriginal.Name
+            }
+        }
+
+        It "Exporta Switch-PromptTheme y la función está disponible sin reiniciar PowerShell" {
+            (Get-Command Switch-PromptTheme -ErrorAction SilentlyContinue) | Should -Not -Be $null
+        }
+
+        It "Cambia de tema activo inmediatamente sin reiniciar PowerShell" {
+            $result = Switch-PromptTheme -Name "Dracula"
+
+            $result | Should -Not -Be $null
+            $result.Name | Should -Be "Dracula"
+            (Get-ActiveTheme).Name | Should -Be "Dracula"
+            (Get-PromptTheme -Name "Dracula").Name | Should -Be "Dracula"
+        }
+
+        It "Lanza error al intentar cambiar a un tema que no está registrado" {
+            { Switch-PromptTheme -Name "TemaQueNoExiste$([guid]::NewGuid().ToString('N'))" } | Should -Throw
+        }
+
+        It "Devuelve información del tema activado (tema, paleta, iconos, segmentos, previo)" {
+            Set-PromptTheme -Name "Nord"
+
+            $result = Switch-PromptTheme -Name "Dracula"
+
+            $result.PreviousTheme | Should -Be "Nord"
+            $result.Name | Should -Be "Dracula"
+            $result.SwitchedAt | Should -BeGreaterThan ([datetime]::Now.AddMinutes(-1))
+            $result.Palette["Primary"] | Should -Be "Magenta" # Dracula palette
+            $result.Icons["GitDirty"] | Should -Be ""       # Dracula icon
+            $result.Segments["Session"]["Visible"] | Should -Be $true
+        }
+
+        It "El siguiente Invoke-Prompt renderiza con el nuevo tema (sin reinicio)" {
+            Switch-PromptTheme -Name "Nord"
+
+            $context = Invoke-Prompt
+            $prompt = Get-PromptString -Context $context -Renderer "PowerLine"
+
+            # Nord SessionBg = #5e81ac → truecolor de fondo 48;2;94;129;172
+            $prompt | Should -Match "`e\[48;2;94;129;172"
+            # Nord usa diamante de apertura (LeadingDiamond) en Session
+            $prompt | Should -Match ""
+
+            # Cambiar a otro tema y volver a renderizar: el nuevo tema se refleja
+            Switch-PromptTheme -Name "Dracula"
+            $context2 = Invoke-Prompt
+            $prompt2 = Get-PromptString -Context $context2 -Renderer "PowerLine"
+            $prompt2 | Should -Match "`e\[48;2;68;71;90" # Dracula SessionBg #44475a
+        }
+
+        It "No hay fuga de configuración entre temas (visibilidad, iconos y colores)" {
+            $oldTheme = Get-ActiveTheme
+            try {
+                # Línea base (Default): Memory y Project visibles
+                Set-PromptTheme -Name "Default"
+                (Get-SegmentConfiguration -Name "Memory").Visible | Should -Be $true
+                (Get-SegmentConfiguration -Name "Project").Visible | Should -Be $true
+                (Get-SegmentConfiguration -Name "Session").Icon | Should -Be ""
+                (Get-SegmentConfiguration -Name "Session").Foreground | Should -Be "Cyan"
+
+                # Cambiar a Kali: oculta Memory, Project, DotNet, etc.
+                Switch-PromptTheme -Name "Kali"
+                (Get-SegmentConfiguration -Name "Memory").Visible | Should -Be $false
+                (Get-SegmentConfiguration -Name "Project").Visible | Should -Be $false
+                (Get-SegmentConfiguration -Name "Session").Icon | Should -Be "Session" # clave de icono de Kali
+                (Get-SegmentConfiguration -Name "Session").Foreground | Should -Be "DarkText"
+
+                # Volver a Default: nada del tema Kali debe persistir (sin fugas)
+                Switch-PromptTheme -Name "Default"
+                (Get-SegmentConfiguration -Name "Memory").Visible | Should -Be $true
+                (Get-SegmentConfiguration -Name "Project").Visible | Should -Be $true
+                (Get-SegmentConfiguration -Name "Session").Icon | Should -Be ""
+                (Get-SegmentConfiguration -Name "Session").Foreground | Should -Be "Cyan"
+
+                # Renderizar con Default no debe contener el truecolor de Kali SessionBg (#00a86b)
+                $context = Invoke-Prompt
+                $prompt = Get-PromptString -Context $context -Renderer "PowerLine"
+                $prompt | Should -Not -Match "48;2;0;168;107"
+
+                # Set-PromptTheme también debe invalidar estado y no filtrar configuración
+                Set-PromptTheme -Name "Nord"
+                (Get-SegmentConfiguration -Name "Memory").Visible | Should -Be $false
+                Set-PromptTheme -Name "Default"
+                (Get-SegmentConfiguration -Name "Memory").Visible | Should -Be $true
+            }
+            finally {
+                if ($oldTheme) { Set-PromptTheme -Name $oldTheme.Name }
+            }
+        }
+
+        It "El cambio de tema tarda menos de 100 ms" {
+            $themes = @("Default", "Nord", "Dracula", "Catppuccin", "Kali")
+            $null = Switch-PromptTheme -Name $themes[0] # calentamiento
+
+            $maxMs = 0.0
+            for ($i = 0; $i -lt 10; $i++) {
+                $sw = [System.Diagnostics.Stopwatch]::StartNew()
+                $null = Switch-PromptTheme -Name $themes[$i % $themes.Count]
+                $sw.Stop()
+                if ($sw.Elapsed.TotalMilliseconds -gt $maxMs) {
+                    $maxMs = $sw.Elapsed.TotalMilliseconds
+                }
+            }
+
+            Write-Verbose "[PPF] Tiempo máximo de cambio de tema: $maxMs ms"
+            $maxMs | Should -BeLessThan 100
+        }
+
+    }
+
     Context "Configuration Manager (Fase 4)" {
 
         BeforeAll {

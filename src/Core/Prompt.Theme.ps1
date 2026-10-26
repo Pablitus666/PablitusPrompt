@@ -137,6 +137,11 @@ function Set-PromptTheme {
     # visibility and icon changes do not leak between themes.
     Reset-PPFThemeSegments
 
+    # Invalida la caché de tema/segmento para evitar fugas de estado entre
+    # temas (colores, iconos y visibilidad resueltos con el tema anterior no
+    # deben persistir en la caché de memoria ni en disco).
+    Clear-PPFCacheByTheme
+
     # Actualizar la configuración activa con la del tema
     $theme = $script:PromptThemes[$Name]
     $config = Get-PromptConfiguration
@@ -162,6 +167,78 @@ function Set-PromptTheme {
 
     if (Get-Command Invoke-PPFEvent -ErrorAction SilentlyContinue) {
         Invoke-PPFEvent -EventName "ThemeChanged" -EventArgs $Name
+    }
+
+}
+
+function Switch-PromptTheme {
+
+    <#
+    .SYNOPSIS
+        Cambia el tema activo inmediatamente, sin reiniciar PowerShell.
+
+    .DESCRIPTION
+        Switch-PromptTheme activa un tema registrado en caliente. A diferencia
+        de una recarga completa del módulo, esta operación:
+
+        1. Valida que el tema exista (esté registrado con Register-PromptTheme).
+        2. Restaura la línea base de segmentos (Reset-PPFThemeSegments), de modo
+           que los overrides del tema anterior (segmentos ocultos, iconos,
+           colores) no persistan.
+        3. Invalida la caché de segmento/tema (Clear-PPFCacheByTheme) para que
+           la siguiente renderización resuelva todo con el nuevo tema.
+        4. Aplica los overrides (paleta, iconos y configuración de segmentos)
+           del tema entrante.
+        5. Devuelve información del tema activado.
+
+    .PARAMETER Name
+        Nombre del tema a activar. Debe estar registrado previamente.
+
+    .OUTPUTS
+        [PSCustomObject] con Name, Palette, Icons, Segments, PreviousTheme y
+        SwitchedAt del tema activado.
+
+    .EXAMPLE
+        Switch-PromptTheme -Name "Nord"
+
+        Cambia al tema Nord inmediatamente y devuelve su información.
+
+    .NOTES
+        No se requiere reiniciar PowerShell. El cambio es efectivo para el
+        siguiente Invoke-Prompt.
+    #>
+
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Name
+    )
+
+    # Validar que el tema exista antes de mutar cualquier estado.
+    if (-not $script:PromptThemes.ContainsKey($Name)) {
+        throw "El tema '$Name' no está registrado. Regístrelo con Register-PromptTheme antes de cambiar a él."
+    }
+
+    # Capturar el tema previo antes de cambiar el activo, para reportarlo en
+    # el resultado (útil para auditoría y rollback manual).
+    $previousThemeName = $script:ActiveThemeName
+
+    # Cambiar el tema activo inmediatamente. Set-PromptTheme se encarga de:
+    #   - Restaurar la línea base (rollback de la configuración del tema previo).
+    #   - Invalidar la caché de segmentos (sin fugas de color/icono entre temas).
+    #   - Aplicar los overrides del nuevo tema.
+    Set-PromptTheme -Name $Name
+
+    $theme = Get-ActiveTheme
+
+    # Devolver información del tema activado.
+    [PSCustomObject]@{
+        Name          = $theme.Name
+        Palette       = $theme.Palette
+        Icons         = $theme.Icons
+        Segments      = $theme.Segments
+        PreviousTheme = $previousThemeName
+        SwitchedAt    = [datetime]::Now
     }
 
 }

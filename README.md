@@ -705,6 +705,192 @@ Ejemplo de tema JSON completo con right prompt, prompt transitorio y tooltips:
 
 ---
 
+## Guía de usuario rápida
+
+Esta guía cubre las tareas más comunes: cambiar de tema, renderizar el prompt
+principal, el prompt transitorio y los tooltips, y dejar todo configurado en tu
+`$PROFILE`.
+
+### Requisito para Fase 3C (prompt transitorio, tooltips y right prompt)
+
+El núcleo .NET de PPF renderiza estas funcionalidades y requiere opt-in:
+
+```powershell
+$env:PPF_USE_DOTNET_CORE = "1"
+Import-Module PablitusPrompt -Force
+```
+
+### Cambiar de tema
+
+PPF incluye 8 temas oficiales:
+
+```powershell
+Set-PromptTheme -Name "Default"
+Set-PromptTheme -Name "Nord"
+Set-PromptTheme -Name "Dracula"
+Set-PromptTheme -Name "Catppuccin"
+Set-PromptTheme -Name "Kali"
+Set-PromptTheme -Name "Pablitus"
+Set-PromptTheme -Name "Pablitus Dark"
+Set-PromptTheme -Name "Pablitus Light"
+```
+
+Consulta los temas disponibles y el activo:
+
+```powershell
+Get-PromptThemes | Select-Object -ExpandProperty Name
+Get-ActiveTheme
+Get-PromptTheme -Name "Pablitus Dark"
+```
+
+### Renderizar el prompt principal
+
+```powershell
+Import-Module PablitusPrompt -Force
+Set-PromptTheme -Name "Pablitus"
+
+$context = Invoke-Prompt
+Get-PromptString -Context $context -Renderer "PowerLine"
+```
+
+Pasa el ancho de terminal para que el núcleo combine el prompt principal con el
+right prompt (`overflow: hide` u `overflow: break`):
+
+```powershell
+Get-PromptString -TerminalWidth 120
+```
+
+### Prompt transitorio
+
+Un prompt simplificado que se muestra tras aceptar un comando. Requiere que el
+tema activo defina un bloque `transientPrompt`:
+
+```powershell
+Get-PromptString -Transient -TerminalWidth 80
+```
+
+Soporta `template`, `right_template`, `filler`, `newline`, `foreground` y
+`background`. Devuelve `$null` si el tema activo no define un `transientPrompt`.
+
+### Tooltips
+
+Segmentos alineados a la derecha que aparecen al escribir palabras clave (`tips`):
+
+```powershell
+Get-PromptTooltip -Command "git" -TerminalWidth 80 -Column 5
+```
+
+- `-Command`: primera palabra del comando (por ejemplo, `git`, `docker`).
+- `-TerminalWidth`: ancho de la terminal para alinear el tooltip a la derecha.
+- `-Column`: columna del cursor (punto de inicio del alineado a la derecha).
+
+Devuelve el texto del tooltip, o `$null` si no hay coincidencia con ninguna
+palabra clave configurada. Cómo se combina con el right prompt actual depende
+de `tooltipsAction` del tema: `replace` (predeterminado), `extend` o `prepend`.
+
+### Ejemplo de tema JSON completo
+
+Este tema declarativo combina right prompt, prompt transitorio y tooltips:
+
+```json
+{
+  "name": "MiTema",
+  "renderer": "powerline",
+  "transientPrompt": {
+    "template": "{{ .Path.Folder }} ❯ ",
+    "right_template": "{{ .Time }}",
+    "filler": "-",
+    "foreground": "#cdd6f4",
+    "background": "#1e1e2e"
+  },
+  "tooltips": [
+    {
+      "tips": ["git"],
+      "type": "text",
+      "template": "git: {{ .Git.Branch }}",
+      "style": "plain"
+    },
+    {
+      "tips": ["docker"],
+      "type": "text",
+      "template": "docker: {{ .Docker.Containers }}",
+      "style": "plain"
+    }
+  ],
+  "tooltipsAction": "extend",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        { "type": "session", "template": "{{ .UserName }}", "style": "plain" },
+        { "type": "path", "template": "{{ .Path.Display }}", "style": "plain" }
+      ]
+    },
+    {
+      "type": "rprompt",
+      "alignment": "right",
+      "filler": "·",
+      "overflow": "hide",
+      "segments": [
+        { "type": "text", "template": "{{ .Path.Folder }}", "style": "plain" }
+      ]
+    }
+  ]
+}
+```
+
+Importa y activa el tema JSON con el núcleo .NET:
+
+```powershell
+$env:PPF_USE_DOTNET_CORE = "1"
+Import-Module PablitusPrompt -Force
+
+Import-PPFDotNetTheme -Path "$HOME\Documents\PowerShell\Themes\MiTema.ppf.json" -Activate
+Set-PromptTheme -Name "MiTema"
+```
+
+### Configuración en $PROFILE
+
+Agrega este bloque a tu `$PROFILE` (éditalo con `notepad $PROFILE` o
+`code $PROFILE`) y ajusta la ruta del repositorio:
+
+```powershell
+$PPF = "D:\PablitusPrompt\src"
+
+if (Test-Path (Join-Path $PPF "Bootstrap.ps1")) {
+    try {
+        . (Join-Path $PPF "Bootstrap.ps1")
+
+        $env:PPF_USE_DOTNET_CORE = "1"
+        Set-PromptTheme -Name "Pablitus Dark"
+        $global:PPF_SkipHiddenProviders = $true
+
+        function global:prompt {
+            try {
+                $context = Invoke-Prompt
+                Get-PromptString -Context $context -Renderer "PowerLine"
+            }
+            catch {
+                "PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
+            }
+        }
+    }
+    catch {
+        Write-Warning "[PPF] No se pudo cargar el prompt: $_"
+    }
+}
+```
+
+El `try/catch` garantiza que un fallo de un proveedor, segmento o renderer no
+deje la consola sin prompt. El ancho de terminal se pasa desde el adaptador o
+CLI que invoque a `Get-PromptString`; en el bucle nativo de PowerShell el
+prompt principal se renderiza sin `-TerminalWidth`.
+
+Para volver al prompt anterior, elimina la función `prompt` del perfil o
+comenta el bloque.
+
+---
 ## Temas
 
 ### Cambiar de tema

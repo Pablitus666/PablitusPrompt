@@ -1,154 +1,225 @@
-# Pablitus Prompt Framework - Themes Reference
+# Pablitus Prompt Framework - Temas
 
-Themes in PPF define the color palette, icons, and per-segment overrides that
-segments use to render themselves. A theme only declares overrides; switching
-themes restores the baseline segment configuration first, so hidden segments or
-icons never leak between themes.
+Los temas de PPF definen la paleta de colores, los íconos y las anulaciones por
+segmento que los segmentos usan para renderizarse. Un tema solo declara
+anulaciones; al cambiar de tema se restaura primero la configuración base de los
+segmentos, por lo que los segmentos ocultos o los íconos nunca se filtran entre
+temas.
 
-PPF ships with 5 built-in themes in `src/Themes/`. The built-in PowerLine themes
-use the Nerd Font clock glyph (`U+F017`) for the `Time` segment.
+PPF incluye 8 temas oficiales en `src/Themes/`. Los temas integrados de
+PowerLine usan el glifo de reloj de Nerd Font (`U+F017`) para el segmento
+`Time`.
+
+## Temas oficiales
+
+| Tema | Estilo | Paleta principal | Mejor caso de uso |
+| --- | --- | --- | --- |
+| `Default` | Base ANSI clásica | Cyan, Blue, Green, Yellow, Magenta, Red | Prompts sencillos y compatibles con cualquier terminal sin Nerd Font. |
+| `Nord` | Polar Night, Frost y Aurora | `#5e81ac`, `#434c5e`, `#a3be8c`, `#ebcb8b` | Escritorios oscuros con buena legibilidad y bloques PowerLine. |
+| `Dracula` | Paleta oficial Dracula | `#44475a`, `#6272a4`, `#ffb86c`, `#8be9fd`, `#ff79c6` | Estilo oscuro clásico con alto contraste y silueta de Oh My Posh. |
+| `Catppuccin` | Catppuccin Mocha | `#cba6f7`, `#585b70`, `#fab387`, `#a6e3a1`, `#89b4fa` | Paleta pastel suave sobre fondo oscuro para sesiones largas. |
+| `Kali` | Verde, cian y ámbar | `#00a86b`, `#00838f`, `#ffc107`, `#ff9800`, `#9c27b0` | Entornos de seguridad y auditoría con `user@host` visible. |
+| `Pablitus` | PowerLine truecolor oscuro | `#1e1e2e`, `#89b4fa`, `#a6e3a1`, `#f38ba8` | Tema oficial de PPF: Session, Path, Git y Time con diamantes. |
+| `Pablitus Dark` | PowerLine truecolor muy oscuro | `#0a0a0a`, `#bb86fc`, `#03dac6`, `#ff5252` | Fondos negros; incluye prompt transitorio con `right_template` y `filler`. |
+| `Pablitus Light` | PowerLine truecolor claro/neón | `#fafafa`, `#ff00ff`, `#00e5ff`, `#00ff9f`, `#ff6b00` | Terminales con tema claro; diamantes magenta, cian y naranja. |
+
+Los temas PowerLine comparten la misma gramática visual de bloques, diamantes y
+glifos de Nerd Font, pero cada uno define su propia paleta, contraste y acentos.
+El segmento `Time` usa el icono de reloj de Nerd Font (`U+F017`).
 
 ---
 
 ## 1. Default
-- **Palette**: standard ANSI colors (Cyan, Blue, Green, Yellow, Magenta, Red).
-- **Icons**: clean Unicode/Nerd Font equivalents.
-- **Renderer**: ANSI-oriented baseline. It still works with PowerLine through
-  the renderer's foreground-to-background fallback, but does not define
-  truecolor blocks.
+
+- **Paleta**: colores ANSI estándar (Cyan, Blue, Green, Yellow, Magenta, Red).
+- **Íconos**: equivalentes Unicode/Nerd Font limpios.
+- **Renderizador**: base orientada a ANSI. Funciona con PowerLine a través del
+  fallback de fondo del renderizador, pero no define bloques truecolor.
+- **Segmentos visibles**: Session, Project, Path, Git, Python y Node.
 
 ---
 
 ## 2. Nord
-- **Palette**: official Nord palette (Polar Night, Snow Storm, Frost and Aurora).
-- **PowerLine**: truecolor blocks for Session, Project, Path, Git, Python, Node,
-  Time and the optional runtime/telemetry segments.
-- **Layout**: frost-blue session block, compact Polar Night path block,
-  Git/Python/Node accents and a diamond-closed yellow time block. Uses light text
-  on the darker Session/Path blocks and dark text on the Aurora/Frost accents.
-  Project and the telemetry blocks are hidden by default to keep the layout
-  compact; they still have colors if you enable them.
-- **Renderer**: best used with `Get-PromptString -Renderer "PowerLine"`.
+
+- **Paleta**: paleta oficial Nord (Polar Night, Snow Storm, Frost y Aurora).
+- **PowerLine**: bloques truecolor para Session, Path, Git, Python, Node y
+  Time.
+- **Diseño**: bloque de sesión azul escarcha, bloque de ruta Polar Night
+  compacto, acentos de Git/Python/Node y bloque de tiempo cerrado con diamante
+  amarillo. Usa texto claro sobre los bloques oscuros de Sesión/Ruta y texto
+  oscuro sobre los acentos de Aurora/Frost. Project y los bloques de telemetría
+  están ocultos por defecto para mantener el diseño compacto; siguen teniendo
+  colores si se habilitan.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
 
 ---
 
 ## 3. Dracula
-- **Palette**: official Dracula truecolor palette: `#44475a` session, `#6272a4`
-  path, `#ffb86c` Git, `#8be9fd` Node, `#ff79c6` time, `#f8f8f2` text and
-  `#282a36` dark text.
-- **Layout**: Powerline blocks with a leading session diamond and a trailing time
-  diamond, matching the Oh My Posh Dracula theme. Session and Path use light text;
-  Git, Node and Time use dark text for stronger contrast.
-- **Renderer**: best used with `Get-PromptString -Renderer "PowerLine"`.
-- **Behavior**: shows Session, Path, Git, Node and Time. Hides `Project`,
-  `Python`, `Docker`, `WSL`, `Battery`, `CPU`, `Memory`, `Kubernetes` and
-  `DotNet` to keep the official Dracula silhouette.
+
+- **Paleta**: paleta truecolor oficial Dracula: `#44475a` sesión, `#6272a4`
+  ruta, `#ffb86c` Git, `#8be9fd` Node, `#ff79c6` tiempo, `#f8f8f2` texto y
+  `#282a36` texto oscuro.
+- **Diseño**: bloques PowerLine con diamante de apertura en sesión y diamante de
+  cierre en tiempo, al estilo del tema Dracula de Oh My Posh. Session y Path
+  usan texto claro; Git, Node y Time usan texto oscuro para mayor contraste.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
+- **Comportamiento**: muestra Session, Path, Git, Node y Time. Oculta
+  `Project`, `Python`, `Docker`, `WSL`, `Battery`, `CPU`, `Memory`,
+  `Kubernetes` y `DotNet` para mantener la silueta oficial de Dracula.
 
 ---
 
 ## 4. Catppuccin
-- **Palette**: Catppuccin Mocha (Mauve, Blue, Peach, Yellow, Green and Surface
-  tones).
-- **PowerLine**: truecolor blocks with a dark Surface path block and pastel
-  accent blocks for Session, Git, Python, Node and Time.
-- **Layout**: mauve session diamond, compact dark folder path, Git/Python/Node
-  accents and a diamond-closed blue time block. Uses dark text on the pastel
-  accents and light text on the dark path block. Project and the telemetry blocks
-  are hidden by default; they still have colors if you enable them.
-- **Renderer**: best used with `Get-PromptString -Renderer "PowerLine"`.
+
+- **Paleta**: Catppuccin Mocha (Mauve, Blue, Peach, Yellow, Green y tonos de
+  Surface).
+- **PowerLine**: bloques truecolor con un bloque de ruta Surface oscuro y
+  bloques de acento pastel para Session, Git, Python, Node y Time.
+- **Diseño**: diamante de sesión en mauve, bloque de ruta compacto de carpeta
+  oscura, acentos de Git/Python/Node y bloque de tiempo azul cerrado con
+  diamante. Usa texto oscuro sobre los acentos pastel y texto claro sobre el
+  bloque de ruta oscuro. Project y los bloques de telemetría están ocultos por
+  defecto; siguen teniendo colores si se habilitan.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
 
 ---
 
 ## 5. Kali
-- **Palette**: Kali-style terminal colors (green session, dark cyan path, amber
-  Git, orange Python and purple time) with truecolor PowerLine blocks.
-- **Icons**: Nerd Font glyphs shared with `Default`. The Time segment uses the
-  Nerd Font clock icon (`U+F017`).
-- **Behavior**: shows `user@host` in the session segment and hides `Project`,
-  `Memory`, `CPU`, `Battery`, `Docker`, `Kubernetes`, `DotNet`, `Node`, and
-  `WSL` for a minimal prompt. `ShowHost` can be enabled independently in any
-  theme's `Session` configuration.
-- **Renderer**: best used with `Get-PromptString -Renderer "PowerLine"`.
+
+- **Paleta**: colores de terminal al estilo Kali (sesión verde, ruta cian
+  oscuro, Git ámbar, Python naranja, tiempo púrpura) con bloques PowerLine
+  truecolor.
+- **Íconos**: glifos de Nerd Font compartidos con `Default`. El segmento Time
+  usa el icono de reloj de Nerd Font (`U+F017`).
+- **Comportamiento**: muestra `user@host` en el segmento de sesión y oculta
+  `Project`, `Memory`, `CPU`, `Battery`, `Docker`, `Kubernetes`, `DotNet`,
+  `Node` y `WSL` para un prompt minimalista. `ShowHost` se puede habilitar de
+  forma independiente en la configuración `Session` de cualquier tema.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
 
 ---
 
-## 6. PowerLine Theme Contract
+## 6. Pablitus
 
-For a theme to render polished PowerLine blocks, each visible segment override
-should define:
+- **Paleta**: PowerLine truecolor oscuro sobre `#1e1e2e` con `#89b4fa`
+  (sesión), `#a6e3a1` (ruta), `#89b4fa` (Git) y `#f38ba8` (tiempo).
+- **Íconos**: Nerd Font (`U+F017` para el reloj).
+- **Diseño**: Session, Path, Git y Time con diamantes de apertura y cierre.
+  Project está oculto. Es el tema oficial de PPF.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
 
-| Key | Purpose | Example |
+---
+
+## 7. Pablitus Dark
+
+- **Paleta**: PowerLine truecolor muy oscuro sobre `#0a0a0a` con `#bb86fc`
+  (sesión), `#03dac6` (ruta), `#bb86fc` (Git) y `#ff5252` (tiempo).
+- **Íconos**: Nerd Font (`U+F017` para el reloj).
+- **Diseño**: Session, Path, Git y Time con diamantes; Project está oculto.
+  Demuestra las capacidades de Fase 3C con prompt transitorio que usa
+  `right_template` y `filler`. Tema oficial oscuro de PPF.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
+
+---
+
+## 8. Pablitus Light
+
+- **Paleta**: PowerLine truecolor claro/neón sobre `#fafafa` con `#ff00ff`
+  (sesión), `#00e5ff` (ruta), `#00ff9f` (Git) y `#ff6b00` (tiempo).
+- **Íconos**: Nerd Font (`U+F017` para el reloj).
+- **Diseño**: Session, Path, Git y Time con diamantes; Project está oculto.
+  Paleta clara/neón con diamantes magenta, cian y naranja, optimizada para
+  terminales con tema claro.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
+
+---
+
+## 9. Contrato de tema PowerLine
+
+Para que un tema renderice bloques PowerLine pulidos, cada anulación de segmento
+visible debería definir:
+
+| Clave | Propósito | Ejemplo |
 | --- | --- | --- |
-| `Foreground` | Text color. Use a palette key or a `#rrggbb` value. | `"Text"` |
-| `Background` | Block background. Must resolve to a color. | `"PathBg"` |
-| `PowerlineSymbol` | Separator glyph. Defaults to ``. | `""` |
-| `LeadingDiamond` | Opening half-circle, used only on the first visible segment. | `""` |
-| `TrailingDiamond` | Closing half-circle, used only on the last visible segment. | `""` |
-| `PathStyle` | Set to `"Folder"` for a compact leaf-folder path. | `"Folder"` |
+| `Foreground` | Color del texto. Usa una clave de paleta o un valor `#rrggbb`. | `"Text"` |
+| `Background` | Fondo del bloque. Debe resolverse a un color. | `"PathBg"` |
+| `PowerlineSymbol` | Glifo separador. Por defecto es ``. | `""` |
+| `LeadingDiamond` | Semicírculo de apertura, usado solo en el primer segmento visible. | `""` |
+| `TrailingDiamond` | Semicírculo de cierre, usado solo en el último segmento visible. | `""` |
+| `PathStyle` | Se establece en `"Folder"` para una ruta de carpeta compacta. | `"Folder"` |
 
-If a segment has a `Background` but no `Foreground`, the renderer chooses a
-contrasting ANSI color automatically. For the best result, define both.
+Si un segmento tiene `Background` pero no `Foreground`, el renderizador elige
+automáticamente un color ANSI contrastante. Para obtener el mejor resultado,
+definir ambos.
 
 ---
 
-## 7. Theme Operations
+## 10. Operaciones de tema
 
-### Activating a theme
+### Activar un tema
+
 ```powershell
 Set-PromptTheme -Name "Catppuccin"
 ```
 
-### Listing registered themes
+### Listar temas registrados
+
 ```powershell
 Get-PromptThemes | Select-Object -ExpandProperty Name
 ```
 
-### Retrieving active theme details
+### Obtener detalles del tema activo
+
 ```powershell
 Get-ActiveTheme
 ```
 
-### Querying colors and icons
-If you are developing a segment, use these helper functions to resolve themes
-dynamically:
+### Consultar colores e íconos
+
+Si estás desarrollando un segmento, usa estas funciones auxiliares para
+resolver temas dinámicamente:
 
 ```powershell
 $color = Resolve-ThemeColor -ColorName "Primary"
 $icon  = Resolve-ThemeIcon -IconKey "GitDirty"
 ```
 
-These functions fall back gracefully when a theme does not define a custom key.
+Estas funciones hacen fallback de forma elegante cuando el tema no define una
+clave personalizada.
 
 ---
 
-## 8. Creating Custom Themes
+## 11. Crear temas personalizados
 
-There are two supported ways to add themes.
+Hay dos formas compatibles de agregar temas.
 
-### Option A: Built-in theme file
-Create `src/Themes/MyTheme.Theme.ps1`. The loader automatically imports every
-`*.Theme.ps1` file in that directory, so the theme is registered the next time
-the module is imported.
+### Opción A: archivo de tema integrado
 
-### Option B: External theme file
-Keep the theme outside the repository and import it explicitly:
+Crea `src/Themes/MiTema.Theme.ps1`. El cargador importa automáticamente todos
+los archivos `*.Theme.ps1` de ese directorio, por lo que el tema se registra la
+próxima vez que se importa el módulo.
+
+### Opción B: archivo de tema externo
+
+Mantén el tema fuera del repositorio e impórtalo explícitamente:
 
 ```powershell
-Import-PromptTheme -Path "$HOME\Documents\PowerShell\Themes\MyTheme.Theme.ps1"
-Set-PromptTheme -Name "MyTheme"
+Import-PromptTheme -Path "$HOME\Documents\PowerShell\Themes\MiTema.Theme.ps1"
+Set-PromptTheme -Name "MiTema"
 ```
 
-`Import-PromptTheme` also accepts a directory and imports every
-`*.Theme.ps1` file inside it:
+`Import-PromptTheme` también acepta un directorio e importa todos los archivos
+`*.Theme.ps1` dentro de él:
 
 ```powershell
 Import-PromptTheme -Path "$HOME\Documents\PowerShell\Themes"
 ```
 
-Add that line to your `$PROFILE` after the PPF bootstrap if you want custom
-themes available in every session.
+Agrega esa línea a tu `$PROFILE` después del bootstrap de PPF si quieres que
+los temas personalizados estén disponibles en cada sesión.
 
-### Theme file example
+### Ejemplo de archivo de tema
+
 ```powershell
 Register-PromptTheme `
     -Name "Sunset" `
@@ -211,14 +282,57 @@ Register-PromptTheme `
     }
 ```
 
-A complete copy is available at
+Una copia completa está disponible en
 [`examples/Themes/Sunset.Theme.ps1`](../examples/Themes/Sunset.Theme.ps1).
 
-### Theme rules
-- `Palette` and `Icons` are mandatory for `Register-PromptTheme`.
-- `Segments` is optional. Only declare the keys you want to override.
-- Palette values may be ANSI names (`"Cyan"`) or truecolor hex values
-  (`"#89b4fa"`).
-- Use `Visible = $false` to hide a segment for that theme.
-- Use `Get-PromptTheme -Name "MyTheme"` to inspect the registered object.
-- Use `Import-PromptTheme -PassThru` to return the themes added by an import.
+### Reglas del tema
+
+- `Palette` e `Icons` son obligatorios para `Register-PromptTheme`.
+- `Segments` es opcional. Declara solo las claves que quieras anular.
+- Los valores de `Palette` pueden ser nombres ANSI (`"Cyan"`) o valores
+  truecolor hexadecimales (`"#89b4fa"`).
+- Usa `Visible = $false` para ocultar un segmento en ese tema.
+- Usa `Get-PromptTheme -Name "MiTema"` para inspeccionar el objeto registrado.
+- Usa `Import-PromptTheme -PassThru` para devolver los temas agregados por una
+  importación.
+
+---
+
+## 12. Importar un tema de Oh My Posh (OMP)
+
+PPF puede importar temas de Oh My Posh (archivos `.omp.json`) a través del
+núcleo .NET con `Import-PPFDotNetTheme`. Esta función lee el tema OMP, valida
+los segmentos soportados y devuelve la configuración PPF.
+
+```powershell
+# Requiere el núcleo .NET (Fase 3C)
+$env:PPF_USE_DOTNET_CORE = "1"
+Import-Module PablitusPrompt -Force
+
+# Importar y validar sin activar
+Import-PPFDotNetTheme -Path "$HOME\Documents\PowerShell\Themes\MiTema.omp.json"
+
+# Importar y activar como tema actual
+Import-PPFDotNetTheme -Path "$HOME\Documents\PowerShell\Themes\Pablitus.omp.json" -Activate
+```
+
+| Parámetro | Descripción |
+| --- | --- |
+| `-Path` | Ruta al archivo `.omp.json` (obligatorio). |
+| `-IgnoreUnsupported` | Ignora los tipos de segmento que PPF no soporta en lugar de fallar. |
+| `-Activate` | Importa y establece el tema como activo en la sesión actual. |
+
+Después de importar con `-Activate`, usa `Set-PromptTheme -Name <nombre>` si
+necesitas cambiar de tema explícitamente.
+
+### Requisitos
+
+- `Import-PPFDotNetTheme` requiere que la DLL del núcleo .NET de PPF esté
+  disponible (se busca en `PPF_DOTNET_CORE_DLL`, `dotnet/publish` y el
+  directorio de salida de `dotnet build`).
+- Para temas nativos de PPF usa `Import-PromptTheme` con archivos
+  `*.Theme.ps1`.
+
+PPF soporta los siguientes tipos de segmento de OMP: `session`, `path`, `git`,
+`text`, `time` y `exit`. Otros tipos (por ejemplo, `aws`, `kubernetes`,
+`docker`, `go`, `rust`) se ignoran o requieren `-IgnoreUnsupported`.

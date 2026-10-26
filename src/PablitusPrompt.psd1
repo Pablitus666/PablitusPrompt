@@ -24,6 +24,7 @@
         "Get-ActiveTheme",
         "Import-PromptTheme",
         "Set-PromptTheme",
+        "Switch-PromptTheme",
         "Measure-Prompt",
         "Measure-PromptDetailed",
         "Test-PromptFramework",

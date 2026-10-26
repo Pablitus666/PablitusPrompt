@@ -196,6 +196,47 @@ function Clear-PPFCache {
 
 }
 
+function Clear-PPFCacheByTheme {
+
+    <#
+    .SYNOPSIS
+        Invalida la caché asociada a un cambio de tema.
+
+    .DESCRIPTION
+        Cuando se cambia de tema en caliente (sin reiniciar PowerShell), los
+        proveedores y segmentos pueden tener en memoria valores resueltos con
+        el tema anterior (colores, iconos, visibilidad de segmentos). Esta
+        función vacía la caché en memoria y descarta la copia en memoria del
+        caché de disco para que la siguiente renderización (Invoke-Prompt)
+        resuelva todo con el tema activo recién aplicado.
+
+        La configuración de segmentos en sí se restaura en Set-PromptTheme
+        mediante Reset-PPFThemeSegments (línea base); esta función se encarga
+        de los datos derivados cacheados (memoria y disco).
+
+    .NOTES
+        Es seguro llamarla en cada cambio de tema: el cambio de tema es una
+        operación poco frecuente y el coste de reconstruir la caché es
+        despreciable comparado con el riesgo de fugas de estado entre temas.
+    #>
+
+    [CmdletBinding()]
+
+    param()
+
+    # 1. Caché en memoria: eliminar todas las entradas. Los proveedores las
+    #    volverán a poblar con valores del tema activo.
+    $script:PPFMemoryCache.Clear()
+
+    # 2. Caché de disco: descartar la copia en memoria y marcarla sucia para
+    #    que se reescriba limpia en la próxima sincronización (al final del
+    #    siguiente Invoke-Prompt). Esto elimina progresivamente cualquier
+    #    entrada persistente del tema anterior.
+    $script:PPFDiskCacheInMem = @{}
+    $script:PPFDiskCacheDirty = $true
+
+}
+
 function Clear-AllPPFCache {
 
     $script:PPFMemoryCache.Clear()
