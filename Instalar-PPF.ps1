@@ -1,8 +1,6 @@
 # ============================================================
 # Pablitus Prompt Framework (PPF)
 # Script de instalación completa
-#
-# Ejecuta esto para instalar PPF con todos los temas y funcionalidades
 # ============================================================
 
 $ErrorActionPreference = "Stop"
@@ -42,9 +40,6 @@ if (Test-Path -LiteralPath $dotnetPublish) {
         Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
         Write-Host "  $($_.Name)" -ForegroundColor Green
     }
-} else {
-    Write-Host "ADVERTENCIA: No se encontró $dotnetPublish" -ForegroundColor Yellow
-    Write-Host "   Ejecuta primero: dotnet build dotnet/src/PablitusPrompt.Cli -c Release" -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -59,10 +54,10 @@ Write-Host "  Import-Module PablitusPrompt -Force"
 Write-Host "  Set-PromptTheme -Name 'Pablitus Stack'"
 Write-Host "  function global:prompt {"
 Write-Host "    try {"
-Write-Host "      $context = Invoke-Prompt"
-Write-Host "      Get-PromptString -Context $context -Renderer 'Plain'"
+Write-Host "      \$context = Invoke-Prompt"
+Write-Host "      Get-PromptString -Context \$context -Renderer 'Plain'"
 Write-Host "    } catch {"
-Write-Host "      'PS ' + $executionContext.SessionState.Path.CurrentLocation + '➜ '"
+Write-Host "      'PS ' + \$executionContext.SessionState.Path.CurrentLocation + '➜ '"
 Write-Host "    }"
 Write-Host "  }"
 Write-Host ""
