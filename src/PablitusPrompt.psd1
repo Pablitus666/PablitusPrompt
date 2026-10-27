@@ -64,6 +64,7 @@
         "Set-PPFCache",
         "Get-PPFCache",
         "Clear-PPFCache",
+        "Clear-PPFCacheByTheme",
         "Clear-AllPPFCache",
         "Write-PPFLog",
         "Set-PPFLogLevel",

@@ -6,7 +6,7 @@ anulaciones; al cambiar de tema se restaura primero la configuración base de lo
 segmentos, por lo que los segmentos ocultos o los íconos nunca se filtran entre
 temas.
 
-PPF incluye 8 temas oficiales en `src/Themes/`. Los temas integrados de
+PPF incluye 12 temas oficiales en `src/Themes/`. Los temas integrados de
 PowerLine usan el glifo de reloj de Nerd Font (`U+F017`) para el segmento
 `Time`.
 
@@ -20,8 +20,12 @@ PowerLine usan el glifo de reloj de Nerd Font (`U+F017`) para el segmento
 | `Catppuccin` | Catppuccin Mocha | `#cba6f7`, `#585b70`, `#fab387`, `#a6e3a1`, `#89b4fa` | Paleta pastel suave sobre fondo oscuro para sesiones largas. |
 | `Kali` | Verde, cian y ámbar | `#00a86b`, `#00838f`, `#ffc107`, `#ff9800`, `#9c27b0` | Entornos de seguridad y auditoría con `user@host` visible. |
 | `Pablitus` | PowerLine truecolor oscuro | `#1e1e2e`, `#89b4fa`, `#a6e3a1`, `#f38ba8` | Tema oficial de PPF: Session, Path, Git y Time con diamantes. |
-| `Pablitus Dark` | PowerLine truecolor muy oscuro | `#0a0a0a`, `#bb86fc`, `#03dac6`, `#ff5252` | Fondos negros; incluye prompt transitorio con `right_template` y `filler`. |
+| `Pablitus Dark` | PowerLine truecolor muy oscuro | `#0a0a0a`, `#bb86fc`, `#03dac6`, `#ff5252` | Fondos negros; transient prompt con `right_template` y `filler`. |
 | `Pablitus Light` | PowerLine truecolor claro/neón | `#fafafa`, `#ff00ff`, `#00e5ff`, `#00ff9f`, `#ff6b00` | Terminales con tema claro; diamantes magenta, cian y naranja. |
+| `Pablitus Neon` | PowerLine truecolor neón oscuro | `#0a0a0a`, `#ff00ff`, `#00e5ff`, `#00ff9f` | Estilo neón vibrante sobre fondo oscuro; diamantes magenta, cian y verde. |
+| `Pablitus Matrix` | PowerLine truecolor verde matriz | `#000000`, `#00ff00`, `#33ff33` | Estilo monocromo verde matriz; sesiones de hacking y terminales oscuros. |
+| `Pablitus Ocean` | PowerLine truecolor azul océano | `#0a192f`, `#64ffda`, `#1d3557`, `#233554` | Desarrollo con rutas, Git y Docker; transient prompt y tooltips. |
+| `Pablitus Sunset` | PowerLine truecolor atardecer | `#2d1b19`, `#ef476f`, `#118ab2`, `#06d6a0` | Sesiones nocturnas con tonos cálidos; right prompt con `overflow: break`. |
 
 Los temas PowerLine comparten la misma gramática visual de bloques, diamantes y
 glifos de Nerd Font, pero cada uno define su propia paleta, contraste y acentos.
@@ -134,7 +138,55 @@ El segmento `Time` usa el icono de reloj de Nerd Font (`U+F017`).
 
 ---
 
-## 9. Contrato de tema PowerLine
+## 9. Pablitus Neon
+
+- **Paleta**: PowerLine truecolor neón oscuro sobre `#0a0a0a` con `#ff00ff`
+  (sesión), `#00e5ff` (ruta), `#00ff9f` (Git) y `#ff00ff` (tiempo).
+- **Íconos**: Nerd Font (`U+F017` para el reloj).
+- **Diseño**: Session, Path, Git y Time con diamantes de apertura y cierre.
+  Project está oculto. Paleta neón vibrante sobre fondo oscuro con diamantes
+  magenta, cian y verde lima.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
+
+---
+
+## 10. Pablitus Matrix
+
+- **Paleta**: PowerLine truecolor monocromo verde matriz sobre `#000000`
+  con `#00ff00` (sesión, ruta, Git) y `#33ff33` (ruta, tiempo).
+- **Íconos**: Nerd Font (`U+F017` para el reloj).
+- **Diseño**: Session, Path, Git y Time con diamantes de apertura y cierre.
+  Project y WSL están ocultos. Paleta verde matriz sobre fondo negro, ideal
+  para terminales oscuros y sesiones de estilo hacking.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
+
+---
+
+## 11. Pablitus Ocean
+
+- **Paleta**: PowerLine truecolor azul océano sobre `#0a192f` con `#64ffda`
+  (sesión, Git), `#1d3557` (sesión) y `#233554` (tiempo).
+- **Íconos**: Nerd Font (`U+F017` para el reloj).
+- **Diseño**: Session, Path, Git y Time con diamantes de apertura y cierre.
+  Project está oculto. Incluye transient prompt con `right_template`,
+  tooltips con `tips` específicos de Docker y right prompt con `filler`.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
+
+---
+
+## 12. Pablitus Sunset
+
+- **Paleta**: PowerLine truecolor atardecer sobre `#2d1b19` con `#ef476f`
+  (sesión), `#118ab2` (ruta), `#06d6a0` (Git) y `#ffd166` (tiempo).
+- **Íconos**: Nerd Font (`U+F017` para el reloj).
+- **Diseño**: Session, Path, Git y Time con diamantes de apertura y cierre.
+  Project está oculto. Incluye transient prompt con `filler` personalizado,
+  tooltips con múltiples palabras clave y right prompt con `overflow: break`.
+- **Renderizador**: se usa mejor con `Get-PromptString -Renderer "PowerLine"`.
+
+---
+
+## 13. Contrato de tema PowerLine
 
 Para que un tema renderice bloques PowerLine pulidos, cada anulación de segmento
 visible debería definir:

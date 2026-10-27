@@ -57,7 +57,7 @@ Get-PromptRenderers
 
 ## 3. Elegir y activar un tema
 
-PPF incluye 8 temas oficiales:
+PPF incluye 12 temas oficiales:
 
 ```powershell
 Set-PromptTheme -Name "Default"
@@ -68,6 +68,10 @@ Set-PromptTheme -Name "Kali"
 Set-PromptTheme -Name "Pablitus"
 Set-PromptTheme -Name "Pablitus Dark"
 Set-PromptTheme -Name "Pablitus Light"
+Set-PromptTheme -Name "Pablitus Neon"
+Set-PromptTheme -Name "Pablitus Matrix"
+Set-PromptTheme -Name "Pablitus Ocean"
+Set-PromptTheme -Name "Pablitus Sunset"
 ```
 
 En esta guía usamos **Pablitus**, el tema oficial de PPF (PowerLine truecolor

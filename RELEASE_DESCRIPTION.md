@@ -16,7 +16,7 @@ El resultado es un prompt propio, comprensible y extensible, sin depender de ser
 - **13 proveedores integrados:** Session, WSL, Path, Project, Git, Docker, Python, Node, DotNet, Kubernetes, Battery, CPU y Memory.
 - **14 segmentos visuales:** Session, Project, Path, Git, Python, Node, Docker, WSL, Battery, CPU, Memory, Kubernetes, DotNet y Time.
 - **8 renderers:** Plain, Minimal, JSON, ANSI, PowerLine, Markdown, HTML y Rich.
-- **8 temas integrados:** Default, Nord, Dracula, Catppuccin, Kali, Pablitus, Pablitus Dark y Pablitus Light.
+- **12 temas integrados:** Default, Nord, Dracula, Catppuccin, Kali, Pablitus, Pablitus Dark, Pablitus Light, Pablitus Neon, Pablitus Matrix, Pablitus Ocean y Pablitus Sunset.
 - **PowerLine truecolor:** bloques con fondos de 24 bits, separadores triangulares y diamantes de apertura/cierre para Dracula, Nord, Catppuccin y Kali.
 - **Temas personalizados:** `Import-PromptTheme` permite importar archivos o directorios completos sin modificar el repositorio.
 - **Segmento Time con reloj:** el segmento usa el glifo de reloj de Nerd Font (`U+F017`).
