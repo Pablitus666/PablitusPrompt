@@ -21,12 +21,11 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
     Write-Host "Creado: $modulePath" -ForegroundColor Green
 }
 
-# 2. Copiar TODOS los archivos del núcleo .NET
+# 2. Copiar TODO el directorio Core al módulo instalado
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
-Get-ChildItem -Path "$src/Core" -Recurse | ForEach-Object {
-    $relPath = $_.FullName.Substring($src.FullName.Length + 1)
-    $dest = Join-Path $modulePath $relPath
+Get-ChildItem -Path "$srcRoot/Core" -Recurse | ForEach-Object {
+    $dest = Join-Path $modulePath $_.FullName.Substring($srcRoot.Length + 1)
     if (-not (Test-Path -LiteralPath (Split-Path $dest))) {
         $null = New-Item -ItemType Directory -Path (Split-Path $dest) -Force
     }
@@ -36,7 +35,7 @@ Get-ChildItem -Path "$src/Core" -Recurse | ForEach-Object {
 # 3. Copiar todos los temas
 Write-Host ""
 Write-Host "Copiando temas..." -ForegroundColor Cyan
-Get-ChildItem -Path "$src/Themes" -Filter "*.Theme.ps1" | ForEach-Object {
+Get-ChildItem -Path "$srcRoot/Themes" -Filter "*.Theme.ps1" | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination "$modulePath/Themes/" -Force
     Write-Host "  Tema: $($_.Name)" -ForegroundColor Green
 }
@@ -44,11 +43,11 @@ Get-ChildItem -Path "$src/Themes" -Filter "*.Theme.ps1" | ForEach-Object {
 # 4. Copiar archivos raíz del módulo
 Write-Host ""
 Write-Host "Copiando archivos del módulo..." -ForegroundColor Cyan
-Get-ChildItem -Path "$src/*.ps1" | ForEach-Object {
+Get-ChildItem -Path "$srcRoot" -Filter "*.ps1" | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
     Write-Host "  $($_.Name)" -ForegroundColor Green
 }
-Get-ChildItem -Path "$src/PablitusPrompt.psd1" | ForEach-Object {
+Get-ChildItem -Path "$srcRoot/PablitusPrompt.psd1" | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
     Write-Host "  $($_.Name)" -ForegroundColor Green
 }
@@ -56,7 +55,7 @@ Get-ChildItem -Path "$src/PablitusPrompt.psd1" | ForEach-Object {
 # 5. Copiar scripts de ShellInit
 Write-Host ""
 Write-Host "Copiando scripts de ShellInit..." -ForegroundColor Cyan
-Get-ChildItem -Path "$src/ShellInit" -Filter "*.ps1" | ForEach-Object {
+Get-ChildItem -Path "$srcRoot/ShellInit" -Filter "*.ps1" | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination "$modulePath/ShellInit/" -Force
     Write-Host "  $($_.Name)" -ForegroundColor Green
 }
@@ -67,13 +66,13 @@ Write-Host "  INSTALACIÓN COMPLETADA" -ForegroundColor Green
 Write-Host "="*60 -ForegroundColor Cyan
 
 Write-Host ""
-Write-Host "Para usar PPF, agrega esto a tu $PROFILE:" -ForegroundColor Yellow
+Write-Host "Para usar PPF, agrega esto a tu '$PROFILE':" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "  Import-Module PablitusPrompt -Force"
 Write-Host "  Set-PromptTheme -Name 'Pablitus Stack'"
 Write-Host "  function global:prompt {"
 Write-Host "    try {"
-Write-Host "      \$context = Invoke-Prompt"
+Write-Host '      $context = Invoke-Prompt'
 Write-Host "      Get-PromptString -Context \$context -Renderer 'Plain'"
 Write-Host "    } catch {"
 Write-Host "      'PS ' + \$executionContext.SessionState.Path.CurrentLocation + '➜ '"
