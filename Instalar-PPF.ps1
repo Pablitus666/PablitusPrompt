@@ -1,13 +1,12 @@
 # ============================================================
 # Pablitus Prompt Framework (PPF)
 # Script de instalación completa
-#
-# Ejecuta esto para instalar PPF con todos los temas y funcionalidades
 # ============================================================
 
 $ErrorActionPreference = "Stop"
 
-$srcRoot = Join-Path $PSScriptRoot "src"
+$repoRoot = Get-Location
+$srcRoot = Join-Path $repoRoot "src"
 $modulePath = Join-Path $env:USERPROFILE "Documents\PowerShell\Modules\PablitusPrompt"
 
 Write-Host "================================================" -ForegroundColor Cyan
@@ -20,7 +19,7 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
     Write-Host "Creado: $modulePath" -ForegroundColor Green
 }
 
-# 2. Copiar TODOS los archivos de src/Core/
+# 2. Copiar TODO el directorio Core/ al módulo
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
 Get-ChildItem -Path "$srcRoot/Core" -Recurse -File | ForEach-Object {
@@ -35,12 +34,8 @@ Get-ChildItem -Path "$srcRoot/Core" -Recurse -File | ForEach-Object {
 # 3. Copiar todos los temas
 Write-Host ""
 Write-Host "Copiando temas..." -ForegroundColor Cyan
-$themesDest = Join-Path $modulePath "Themes"
-if (-not (Test-Path -LiteralPath $themesDest)) {
-    $null = New-Item -ItemType Directory -Path $themesDest -Force
-}
 Get-ChildItem -Path "$srcRoot/Themes" -Filter "*.Theme.ps1" | ForEach-Object {
-    Copy-Item -Path $_.FullName -Destination $themesDest -Force
+    Copy-Item -Path $_.FullName -Destination "$modulePath/Themes/" -Force
     Write-Host "  Tema: $($_.Name)" -ForegroundColor Green
 }
 
