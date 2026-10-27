@@ -37,6 +37,7 @@ function Get-PPFSourceFiles {
         "Prompt.Segment.Registry.ps1"
         "Prompt.Telemetry.ps1"
         "Prompt.Theme.ps1"
+        "Prompt.Theme.Omp.ps1"
     )
 
     $files = [System.Collections.Generic.List[string]]::new()
@@ -111,6 +112,7 @@ $PPFModularBootstrap = {
         "Prompt.Segment.Registry.ps1"
         "Prompt.Telemetry.ps1"
         "Prompt.Theme.ps1"
+        "Prompt.Theme.Omp.ps1"
     )
 
     $LoadedCoreFiles = @()
@@ -287,7 +289,8 @@ $PublicFunctions = @(
     "Import-PPFDotNetTheme",
     "Get-PromptTooltip",
     "Get-PromptMetrics",
-    "Clear-PPFMetrics"
+    "Clear-PPFMetrics",
+    "Import-OmpTheme"
 )
 
 Export-ModuleMember -Function $PublicFunctions

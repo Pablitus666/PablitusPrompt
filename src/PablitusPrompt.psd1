@@ -76,7 +76,8 @@
         "Import-PPFDotNetTheme",
         "Get-PromptTooltip",
         "Get-PromptMetrics",
-        "Clear-PPFMetrics"
+        "Clear-PPFMetrics",
+        "Import-OmpTheme"
     )
     CmdletsToExport = @()
     VariablesToExport = @()

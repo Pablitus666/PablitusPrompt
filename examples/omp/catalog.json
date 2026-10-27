@@ -1,0 +1,71 @@
+{
+  "$schema": "https://pablitus.dev/schemas/omp-catalog.schema.json",
+  "version": "1.0",
+  "description": "Catálogo de temas Oh My Posh compatibles con PPF",
+  "themes": [
+    {
+      "name": "jandedobbeleer",
+      "displayName": "Jandedobbeleer",
+      "description": "Tema oficial de Oh My Posh con diseño clásico",
+      "url": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json",
+      "author": "JanDeDobbeleer",
+      "version": 3
+    },
+    {
+      "name": "powerlevel10k_style",
+      "displayName": "Powerlevel10k Style",
+      "description": "Estilo inspirado en Powerlevel10k con diamantes y colores neón",
+      "url": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/powerlevel10k_mixed.omp.json",
+      "author": "JanDeDobbel eer",
+      "version": 3
+    },
+    {
+      "name": "paradox",
+      "displayName": "Paradox",
+      "description": "Tema oscuro con colores vibrantes y diseño minimalista",
+      "url": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/paradox.omp.json",
+      "author": "JanDeDobbel eer",
+      "version": 3
+    },
+    {
+      "name": "agnoster",
+      "displayName": "Agnoster",
+      "description": "Tema clásico de Powerline con segmentos de colores",
+      "url": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/agnoster.omp.json",
+      "author": "JanDeDobbel eer",
+      "version": 3
+    },
+    {
+      "name": "cloud",
+      "displayName": "Cloud",
+      "description": "Tema ligero con diseño minimalista",
+      "url": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/cloud.omp.json",
+      "author": "JanDeDobbel eer",
+      "version": 3
+    },
+    {
+      "name": "avit",
+      "displayName": "Avit",
+      "description": "Tema con información detallada de git y path",
+      "url": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/avit.omp.json",
+      "author": "JanDeDobbel eer",
+      "version": 3
+    },
+    {
+      "name": "candy",
+      "displayName": "Candy",
+      "description": "Tema con colores pastel y diseño suave",
+      "url": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/candy.omp.json",
+      "author": "JanDeDobbel eer",
+      "version": 3
+    },
+    {
+      "name": "lambda",
+      "displayName": "Lambda",
+      "description": "Tema minimalista con símbolo lambda",
+      "url": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/lambda.omp.json",
+      "author": "JanDeDobbel eer",
+      "version": 3
+    }
+  ]
+}
