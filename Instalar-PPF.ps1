@@ -2,7 +2,7 @@
 # Pablitus Prompt Framework (PPF)
 # Script de instalación completa
 #
-# Ejecuta esto desde la carpeta raíz del repositorio (D:\PablitusPrompt)
+# Ejecuta esto para instalar PPF con todos los temas y funcionalidades
 # ============================================================
 
 $ErrorActionPreference = "Stop"
@@ -10,6 +10,7 @@ $ErrorActionPreference = "Stop"
 $repoRoot = Get-Location
 $srcRoot = Join-Path $repoRoot "src"
 $modulePath = Join-Path $env:USERPROFILE "Documents\PowerShell\Modules\PablitusPrompt"
+$dotnetPublish = Join-Path $repoRoot "dotnet/publish"
 
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host "  Pablitus Prompt Framework - Instalación" -ForegroundColor Cyan
@@ -33,17 +34,17 @@ Get-ChildItem -Path "$srcRoot" -Recurse -File | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination $destPath -Force
 }
 
-# 3. Copiar el núcleo .NET desde dotnet/publish/
+# 3. Copiar el núcleo .NET compilado (dll, pdb, etc.)
 Write-Host ""
 Write-Host "Copiando núcleo .NET..." -ForegroundColor Cyan
-$dotnetPublish = Join-Path $repoRoot "dotnet/publish"
 if (Test-Path -LiteralPath $dotnetPublish) {
     Get-ChildItem -Path "$dotnetPublish" -File | ForEach-Object {
         Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
-        Write-Host "  $($_.Name)" -ForegroundColor Green
     }
+    Write-Host "  Núcleo .NET copiado" -ForegroundColor Green
 } else {
-    Write-Host "ADVERTENCIA: No se encontró $dotnetPublish. Construya el núcleo .NET primero con scripts/Build-PPFDotNetCore.ps1" -ForegroundColor Yellow
+    Write-Host "ADVERTENCIA: No se encontró $dotnetPublish" -ForegroundColor Yellow
+    Write-Host "   Ejecuta: dotnet publish dotnet/src/PablitusPrompt.Cli -c Release" -ForegroundColor Yellow
 }
 
 Write-Host ""
