@@ -1,0 +1,107 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 3,
+  "final_space": true,
+  "palette": {
+    "user": "#E0AF68",
+    "host": "#BB9AF7",
+    "path": "#7DCFFF",
+    "git": "#F7768E",
+    "success": "#9ece6a",
+    "error": "#f7768e"
+  },
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "powerline",
+          "foreground": "#1a1b26",
+          "background": "p:user",
+          "template": " {{ .UserName }} ",
+          "leading_diamond": "",
+          "trailing_diamond": ""
+        },
+        {
+          "type": "session",
+          "style": "powerline",
+          "foreground": "#1a1b26",
+          "background": "p:host",
+          "template": " @{{ .HostName }} ",
+          "leading_diamond": "",
+          "trailing_diamond": ""
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "foreground": "#1a1b26",
+          "background": "p:path",
+          "template": " {{ .Path.Display }} ",
+          "leading_diamond": "",
+          "trailing_diamond": ""
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "foreground": "#c0caf5",
+          "background": "p:git",
+          "template": " {{ if .HEAD }} {{ .HEAD }}{{ end }} ",
+          "leading_diamond": "",
+          "trailing_diamond": "",
+          "properties": {
+            "fetch_status": true
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#c0caf5",
+          "background": "transparent",
+          "template": "\n✘ {{ .Code }} ▶ "
+        }
+      ]
+    },
+    {
+      "type": "rprompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#c0caf5",
+          "background": "#1a1b26",
+          "template": " {{ .Time }} "
+        }
+      ]
+    }
+  ],
+  "transient_prompt": {
+    "template": "{{ .Shell }} ▶ ",
+    "right_template": "{{ .Path.Folder }}",
+    "filler": "━",
+    "newline": false,
+    "foreground": "#c0caf5",
+    "background": "#1a1b26"
+  },
+  "tooltips_action": "extend",
+  "tooltips": [
+    {
+      "type": "git",
+      "tips": ["git", "g"],
+      "style": "plain",
+      "foreground": "#1a1b26",
+      "background": "#bb9af7",
+      "template": "git {{ .HEAD }}"
+    },
+    {
+      "type": "text",
+      "tips": ["docker", "d"],
+      "style": "plain",
+      "foreground": "#1a1b26",
+      "background": "#e0af68",
+      "template": "docker"
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 3,
+  "final_space": true,
+  "palette": {
+    "user": "#8AE234",
+    "host": "#EF2929",
+    "path": "#729FCF",
+    "git": "#FCE94F"
+  },
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "p:user",
+          "background": "transparent",
+          "template": "┌─[{{ .UserName }}]"
+        },
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "p:host",
+          "background": "transparent",
+          "template": "@{{ .HostName }}"
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "foreground": "#2E3436",
+          "background": "p:path",
+          "template": " {{ .Path.Display }} "
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "foreground": "#2E3436",
+          "background": "p:git",
+          "template": "{{ .HEAD }}",
+          "properties": {
+            "fetch_status": true
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "p:path",
+          "background": "transparent",
+          "template": "\n└─▶ "
+        }
+      ]
+    },
+    {
+      "type": "rprompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#2E3436",
+          "background": "#FCE94F",
+          "template": " {{ .Time }} "
+        }
+      ]
+    }
+  ],
+  "transient_prompt": {
+    "template": "{{ .Shell }} ▶ ",
+    "right_template": "{{ .Path.Folder }}",
+    "filler": "─",
+    "newline": true,
+    "foreground": "#8AE234",
+    "background": "transparent"
+  },
+  "tooltips_action": "replace",
+  "tooltips": [
+    {
+      "type": "git",
+      "tips": ["git", "g"],
+      "style": "diamond",
+      "foreground": "#2E3436",
+      "background": "#FCE94F",
+      "template": "git {{ .HEAD }}",
+      "leading_diamond": "",
+      "trailing_diamond": ""
+    },
+    {
+      "type": "text",
+      "tips": ["docker", "d"],
+      "style": "plain",
+      "foreground": "#2E3436",
+      "background": "#EF2929",
+      "template": "docker"
+    }
+  ]
+}
