@@ -1,0 +1,163 @@
+{
+  "$schema": "https://pablitus.dev/schemas/ppf.schema.json",
+  "version": "1.0",
+  "renderer": "plain",
+  "finalSpace": true,
+  "cache": {
+    "enabled": true,
+    "ttlSeconds": 30,
+    "maxEntries": 256
+  },
+  "template": {
+    "prompt": "{{ .UserName }}@{{ .HostName }} ➜ ",
+    "rightPrompt": "{{ .Path.Folder }}",
+    "transientPrompt": "{{ .Shell }}> "
+  },
+  "transientPrompt": {
+    "template": "{{ if .Interrupted }}^C {{ end }}{{ .Shell }}> ",
+    "rightTemplate": "{{ .Path.Folder }}",
+    "filler": "-",
+    "newline": true,
+    "foreground": "#e0e0e0",
+    "background": "#01243a"
+  },
+  "tooltipsAction": "extend",
+  "tooltips": [
+    {
+      "type": "text",
+      "tips": ["git", "g"],
+      "style": "diamond",
+      "foreground": "#01243a",
+      "background": "#1abc9c",
+      "template": "git"
+    },
+    {
+      "type": "text",
+      "tips": ["docker", "d"],
+      "style": "plain",
+      "foreground": "#01243a",
+      "background": "#f39c12",
+      "template": "docker"
+    },
+    {
+      "type": "text",
+      "tips": ["npm", "node"],
+      "style": "plain",
+      "foreground": "#01243a",
+      "background": "#2ecc71",
+      "template": "node"
+    }
+  ],
+  "theme": {
+    "name": "Pablitus Honukai",
+    "version": "1.0",
+    "source": "pablitus",
+    "renderer": "plain",
+    "finalSpace": true,
+    "palette": {
+      "Background": "#01243a",
+      "Foreground": "#e0e0e0",
+      "Primary": "#1abc9c",
+      "Secondary": "#2c3e50",
+      "Success": "#2ecc71",
+      "Warning": "#f39c12",
+      "Error": "#e74c3c",
+      "SessionBg": "#1abc9c",
+      "SessionFg": "#01243a",
+      "PathBg": "#16a085",
+      "PathFg": "#e0e0e0",
+      "GitBg": "#f39c12",
+      "GitFg": "#01243a",
+      "TimeBg": "#2ecc71",
+      "TimeFg": "#01243a",
+      "Accent": "#34495e",
+      "Surface": "#0c1e2a"
+    },
+    "template": {
+      "transientPrompt": "{{ .Shell }}> ",
+      "rightTemplate": "{{ .Path.Folder }}",
+      "filler": "-",
+      "newline": true
+    },
+    "tooltipsAction": "extend",
+    "tooltips": [
+      {
+        "type": "text",
+        "tips": ["git", "g"],
+        "style": "diamond",
+        "foreground": "#01243a",
+        "background": "#1abc9c",
+        "template": "git"
+      },
+      {
+        "type": "text",
+        "tips": ["docker", "d"],
+        "style": "plain",
+        "foreground": "#01243a",
+        "background": "#f39c12",
+        "template": "docker"
+      },
+      {
+        "type": "text",
+        "tips": ["npm", "node"],
+        "style": "plain",
+        "foreground": "#01243a",
+        "background": "#2ecc71",
+        "template": "node"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "session",
+            "name": "session",
+            "style": "plain",
+            "foreground": "#01243a",
+            "background": "#1abc9c",
+            "template": "{{ .UserName }}@{{ .HostName }}"
+          },
+          {
+            "type": "path",
+            "name": "path",
+            "style": "plain",
+            "foreground": "#e0e0e0",
+            "background": "#16a085",
+            "template": "{{ .Path.Display }}"
+          },
+          {
+            "type": "git",
+            "name": "git",
+            "style": "plain",
+            "foreground": "#01243a",
+            "background": "#f39c12",
+            "template": "{{ if .Git.Branch }} {{ .Git.Branch }}{{ end }}",
+            "timeoutMs": 1500
+          },
+          {
+            "type": "time",
+            "name": "time",
+            "style": "plain",
+            "foreground": "#01243a",
+            "background": "#2ecc71",
+            "template": "{{ .Time }}"
+          }
+        ]
+      },
+      {
+        "type": "rprompt",
+        "alignment": "right",
+        "filler": "-",
+        "overflow": "hide",
+        "segments": [
+          {
+            "type": "text",
+            "template": "{{ .Path.Folder }}"
+          }
+        ]
+      }
+    ]
+  }
+}
