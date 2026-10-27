@@ -1,6 +1,8 @@
 # ============================================================
 # Pablitus Prompt Framework (PPF)
 # Script de instalación completa
+#
+# Ejecuta esto desde la carpeta raíz del repositorio (D:\PablitusPrompt)
 # ============================================================
 
 $ErrorActionPreference = "Stop"
@@ -31,7 +33,7 @@ Get-ChildItem -Path "$srcRoot" -Recurse -File | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination $destPath -Force
 }
 
-# 3. Copiar DLL del núcleo .NET (.NET Core)
+# 3. Copiar el núcleo .NET desde dotnet/publish/
 Write-Host ""
 Write-Host "Copiando núcleo .NET..." -ForegroundColor Cyan
 $dotnetPublish = Join-Path $repoRoot "dotnet/publish"
