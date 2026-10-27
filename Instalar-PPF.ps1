@@ -35,8 +35,12 @@ Get-ChildItem -Path "$srcRoot/Core" -Recurse -File | ForEach-Object {
 # 3. Copiar todos los temas
 Write-Host ""
 Write-Host "Copiando temas..." -ForegroundColor Cyan
+$themesDest = Join-Path $modulePath "Themes"
+if (-not (Test-Path -LiteralPath $themesDest)) {
+    $null = New-Item -ItemType Directory -Path $themesDest -Force
+}
 Get-ChildItem -Path "$srcRoot/Themes" -Filter "*.Theme.ps1" | ForEach-Object {
-    Copy-Item -Path $_.FullName -Destination "$modulePath/Themes/" -Force
+    Copy-Item -Path $_.FullName -Destination $themesDest -Force
     Write-Host "  Tema: $($_.Name)" -ForegroundColor Green
 }
 
