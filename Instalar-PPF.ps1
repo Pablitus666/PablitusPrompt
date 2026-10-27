@@ -59,8 +59,12 @@ Get-ChildItem -Path "$srcRoot/PablitusPrompt.psd1" | ForEach-Object {
 # 5. Copiar scripts de ShellInit
 Write-Host ""
 Write-Host "Copiando scripts de ShellInit..." -ForegroundColor Cyan
+$shellInitDest = Join-Path $modulePath "ShellInit"
+if (-not (Test-Path -LiteralPath $shellInitDest)) {
+    $null = New-Item -ItemType Directory -Path $shellInitDest -Force
+}
 Get-ChildItem -Path "$srcRoot/ShellInit" -Filter "*.ps1" | ForEach-Object {
-    Copy-Item -Path $_.FullName -Destination "$modulePath/ShellInit/" -Force
+    Copy-Item -Path $_.FullName -Destination $shellInitDest -Force
     Write-Host "  $($_.Name)" -ForegroundColor Green
 }
 
