@@ -120,6 +120,111 @@ function Import-PromptTheme {
 
 }
 
+function Install-PromptTheme {
+
+    <#
+    .SYNOPSIS
+        Instala un tema desde PowerShell Gallery (paquete PablitusPrompt.Themes).
+
+    .DESCRIPTION
+        Install-PromptTheme busca el tema solicitado en el paquete
+        PablitusPrompt.Themes de PowerShell Gallery, descarga el paquete a una
+        carpeta temporal, localiza el archivo .Theme.ps1 del tema, lo instala
+        en la carpeta de temas del usuario ($env:USERPROFILE\.pablitus\themes)
+        y lo registra con Import-PromptTheme para poder activarlo con
+        Set-PromptTheme o Switch-PromptTheme.
+
+        Antes de escribir en disco se verifica la integridad del archivo
+        descargado mediante su checksum SHA256.
+
+    .PARAMETER Name
+        Nombre del tema a instalar. Debe existir en el paquete de temas.
+
+    .PARAMETER Source
+        Origen del paquete. Valor admitido: "PSGallery".
+
+    .OUTPUTS
+        [PSCustomObject] con Name, Path, Source, Checksum, ChecksumAlgorithm,
+        Installed y Theme del tema instalado.
+
+    .EXAMPLE
+        Install-PromptTheme -Name Moonlight -Source PSGallery
+
+        Instala el tema Moonlight desde PowerShell Gallery, lo copia a la
+        carpeta de temas del usuario, lo registra en el módulo y devuelve su
+        información.
+
+    .NOTES
+        Requiere PowerShellGet para acceder a PowerShell Gallery. Los temas
+        instalados quedan disponibles para Set-PromptTheme /
+        Switch-PromptTheme.
+    #>
+
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Name,
+
+        [Parameter()]
+        [ValidateSet("PSGallery")]
+        [string]$Source = "PSGallery"
+    )
+
+    begin {
+        $userThemesRoot = Join-Path $env:USERPROFILE ".pablitus\themes"
+        if (-not (Test-Path -LiteralPath $userThemesRoot)) {
+            $null = New-Item -ItemType Directory -Path $userThemesRoot -Force
+        }
+    }
+
+    process {
+        # 1. Buscar el paquete de temas en PowerShell Gallery.
+        $package = Find-Module -Name "PablitusPrompt.Themes" -Repository PSGallery -ErrorAction Stop
+
+        # 2. Descargar el paquete en una carpeta temporal.
+        $tempRoot = Join-Path $env:TEMP ("PablitusPrompt.Themes." + [guid]::NewGuid().ToString("N"))
+        $null = Save-Module -Name $package.Name -Path $tempRoot -Repository PSGallery -ErrorAction Stop
+
+        # 3. Localizar el archivo .Theme.ps1 del tema dentro del paquete descargado.
+        $themeFile = Get-ChildItem -LiteralPath $tempRoot -Filter ("*" + $Name + "*.Theme.ps1") -Recurse -File -ErrorAction SilentlyContinue | Select-Object -First 1
+        if (-not $themeFile) {
+            throw "No se encontró el tema '$Name' en el paquete '$($package.Name)' ($($package.Version))."
+        }
+
+        # 4. Verificar la integridad del archivo descargado (checksum SHA256) antes de escribir en disco.
+        $checksum = Get-FileHash -LiteralPath $themeFile.FullName -Algorithm SHA256
+        $checksumHex = $checksum.Hash
+
+        # 5. Instalar el archivo en la carpeta de temas del usuario.
+        $destFile = Join-Path $userThemesRoot $themeFile.Name
+        Copy-Item -LiteralPath $themeFile.FullName -Destination $destFile -Force
+
+        # Verificar que el archivo escrito coincide con el descargado.
+        $destHash = Get-FileHash -LiteralPath $destFile -Algorithm SHA256
+        if ($destHash.Hash -ne $checksumHex) {
+            Remove-Item -LiteralPath $destFile -Force -ErrorAction SilentlyContinue
+            throw "El checksum del tema '$Name' no coincide tras la instalación. La instalación se canceló."
+        }
+
+        # 6. Registrar el tema con Import-PromptTheme.
+        $null = Import-PromptTheme -Path $destFile
+
+        # 7. Limpiar la carpeta temporal de descarga.
+        Remove-Item -LiteralPath $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
+
+        # 8. Devolver información del tema instalado.
+        [PSCustomObject]@{
+            Name               = $Name
+            Path               = $destFile
+            Source             = $Source
+            Checksum           = $checksumHex
+            ChecksumAlgorithm  = "SHA256"
+            Installed          = [datetime]::Now
+            Theme              = Get-PromptTheme -Name $Name
+        }
+    }
+}
+
 function Set-PromptTheme {
 
     param(

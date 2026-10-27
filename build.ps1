@@ -18,13 +18,56 @@ $buildDir = Join-Path $scriptDir "build"
 $publishDir = Join-Path $buildDir "PablitusPrompt"
 $manifestPath = Join-Path $srcDir "PablitusPrompt.psd1"
 
+# Ejecutable nativo .NET (ppf). Publicación framework-dependent: solo requiere
+# .NET 8 runtime, no depende de pwsh ni de una distribución de .NET embebida.
+$dotnetRoot = Join-Path $scriptDir "dotnet"
+$dotnetCliProject = Join-Path $dotnetRoot "src/PablitusPrompt.Cli/PablitusPrompt.Cli.csproj"
+$dotnetPublishDir = Join-Path $buildDir "dotnet-publish"
+$nativeExeName = if ($IsWindows) { "ppf.exe" } else { "ppf" }
+$nativePublishPath = Join-Path $dotnetPublishDir $nativeExeName
+
 # 1. Load Manifest Data to get current version
 Write-Host "Cargando manifiesto de módulo desde $manifestPath..." -ForegroundColor Cyan
 $manifestData = Import-PowerShellDataFile -Path $manifestPath
 $version = $manifestData.ModuleVersion
 Write-Host "Versión detectada: $version" -ForegroundColor Green
 
-# 2. Run Pester Tests
+# 2. Publicar el ejecutable nativo .NET (ppf)
+Write-Host "`n[0/6] Publicando ejecutable nativo ppf (.NET)..." -ForegroundColor Cyan
+if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
+    throw "El SDK de .NET no está en el PATH. Instale .NET 8 SDK para publicar el ejecutable nativo ppf."
+}
+if (-not (Test-Path -LiteralPath $dotnetCliProject)) {
+    throw "No se encontró el proyecto CLI: $dotnetCliProject"
+}
+
+if (Test-Path $dotnetPublishDir) {
+    Remove-Item $dotnetPublishDir -Recurse -Force
+}
+$null = New-Item -ItemType Directory -Path $dotnetPublishDir -Force
+
+# Publicación framework-dependent (--self-contained false): requiere únicamente
+# .NET 8 runtime en el equipo de destino, no depende de pwsh.
+$publishArgs = @(
+    "publish", $dotnetCliProject,
+    "-c", "Release",
+    "-o", $dotnetPublishDir,
+    "--self-contained", $false,
+    "--nologo"
+)
+Write-Host "Ejecutando: dotnet $($publishArgs -join ' ')" -ForegroundColor Gray
+$publishResult = & dotnet @publishArgs 2>&1
+if ($LASTEXITCODE -ne 0) {
+    $publishResult
+    throw "Fallo al publicar el ejecutable nativo ppf."
+}
+
+if (-not (Test-Path -LiteralPath $nativePublishPath)) {
+    throw "No se generó el ejecutable nativo: $nativePublishPath"
+}
+Write-Host "Ejecutable nativo publicado: $nativePublishPath" -ForegroundColor Green
+
+# 2b. Run Pester Tests
 Write-Host "`n[1/6] Ejecutando pruebas de Pester..." -ForegroundColor Cyan
 $pesterResult = Invoke-Pester -Path $testsDir -PassThru
 if ($pesterResult.FailedCount -gt 0) {
@@ -149,8 +192,8 @@ foreach ($func in $functions) {
 $sb.ToString() | Out-File -FilePath $docPath -Encoding utf8
 Write-Host "Documentación de API actualizada en '$docPath'." -ForegroundColor Green
 
-# 6. Packaging (ZIP + NuGet package for PowerShell Gallery)
-Write-Host "`n[5/6] Empaquetando módulo (ZIP y .nupkg)..." -ForegroundColor Cyan
+# 6. Packaging (ZIP + NuGet package del núcleo)
+Write-Host "`n[5/7] Empaquetando módulo (ZIP y .nupkg del núcleo)..." -ForegroundColor Cyan
 if (Test-Path $buildDir) {
     Remove-Item $buildDir -Recurse -Force
 }
@@ -161,6 +204,13 @@ Copy-Item -Path $srcDir\* -Destination $publishDir -Recurse -Force
 Copy-Item -Path (Join-Path $scriptDir "LICENSE") -Destination $publishDir -Force
 Copy-Item -Path (Join-Path $scriptDir "README.md") -Destination $publishDir -Force
 Copy-Item -Path (Join-Path $scriptDir "CHANGELOG.md") -Destination $publishDir -Force
+
+# Incluir el ejecutable nativo ppf en el paquete ZIP para que los shells
+# sin pwsh puedan usarlo directamente (ppf.bash/.zsh/.fish/.cmd lo detectan).
+$toolsDir = Join-Path $publishDir "tools"
+$null = New-Item -ItemType Directory -Path $toolsDir -Force
+Copy-Item -Path $nativePublishPath -Destination $toolsDir -Force
+Write-Host "Ejecutable nativo incluido en el paquete: $toolsDir\$nativeExeName" -ForegroundColor Green
 
 # Create Zip package
 $zipPath = Join-Path $buildDir "PablitusPrompt-v$version.zip"
@@ -215,15 +265,73 @@ finally {
 }
 Write-Host "Paquete NuGet (.nupkg) creado con éxito." -ForegroundColor Green
 
+# 6b. Paquete de temas para PowerShell Gallery (PablitusPrompt.Themes)
+Write-Host "`n[6/7] Empaquetando paquete de temas (PablitusPrompt.Themes.nupkg)..." -ForegroundColor Cyan
+$themesContentRoot = Join-Path $buildDir "PablitusPrompt.Themes.nupkg_content"
+$themesDir = Join-Path $themesContentRoot "themes"
+if (Test-Path $themesContentRoot) {
+    Remove-Item $themesContentRoot -Recurse -Force
+}
+$null = New-Item -ItemType Directory -Path $themesDir -Force
+
+# Temas adicionales (no del núcleo) distribuidos por la galería
+$additionalThemes = @(
+    "Moonlight.Theme.ps1"
+    "Solarized.Theme.ps1"
+    "TokyoNight.Theme.ps1"
+)
+foreach ($themeName in $additionalThemes) {
+    $sourceTheme = Join-Path (Join-Path $srcDir "Themes") $themeName
+    if (-not (Test-Path -LiteralPath $sourceTheme)) {
+        throw "Tema adicional no encontrado: $sourceTheme"
+    }
+    Copy-Item -LiteralPath $sourceTheme -Destination $themesDir -Force
+}
+
+# Archivos raíz del paquete de temas
+Copy-Item -Path (Join-Path $scriptDir "LICENSE") -Destination $themesContentRoot -Force
+Copy-Item -Path (Join-Path $scriptDir "README.md") -Destination $themesContentRoot -Force
+Copy-Item -Path (Join-Path $scriptDir "CHANGELOG.md") -Destination $themesContentRoot -Force
+
+# Nuspec del paquete de temas con versión del manifiesto
+$themesNuspecSource = Join-Path $scriptDir "PablitusPrompt.Themes.nuspec"
+$themesNuspecDest = Join-Path $themesContentRoot "PablitusPrompt.Themes.nuspec"
+Copy-Item -Path $themesNuspecSource -Destination $themesNuspecDest -Force
+$themesNuspecContent = Get-Content -LiteralPath $themesNuspecDest -Raw
+$themesNuspecContent = $themesNuspecContent -replace '<version>.*?</version>', "<version>$version</version>"
+Set-Content -LiteralPath $themesNuspecDest -Value $themesNuspecContent -Encoding utf8
+
+# Comprimir en .nupkg (entradas en la raíz del paquete)
+$themesNupkgPath = Join-Path $buildDir "PablitusPrompt.Themes.$version.nupkg"
+if (Test-Path $themesNupkgPath) { Remove-Item $themesNupkgPath -Force }
+Write-Host "Creando paquete de temas NuGet $themesNupkgPath..."
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$themesZip = [System.IO.Compression.ZipFile]::Open($themesNupkgPath, [System.IO.Compression.ZipArchiveMode]::Create)
+try {
+    $themesRootLen = $themesContentRoot.Length
+    Get-ChildItem -Path $themesContentRoot -File -Recurse | ForEach-Object {
+        $entryName = $_.FullName.Substring($themesRootLen + 1).Replace('\', '/')
+        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($themesZip, $_.FullName, $entryName, [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
+    }
+}
+finally {
+    $themesZip.Dispose()
+}
+Write-Host "Paquete de temas NuGet (.nupkg) creado con éxito." -ForegroundColor Green
+
 # 7. Changelog and Publish Preparation
-Write-Host "`n[6/6] Preparando publicación de artefactos..." -ForegroundColor Cyan
+Write-Host "`n[7/7] Preparando publicación de artefactos..." -ForegroundColor Cyan
 $artifactsDir = Join-Path $scriptDir "artifacts"
 if (-not (Test-Path $artifactsDir)) {
     $null = New-Item -ItemType Directory -Path $artifactsDir -Force
 }
 Copy-Item -Path $zipPath -Destination $artifactsDir -Force
 Copy-Item -Path $nupkgPath -Destination $artifactsDir -Force
+Copy-Item -Path $themesNupkgPath -Destination $artifactsDir -Force
+Copy-Item -Path $nativePublishPath -Destination $artifactsDir -Force
 Write-Host "Artefactos listos en: $artifactsDir" -ForegroundColor Green
 Write-Host "  - $(Split-Path $zipPath -Leaf)" -ForegroundColor Gray
 Write-Host "  - $(Split-Path $nupkgPath -Leaf)" -ForegroundColor Gray
+Write-Host "  - $(Split-Path $themesNupkgPath -Leaf)" -ForegroundColor Gray
+Write-Host "  - $(Split-Path $nativePublishPath -Leaf)" -ForegroundColor Gray
 Write-Host "`n=== PROCESO DE BUILD Y RELEASE COMPLETADO CON ÉXITO ===" -ForegroundColor Green

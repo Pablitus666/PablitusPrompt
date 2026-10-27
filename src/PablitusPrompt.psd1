@@ -23,6 +23,7 @@
         "Get-PromptTheme",
         "Get-ActiveTheme",
         "Import-PromptTheme",
+        "Install-PromptTheme",
         "Set-PromptTheme",
         "Switch-PromptTheme",
         "Measure-Prompt",
@@ -73,7 +74,9 @@
         "Disable-PPFDotNetCore",
         "Get-PPFDotNetCoreStatus",
         "Import-PPFDotNetTheme",
-        "Get-PromptTooltip"
+        "Get-PromptTooltip",
+        "Get-PromptMetrics",
+        "Flush-PPFMetrics"
     )
     CmdletsToExport = @()
     VariablesToExport = @()

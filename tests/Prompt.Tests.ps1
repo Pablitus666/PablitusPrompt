@@ -1351,6 +1351,226 @@ Register-PromptTheme `
         }
     }
 
+    Context "Métricas y observabilidad (Fase 3E)" {
+
+        BeforeAll {
+            $script:metricsEnvOriginal = $env:PPF_METRICS_ENABLED
+            $env:PPF_METRICS_ENABLED = '1'
+            Initialize-PPFMetrics
+        }
+
+        AfterAll {
+            if ($null -ne $script:metricsEnvOriginal) {
+                $env:PPF_METRICS_ENABLED = $script:metricsEnvOriginal
+            }
+            else {
+                $env:PPF_METRICS_ENABLED = $null
+            }
+        }
+
+        It "Get-PromptMetrics está exportada y disponible" {
+            (Get-Command Get-PromptMetrics -ErrorAction SilentlyContinue) | Should -Not -Be $null
+        }
+
+        It "Flush-PPFMetrics está exportada y disponible" {
+            (Get-Command Flush-PPFMetrics -ErrorAction SilentlyContinue) | Should -Not -Be $null
+        }
+
+        It "Escribe el archivo JSON diario en el directorio de caché" {
+            # Configurar acumulador diario con datos de ejemplo
+            $script:PPFMetricsDaily.RenderCount = 3
+            $script:PPFMetricsDaily.ActiveTheme = "Nord"
+            $script:PPFMetricsDaily.CacheHits = 10
+            $script:PPFMetricsDaily.CacheMisses = 2
+            $script:PPFMetricsDaily.SegmentTimes["Session"] = New-Object System.Collections.Generic.List[double]
+            $null = $script:PPFMetricsDaily.SegmentTimes["Session"].Add(1.5)
+            $null = $script:PPFMetricsDaily.SegmentTimes["Session"].Add(2.0)
+            $script:PPFMetricsDaily.ProviderTimes["Git"] = New-Object System.Collections.Generic.List[double]
+            $null = $script:PPFMetricsDaily.ProviderTimes["Git"].Add(5.0)
+            $null = $script:PPFMetricsDaily.ProviderTimes["Git"].Add(3.0)
+
+            Flush-PPFMetrics
+
+            $today = (Get-Date).ToString("yyyy-MM-dd")
+            $path = Join-Path $script:CacheDir "metrics-$today.json"
+            Test-Path -LiteralPath $path | Should -Be $true
+
+            # El contenido debe ser JSON válido y parseable
+            $json = Get-Content -Raw -LiteralPath $path -ErrorAction Stop
+            $data = $json | ConvertFrom-Json -AsHashtable -ErrorAction Stop
+            $data.Date | Should -Be $today
+            $data.RenderCount | Should -Be 3
+            $data.ActiveTheme | Should -Be "Nord"
+            $data.CacheHitRatio | Should -BeGreaterOrEqual 0
+            $data.SegmentTimes.Session.Count | Should -Be 2
+            $data.ProviderTimes.Git.Count | Should -Be 2
+
+            # Limpieza
+            Remove-Item -LiteralPath $path -Force -ErrorAction SilentlyContinue
+        }
+
+        It "No contiene PII en el archivo JSON (sin rutas de usuario, nombres ni ramas de git)" {
+            $script:PPFMetricsDaily.RenderCount = 1
+            $script:PPFMetricsDaily.ActiveTheme = "Default"
+            $script:PPFMetricsDaily.CacheHits = 1
+            $script:PPFMetricsDaily.CacheMisses = 0
+            Flush-PPFMetrics
+
+            $today = (Get-Date).ToString("yyyy-MM-dd")
+            $path = Join-Path $script:CacheDir "metrics-$today.json"
+            $content = Get-Content -Raw -LiteralPath $path -ErrorAction Stop
+
+            # No debe contener el nombre de usuario del sistema
+            $content | Should -Not -Match $env:USERNAME
+            # No debe contener rutas de usuario típicas de Windows
+            $content | Should -Not -Match "Users\\"
+            # No debe contener referencias a ramas de git
+            $content | Should -Not -Match "origin/"
+            $content | Should -Not -Match "refs/heads"
+
+            # Los identificadores internos del framework sí pueden aparecer (no son PII)
+            $content | Should -Match "Nord|Default|Session|Git"
+
+            Remove-Item -LiteralPath $path -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Lee métricas de un día anterior mediante -Date" {
+            $yesterday = (Get-Date).AddDays(-1)
+            $yesterdayStr = $yesterday.ToString("yyyy-MM-dd")
+            $path = Join-Path $script:CacheDir "metrics-$yesterdayStr.json"
+
+            $payload = [ordered]@{
+                Date           = $yesterdayStr
+                RenderCount    = 42
+                ActiveTheme    = "Dracula"
+                CacheHitRatio  = 75.0
+                CacheHits      = 15
+                CacheMisses    = 5
+                SegmentTimes   = [ordered]@{}
+                ProviderTimes  = [ordered]@{}
+                SlowProviders  = @("Git")
+                FlushedAt      = $yesterday.ToString("yyyy-MM-dd HH:mm:ss.fff")
+            }
+            $null = New-Item -ItemType Directory -Path $script:CacheDir -Force
+            $payload | ConvertTo-Json -Depth 5 | Out-File -LiteralPath $path -Encoding utf8 -ErrorAction Stop
+
+            $m = Get-PromptMetrics -Date $yesterday
+            $m.Date | Should -Be $yesterdayStr
+            $m.RenderCount | Should -Be 42
+            $m.ActiveTheme | Should -Be "Dracula"
+            $m.CacheHitRatio | Should -Be 75.0
+
+            Remove-Item -LiteralPath $path -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Sin variable de entorno, Get-PromptMetrics reporta desactivado" {
+            $env:PPF_METRICS_ENABLED = $null
+            $m = Get-PromptMetrics
+            $m.Enabled | Should -Be $false
+            $m.Message | Should -Not -BeNullOrEmpty
+        }
+    }
+
+    }
+
+    Context "Marketplace de temas desde PowerShell Gallery (Fase 3E)" {
+
+        BeforeAll {
+            $script:galleryThemeName = "GalleryTheme$([guid]::NewGuid().ToString('N'))"
+            $script:mockVersion = "1.0.0"
+            $script:userThemesRoot = Join-Path $env:USERPROFILE ".pablitus\themes"
+
+            # Estructura simulada de un paquete guardado con Save-Module:
+            # <raiz>\PablitusPrompt.Themes\<version>\themes\<Tema>.Theme.ps1
+            $script:mockPackageRoot = Join-Path $env:TEMP ("PablitusPrompt.Themes.Mock." + [guid]::NewGuid().ToString("N"))
+            $script:mockModuleDir = Join-Path $script:mockPackageRoot "PablitusPrompt.Themes" $script:mockVersion
+            $script:mockThemesDir = Join-Path $script:mockModuleDir "themes"
+            $null = New-Item -ItemType Directory -Path $script:mockThemesDir -Force
+
+            $script:mockThemePath = Join-Path $script:mockThemesDir "$($script:galleryThemeName).Theme.ps1"
+            $themeScript = @'
+Register-PromptTheme `
+    -Name "__NAME__" `
+    -Palette @{ "Background" = "Black"; "Foreground" = "White"; "Primary" = "Cyan" } `
+    -Icons @{ "Session" = ">" } `
+    -Segments @{ "Session" = @{ Visible = $true; Icon = ">"; Foreground = "Primary" } }
+'@
+            $themeScript.Replace("__NAME__", $script:galleryThemeName) |
+                Set-Content -LiteralPath $script:mockThemePath -Encoding utf8
+        }
+
+        AfterAll {
+            if ($script:mockPackageRoot -and (Test-Path -LiteralPath $script:mockPackageRoot)) {
+                Remove-Item -LiteralPath $script:mockPackageRoot -Recurse -Force
+            }
+            $installedTheme = Join-Path $script:userThemesRoot "$($script:galleryThemeName).Theme.ps1"
+            if (Test-Path -LiteralPath $installedTheme) {
+                Remove-Item -LiteralPath $installedTheme -Force
+            }
+        }
+
+        It "Install-PromptTheme está exportada y disponible como función pública" {
+            (Get-Command Install-PromptTheme -ErrorAction SilentlyContinue) | Should -Not -Be $null
+        }
+
+        It "Install-PromptTheme está declarada en FunctionsToExport del manifiesto del módulo" {
+            $manifest = Import-PowerShellDataFile -Path (Join-Path $PSScriptRoot "..\src\PablitusPrompt.psd1")
+            $manifest.FunctionsToExport | Should -Contain "Install-PromptTheme"
+        }
+
+        It "Instala un tema desde un paquete simulado y lo registra con Import-PromptTheme" {
+            $oldTheme = Get-ActiveTheme
+            try {
+                Mock Find-Module {
+                    [pscustomobject]@{
+                        Name    = "PablitusPrompt.Themes"
+                        Version = [version]"1.0.0"
+                    }
+                } -ModuleName PablitusPrompt
+
+                Mock Save-Module {
+                    param($Name, $Path, $Repository)
+                    $null = $Name, $Repository
+                    $dest = Join-Path -Path $Path -ChildPath "PablitusPrompt.Themes", $script:mockVersion
+                    $null = New-Item -ItemType Directory -Path (Join-Path -Path $dest -ChildPath "themes") -Force
+                    Copy-Item -LiteralPath $script:mockThemePath -Destination (Join-Path -Path $dest -ChildPath "themes", "$($script:galleryThemeName).Theme.ps1") -Force
+                } -ModuleName PablitusPrompt
+
+                $result = Install-PromptTheme -Name $script:galleryThemeName -Source PSGallery
+
+                $result | Should -Not -Be $null
+                $result.Name | Should -Be $script:galleryThemeName
+                $result.Source | Should -Be "PSGallery"
+                $result.ChecksumAlgorithm | Should -Be "SHA256"
+                $result.Checksum | Should -Not -BeNullOrEmpty
+                (Test-Path -LiteralPath $result.Path) | Should -Be $true
+                $result.Path | Should -Match "\.pablitus[\\/]themes[\\/]"
+                $temaRegistrado = Get-PromptTheme -Name $script:galleryThemeName
+                $temaRegistrado | Should -Not -Be $null
+                $temaRegistrado.Name | Should -Be $script:galleryThemeName
+            }
+            finally {
+                if ($oldTheme) { Set-PromptTheme -Name $oldTheme.Name }
+            }
+        }
+
+        It "Lanza error cuando el tema solicitado no existe en el paquete de temas" {
+            Mock Find-Module {
+                [pscustomobject]@{
+                    Name    = "PablitusPrompt.Themes"
+                    Version = [version]"1.0.0"
+                }
+            } -ModuleName PablitusPrompt
+
+            Mock Save-Module {
+                param($Name, $Path, $Repository)
+                $null = $Name, $Repository
+                $dest = Join-Path -Path $Path -ChildPath "PablitusPrompt.Themes", $script:mockVersion
+                $null = New-Item -ItemType Directory -Path $dest -Force
+            } -ModuleName PablitusPrompt
+
+            { Install-PromptTheme -Name "TemaInexistente$([guid]::NewGuid().ToString('N'))" -Source PSGallery } | Should -Throw
+        }
     }
 
     Context "Fast bootstrap path" {

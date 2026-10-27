@@ -26,6 +26,7 @@ function Get-PPFSourceFiles {
         "Prompt.Context.ps1"
         "Prompt.Builder.ps1"
         "Prompt.Cache.ps1"
+        "Prompt.Metrics.ps1"
         "Prompt.Core.ps1"
         "Prompt.Events.ps1"
         "Prompt.Kernel.ps1"
@@ -99,6 +100,7 @@ $PPFModularBootstrap = {
         "Prompt.Context.ps1"
         "Prompt.Builder.ps1"
         "Prompt.Cache.ps1"
+        "Prompt.Metrics.ps1"
         "Prompt.Core.ps1"
         "Prompt.Events.ps1"
         "Prompt.Kernel.ps1"
@@ -232,6 +234,7 @@ $PublicFunctions = @(
     "Get-PromptTheme",
     "Get-ActiveTheme",
     "Import-PromptTheme",
+    "Install-PromptTheme",
     "Set-PromptTheme",
     "Switch-PromptTheme",
     "Measure-Prompt",
@@ -282,7 +285,9 @@ $PublicFunctions = @(
     "Disable-PPFDotNetCore",
     "Get-PPFDotNetCoreStatus",
     "Import-PPFDotNetTheme",
-    "Get-PromptTooltip"
+    "Get-PromptTooltip",
+    "Get-PromptMetrics",
+    "Flush-PPFMetrics"
 )
 
 Export-ModuleMember -Function $PublicFunctions
@@ -303,6 +308,9 @@ if ($null -ne $MyInvocation.MyCommand.Module) {
         }
         if (Get-Command Stop-AllGitWatchers -ErrorAction SilentlyContinue) {
             Stop-AllGitWatchers
+        }
+        if (Get-Command Flush-PPFMetrics -ErrorAction SilentlyContinue) {
+            Flush-PPFMetrics
         }
     }
 }

@@ -1091,6 +1091,14 @@ function Get-PromptHealth {
     # 7. Handles
     $handlesCount = $process.HandleCount
 
+    # 8. Métricas diarias (opt-in; lectura de archivo JSON del día, fuera del hot path)
+    $metricsToday = $null
+    if ($env:PPF_METRICS_ENABLED -eq "1") {
+        if (Get-Command Get-PromptMetrics -ErrorAction SilentlyContinue) {
+            $metricsToday = Get-PromptMetrics
+        }
+    }
+
     $health = [pscustomobject]@{
         MemoryUsageMB       = [math]::Round($memory, 2)
         ActiveRunspaces     = $runspacesCount
@@ -1101,6 +1109,7 @@ function Get-PromptHealth {
         ActiveRenderer      = $activeRenderer
         ActiveTheme         = $activeTheme
         ProcessHandles      = $handlesCount
+        MetricsToday        = $metricsToday
     }
 
     # Format output for console
@@ -1113,6 +1122,15 @@ function Get-PromptHealth {
     Write-Host "Active Renderer:     $($health.ActiveRenderer)"
     Write-Host "Active Providers:    $($health.ActiveProviders -join ', ')"
     Write-Host "Registered Events:   $(if ($health.RegisteredEvents.Count -gt 0) { $health.RegisteredEvents -join ', ' } else { 'None' })"
+    if ($metricsToday) {
+        Write-Host "Métricas hoy:" -ForegroundColor Cyan
+        Write-Host "  Renders:           $($metricsToday.RenderCount)"
+        Write-Host "  Ratio de caché:    $($metricsToday.CacheHitRatio)%"
+        Write-Host "  Tema activo:       $($metricsToday.ActiveTheme)"
+    }
+    else {
+        Write-Host "Métricas hoy:        desactivadas (PPF_METRICS_ENABLED != 1)"
+    }
     Write-Host "================================================`n"
 
     return $health
