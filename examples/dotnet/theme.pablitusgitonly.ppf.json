@@ -1,0 +1,150 @@
+{
+  "$schema": "https://pablitus.dev/schemas/ppf.schema.json",
+  "version": "1.0",
+  "renderer": "plain",
+  "finalSpace": true,
+  "cache": {
+    "enabled": true,
+    "ttlSeconds": 30,
+    "maxEntries": 256
+  },
+  "template": {
+    "prompt": "{{ .UserName }}@{{ .HostName }} {{ .Path.Display }} {{ if .Git.Branch }}[{{ .Git.Branch }}]{{ end }} ➜ ",
+    "rightPrompt": "{{ .Path.Folder }}",
+    "transientPrompt": "{{ .Shell }}> "
+  },
+  "transientPrompt": {
+    "template": "{{ if .Interrupted }}^C {{ end }}{{ .Shell }}> ",
+    "rightTemplate": "{{ .Path.Folder }}",
+    "filler": "-",
+    "newline": true,
+    "foreground": "#c0c0c0",
+    "background": "#1a1a1a"
+  },
+  "tooltipsAction": "extend",
+  "tooltips": [
+    {
+      "type": "text",
+      "tips": ["git", "g"],
+      "style": "plain",
+      "foreground": "#1a1a1a",
+      "background": "#ffaa00",
+      "template": "git"
+    },
+    {
+      "type": "text",
+      "tips": ["docker", "d"],
+      "style": "plain",
+      "foreground": "#1a1a1a",
+      "background": "#0066cc",
+      "template": "docker"
+    }
+  ],
+  "theme": {
+    "name": "Pablitus GitOnly",
+    "version": "1.0",
+    "source": "pablitus",
+    "renderer": "plain",
+    "finalSpace": true,
+    "palette": {
+      "Background": "#1a1a1a",
+      "Foreground": "#c0c0c0",
+      "Primary": "#00ff00",
+      "Secondary": "#666666",
+      "Success": "#00ff00",
+      "Warning": "#ffff00",
+      "Error": "#ff4444",
+      "SessionBg": "#0066cc",
+      "SessionFg": "#1a1a1a",
+      "PathBg": "#333333",
+      "PathFg": "#c0c0c0",
+      "GitBg": "#ffaa00",
+      "GitFg": "#1a1a1a",
+      "TimeBg": "#666666",
+      "TimeFg": "#1a1a1a",
+      "Accent": "#888888",
+      "Surface": "#2a2a2a"
+    },
+    "template": {
+      "transientPrompt": "{{ .Shell }}> ",
+      "rightTemplate": "{{ .Path.Folder }}",
+      "filler": "-",
+      "newline": true
+    },
+    "tooltipsAction": "replace",
+    "tooltips": [
+      {
+        "type": "text",
+        "tips": ["git", "g"],
+        "style": "plain",
+        "foreground": "#1a1a1a",
+        "background": "#ffaa00",
+        "template": "git"
+      },
+      {
+        "type": "text",
+        "tips": ["docker", "d"],
+        "style": "plain",
+        "foreground": "#1a1a1a",
+        "background": "#0066cc",
+        "template": "docker"
+      },
+      {
+        "type": "text",
+        "tips": ["npm", "node"],
+        "style": "plain",
+        "foreground": "#1a1a1a",
+        "background": "#00cc00",
+        "template": "node"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "session",
+            "name": "session",
+            "style": "plain",
+            "foreground": "#1a1a1a",
+            "background": "#0066cc",
+            "template": "{{ .UserName }}@{{ .HostName }}"
+          },
+          {
+            "type": "path",
+            "name": "path",
+            "style": "plain",
+            "foreground": "#c0c0c0",
+            "background": "#333333",
+            "template": "{{ .Path.Display }}"
+          },
+          {
+            "type": "git",
+            "name": "git",
+            "style": "plain",
+            "foreground": "#1a1a1a",
+            "background": "#ffaa00",
+            "template": "{{ if .Git.Branch }}[{{ .Git.Branch }}]{{ end }}"
+          },
+          {
+            "type": "time",
+            "name": "time",
+            "style": "plain",
+            "foreground": "#1a1a1a",
+            "background": "#00cc00",
+            "template": "{{ .Time }}"
+          },
+          {
+            "type": "text",
+            "name": "promptSymbol",
+            "style": "plain",
+            "foreground": "#00ff00",
+            "background": "#1a1a1a",
+            "template": "➜"
+          }
+        ]
+      }
+    ]
+  }
+}

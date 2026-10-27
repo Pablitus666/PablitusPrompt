@@ -1,0 +1,68 @@
+{
+  "$schema": "https://pablitus.dev/schemas/ppf.schema.json",
+  "version": "1.0",
+  "renderer": "plain",
+  "finalSpace": false,
+  "cache": {
+    "enabled": false,
+    "ttlSeconds": 30,
+    "maxEntries": 256
+  },
+  "template": {
+    "prompt": "➜ ",
+    "rightPrompt": "",
+    "transientPrompt": ""
+  },
+  "transientPrompt": {
+    "template": "{{ .Shell }}> ",
+    "rightTemplate": "",
+    "filler": "",
+    "newline": true,
+    "foreground": "#00ff00",
+    "background": "#1a1a1a"
+  },
+  "tooltipsAction": "replace",
+  "tooltips": [],
+  "theme": {
+    "name": "Pablitus Micro",
+    "version": "1.0",
+    "source": "pablitus",
+    "renderer": "plain",
+    "finalSpace": false,
+    "palette": {
+      "Background": "#1a1a1a",
+      "Foreground": "#c0c0c0",
+      "Primary": "#00ff00",
+      "Secondary": "#666666",
+      "Success": "#00ff00",
+      "Warning": "#ffff00",
+      "Error": "#ff4444",
+      "Accent": "#888888",
+      "Surface": "#2a2a2a"
+    },
+    "template": {
+      "transientPrompt": "{{ .Shell }}> ",
+      "rightTemplate": "",
+      "filler": "",
+      "newline": true
+    },
+    "tooltipsAction": "replace",
+    "tooltips": [],
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "text",
+            "name": "promptSymbol",
+            "style": "plain",
+            "foreground": "#00ff00",
+            "background": "#1a1a1a",
+            "template": "➜"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -4,8 +4,62 @@
 # ============================================================
 
 $script:PromptThemes = @{}
-$script:ActiveThemeName = "Default"
+$script:ThemeBaseDir = Join-Path $env:USERPROFILE ".pablitus"
+$script:ThemeConfigPath = Join-Path $script:ThemeBaseDir "active-theme.json"
+$script:ActiveThemeName = $null
 $script:ThemeBaselineSegments = $null
+
+function Get-PPFThemeConfigPath {
+    return $script:ThemeConfigPath
+}
+
+function Save-PPFActiveTheme {
+    param(
+        [Parameter(Mandatory)]
+        [string]$ThemeName
+    )
+
+    $themeDir = Join-Path $env:USERPROFILE ".pablitus"
+    if (-not (Test-Path -LiteralPath $themeDir)) {
+        $null = New-Item -ItemType Directory -Path $themeDir -Force
+    }
+
+    $config = @{
+        ThemeName = $ThemeName
+        SavedAt   = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssZ")
+    }
+
+    $configJson = $config | ConvertTo-Json -Depth 3
+    $configJson | Set-Content -LiteralPath $script:ThemeConfigPath -Encoding utf8 -ErrorAction SilentlyContinue
+}
+
+function Load-PPFActiveTheme {
+    if (-not (Test-Path -LiteralPath $script:ThemeConfigPath)) {
+        return $null
+    }
+
+    try {
+        $content = Get-Content -Raw -LiteralPath $script:ThemeConfigPath -ErrorAction Stop
+        $data = $content | ConvertFrom-Json -ErrorAction Stop
+        return $data.ThemeName
+    }
+    catch {
+        return $null
+    }
+}
+
+function Initialize-PPFThemeFromConfig {
+    $savedTheme = Load-PPFActiveTheme
+    if ($savedTheme -and $script:PromptThemes.ContainsKey($savedTheme)) {
+        $script:ActiveThemeName = $savedTheme
+    }
+    elseif ($script:PromptThemes.ContainsKey("Default")) {
+        $script:ActiveThemeName = "Default"
+    }
+    elseif ($script:PromptThemes.Count -gt 0) {
+        $script:ActiveThemeName = @($script:PromptThemes.Keys)[0]
+    }
+}
 
 function Get-PPFThemeBaseline {
     # Snapshot the effective base configuration the first time a theme is
@@ -274,6 +328,9 @@ function Set-PromptTheme {
         Invoke-PPFEvent -EventName "ThemeChanged" -EventArgs $Name
     }
 
+    # Guardar el tema activo para persistir entre sesiones
+    Save-PPFActiveTheme -ThemeName $Name
+
 }
 
 function Switch-PromptTheme {
@@ -346,6 +403,9 @@ function Switch-PromptTheme {
         SwitchedAt    = [datetime]::Now
     }
 
+    # Guardar el tema activo para persistir entre sesiones
+    Save-PPFActiveTheme -ThemeName $name
+
 }
 
 function Get-PromptTheme {
@@ -416,4 +476,7 @@ function Resolve-ThemeIcon {
     return $null
 
 }
+
+# Cargar el tema guardado al cargar el módulo para persistir entre sesiones
+Initialize-PPFThemeFromConfig
 
