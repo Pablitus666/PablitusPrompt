@@ -1,0 +1,163 @@
+{
+  "$schema": "https://pablitus.dev/schemas/ppf.schema.json",
+  "version": "1.0",
+  "renderer": "plain",
+  "finalSpace": true,
+  "cache": {
+    "enabled": true,
+    "ttlSeconds": 30,
+    "maxEntries": 256
+  },
+  "template": {
+    "prompt": "{{ .UserName }}@{{ .HostName }} ☀️ ",
+    "rightPrompt": "{{ .Path.Folder }}",
+    "transientPrompt": "{{ .Shell }}> "
+  },
+  "transientPrompt": {
+    "template": "{{ if .Interrupted }}^C {{ end }}{{ .Shell }}> ",
+    "rightTemplate": "{{ .Path.Folder }}",
+    "filler": "-",
+    "newline": true,
+    "foreground": "#ffd166",
+    "background": "#2d1b19"
+  },
+  "tooltipsAction": "extend",
+  "tooltips": [
+    {
+      "type": "text",
+      "tips": ["git", "g"],
+      "style": "diamond",
+      "foreground": "#2d1b19",
+      "background": "#ef476f",
+      "template": "git"
+    },
+    {
+      "type": "text",
+      "tips": ["docker", "d"],
+      "style": "plain",
+      "foreground": "#2d1b19",
+      "background": "#06d6a0",
+      "template": "docker"
+    },
+    {
+      "type": "text",
+      "tips": ["npm", "node"],
+      "style": "plain",
+      "foreground": "#2d1b19",
+      "background": "#ffd166",
+      "template": "node"
+    }
+  ],
+  "theme": {
+    "name": "Pablitus Sunset",
+    "version": "1.0",
+    "source": "pablitus",
+    "renderer": "plain",
+    "finalSpace": true,
+    "palette": {
+      "Background": "#2d1b19",
+      "Foreground": "#ffd166",
+      "Primary": "#ef476f",
+      "Secondary": "#118ab2",
+      "Success": "#06d6a0",
+      "Warning": "#ffd166",
+      "Error": "#ef476f",
+      "SessionBg": "#ef476f",
+      "SessionFg": "#2d1b19",
+      "PathBg": "#118ab2",
+      "PathFg": "#2d1b19",
+      "GitBg": "#06d6a0",
+      "GitFg": "#2d1b19",
+      "TimeBg": "#ffd166",
+      "TimeFg": "#2d1b19",
+      "Accent": "#118ab2",
+      "Surface": "#1a0f0e"
+    },
+    "template": {
+      "transientPrompt": "{{ .Shell }}> ",
+      "rightTemplate": "{{ .Path.Folder }}",
+      "filler": "-",
+      "newline": true
+    },
+    "tooltipsAction": "extend",
+    "tooltips": [
+      {
+        "type": "text",
+        "tips": ["git", "g"],
+        "style": "diamond",
+        "foreground": "#2d1b19",
+        "background": "#ef476f",
+        "template": "git"
+      },
+      {
+        "type": "text",
+        "tips": ["docker", "d"],
+        "style": "plain",
+        "foreground": "#2d1b19",
+        "background": "#06d6a0",
+        "template": "docker"
+      },
+      {
+        "type": "text",
+        "tips": ["npm", "node"],
+        "style": "plain",
+        "foreground": "#2d1b19",
+        "background": "#ffd166",
+        "template": "node"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "session",
+            "name": "session",
+            "style": "plain",
+            "foreground": "#2d1b19",
+            "background": "#ef476f",
+            "template": "{{ .UserName }}@{{ .HostName }}"
+          },
+          {
+            "type": "path",
+            "name": "path",
+            "style": "plain",
+            "foreground": "#2d1b19",
+            "background": "#118ab2",
+            "template": "{{ .Path.Display }}"
+          },
+          {
+            "type": "git",
+            "name": "git",
+            "style": "plain",
+            "foreground": "#2d1b19",
+            "background": "#06d6a0",
+            "template": "{{ if .Git.Branch }} {{ .Git.Branch }}{{ end }}",
+            "timeoutMs": 1500
+          },
+          {
+            "type": "time",
+            "name": "time",
+            "style": "plain",
+            "foreground": "#2d1b19",
+            "background": "#ffd166",
+            "template": "{{ .Time }}"
+          }
+        ]
+      },
+      {
+        "type": "rprompt",
+        "alignment": "right",
+        "filler": "-",
+        "overflow": "break",
+        "segments": [
+          {
+            "type": "text",
+            "template": "{{ .Path.Folder }}"
+          }
+        ]
+      }
+    ]
+  }
+}
