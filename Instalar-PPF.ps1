@@ -47,11 +47,11 @@ Get-ChildItem -Path "$srcRoot/src/Themes" -Filter "*.Theme.ps1" | ForEach-Object
 # 4. Copiar archivos raíz del módulo
 Write-Host ""
 Write-Host "Copiando archivos del módulo..." -ForegroundColor Cyan
-Get-ChildItem -Path "$srcRoot" -Filter "*.ps1" | ForEach-Object {
+Get-ChildItem -Path "$srcRoot/src" -Filter "*.ps1" | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
     Write-Host "  $($_.Name)" -ForegroundColor Green
 }
-Get-ChildItem -Path "$srcRoot/PablitusPrompt.psd1" | ForEach-Object {
+Get-ChildItem -Path "$srcRoot/src/PablitusPrompt.psd1" | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
     Write-Host "  $($_.Name)" -ForegroundColor Green
 }
