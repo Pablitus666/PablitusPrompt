@@ -287,7 +287,7 @@ $PublicFunctions = @(
     "Import-PPFDotNetTheme",
     "Get-PromptTooltip",
     "Get-PromptMetrics",
-    "Flush-PPFMetrics"
+    "Clear-PPFMetrics"
 )
 
 Export-ModuleMember -Function $PublicFunctions
@@ -309,8 +309,8 @@ if ($null -ne $MyInvocation.MyCommand.Module) {
         if (Get-Command Stop-AllGitWatchers -ErrorAction SilentlyContinue) {
             Stop-AllGitWatchers
         }
-        if (Get-Command Flush-PPFMetrics -ErrorAction SilentlyContinue) {
-            Flush-PPFMetrics
+        if (Get-Command Clear-PPFMetrics -ErrorAction SilentlyContinue) {
+            Clear-PPFMetrics
         }
     }
 }

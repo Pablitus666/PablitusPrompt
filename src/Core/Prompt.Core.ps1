@@ -31,11 +31,11 @@ function Invoke-Prompt {
     Sync-PPFDiskCache
 
     # Métricas de observabilidad (opt-in). Solo actualiza estructuras en
-    # memoria; la persistencia a disco es batch/asincrónica (Flush-PPFMetrics).
-    if (Get-Command Record-PPFRenderMetrics -ErrorAction SilentlyContinue) {
+    # memoria; la persistencia a disco es batch/asincrónica (Clear-PPFMetrics).
+    if (Get-Command Write-PPFRenderMetrics -ErrorAction SilentlyContinue) {
         try {
             $activeTheme = if (Get-Command Get-ActiveTheme -ErrorAction SilentlyContinue) { (Get-ActiveTheme).Name } else { $null }
-            Record-PPFRenderMetrics -Metrics $context.Metrics -ActiveThemeName $activeTheme
+            Write-PPFRenderMetrics -Metrics $context.Metrics -ActiveThemeName $activeTheme
         }
         catch {
             # No romper el prompt por un fallo en la recopilación de métricas.

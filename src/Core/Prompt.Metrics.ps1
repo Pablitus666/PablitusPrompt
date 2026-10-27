@@ -77,7 +77,7 @@ function Ensure-PPFMetricsInitialized {
 # Registra un render completo en el acumulador diario (memoria, sin disco).
 # Se invoca desde Invoke-Prompt / Get-PromptString fuera del camino crítico
 # de I/O: solo actualiza hashtables en memoria.
-function Record-PPFRenderMetrics {
+function Write-PPFRenderMetrics {
 
     param(
         [Parameter(Mandatory)]
@@ -122,7 +122,7 @@ function Record-PPFRenderMetrics {
 
     # Flush batch cuando se alcanza el umbral (sin I/O en cada render).
     if ($script:PPFMetricsRenderCount -ge $script:PPFMetricsFlushThreshold) {
-        Flush-PPFMetrics
+        Clear-PPFMetrics
     }
 }
 
@@ -161,7 +161,7 @@ function Get-PPFMetricsSlowProviders {
 }
 
 # Persiste el acumulador diario a disco (escritura atómica via archivo temporal).
-function Flush-PPFMetrics {
+function Clear-PPFMetrics {
 
     if (-not $script:PPFMetricsEnabled) { return }
     if ($null -eq $script:PPFMetricsDaily) { return }
@@ -249,7 +249,7 @@ function Get-PromptMetrics {
     Ensure-PPFMetricsInitialized
 
     # Forzar flush de los datos pendientes de esta sesión antes de leer.
-    Flush-PPFMetrics
+    Clear-PPFMetrics
 
     $targetDate = if ($Date) { $Date } else { [datetime]::Today }
 

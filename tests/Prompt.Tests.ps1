@@ -1372,8 +1372,8 @@ Register-PromptTheme `
             (Get-Command Get-PromptMetrics -ErrorAction SilentlyContinue) | Should -Not -Be $null
         }
 
-        It "Flush-PPFMetrics está exportada y disponible" {
-            (Get-Command Flush-PPFMetrics -ErrorAction SilentlyContinue) | Should -Not -Be $null
+        It "Clear-PPFMetrics está exportada y disponible" {
+            (Get-Command Clear-PPFMetrics -ErrorAction SilentlyContinue) | Should -Not -Be $null
         }
 
         It "Escribe el archivo JSON diario en el directorio de caché" {
@@ -1389,7 +1389,7 @@ Register-PromptTheme `
             $null = $script:PPFMetricsDaily.ProviderTimes["Git"].Add(5.0)
             $null = $script:PPFMetricsDaily.ProviderTimes["Git"].Add(3.0)
 
-            Flush-PPFMetrics
+            Clear-PPFMetrics
 
             $today = (Get-Date).ToString("yyyy-MM-dd")
             $path = Join-Path $script:CacheDir "metrics-$today.json"
@@ -1414,7 +1414,7 @@ Register-PromptTheme `
             $script:PPFMetricsDaily.ActiveTheme = "Default"
             $script:PPFMetricsDaily.CacheHits = 1
             $script:PPFMetricsDaily.CacheMisses = 0
-            Flush-PPFMetrics
+            Clear-PPFMetrics
 
             $today = (Get-Date).ToString("yyyy-MM-dd")
             $path = Join-Path $script:CacheDir "metrics-$today.json"
