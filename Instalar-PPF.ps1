@@ -20,7 +20,7 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
     Write-Host "Creado: $modulePath" -ForegroundColor Green
 }
 
-# 2. Copiar TODOS los archivos de src/Core/
+# 2. Copiar TODO el contenido de src/Core/ al módulo
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
 Get-ChildItem -Path "$srcRoot/Core" -Recurse -File | ForEach-Object {
