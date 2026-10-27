@@ -7,8 +7,7 @@
 
 $ErrorActionPreference = "Stop"
 
-$repoRoot = (Get-Location).Path
-$srcRoot = Join-Path $repoRoot "src"
+$srcRoot = Join-Path $PSScriptRoot "src"
 $modulePath = Join-Path $env:USERPROFILE "Documents\PowerShell\Modules\PablitusPrompt"
 
 Write-Host "================================================" -ForegroundColor Cyan
