@@ -1,6 +1,8 @@
 # ============================================================
 # Pablitus Prompt Framework (PPF)
 # Script de instalación completa
+#
+# Ejecuta esto para instalar PPF con todos los temas y funcionalidades
 # ============================================================
 
 $ErrorActionPreference = "Stop"
@@ -40,6 +42,9 @@ if (Test-Path -LiteralPath $dotnetPublish) {
         Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
         Write-Host "  $($_.Name)" -ForegroundColor Green
     }
+} else {
+    Write-Host "ADVERTENCIA: No se encontró $dotnetPublish" -ForegroundColor Yellow
+    Write-Host "   Ejecuta primero: scripts/Build-PPFDotNetCore.ps1" -ForegroundColor Yellow
 }
 
 Write-Host ""
