@@ -44,7 +44,7 @@ if (Test-Path -LiteralPath $dotnetPublish) {
     }
 } else {
     Write-Host "ADVERTENCIA: No se encontró $dotnetPublish" -ForegroundColor Yellow
-    Write-Host "   Ejecuta primero: dotnet build dotnet/src/PablitusPrompt.Cli -c Release" -ForegroundColor Yellow
+    Write-Host "   Ejecuta primero: scripts/Build-PPFDotNetCore.ps1" -ForegroundColor Yellow
 }
 
 Write-Host ""
