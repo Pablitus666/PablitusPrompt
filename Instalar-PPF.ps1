@@ -23,7 +23,7 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
 # 2. Copiar TODOS los archivos de src/Core/
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
-Get-ChildItem -Path "$srcRoot/Core" -Recurse -File | ForEach-Object {
+Get-ChildItem -Path "$srcRoot/src/Core" -Recurse -File | ForEach-Object {
     $relPath = $_.FullName.Substring($srcRoot.Length + 1)
     $destPath = Join-Path $modulePath $relPath
     if (-not (Test-Path -LiteralPath (Split-Path $destPath))) {
@@ -72,7 +72,7 @@ Write-Host "  Import-Module PablitusPrompt -Force"
 Write-Host "  Set-PromptTheme -Name 'Pablitus Stack'"
 Write-Host "  function global:prompt {"
 Write-Host "    try {"
-Write-Host '      $context = Invoke-Prompt'
+Write-Host "      \$context = Invoke-Prompt"
 Write-Host "      Get-PromptString -Context \$context -Renderer 'Plain'"
 Write-Host "    } catch {"
 Write-Host "      'PS ' + \$executionContext.SessionState.Path.CurrentLocation + '➜ '"
