@@ -1,0 +1,100 @@
+{
+  "$schema": "https://pablitus.dev/schemas/ppf.schema.json",
+  "version": "1.0",
+  "renderer": "plain",
+  "finalSpace": true,
+  "cache": {
+    "enabled": true,
+    "ttlSeconds": 30,
+    "maxEntries": 256
+  },
+  "template": {
+    "prompt": "{{ .Session }}{{ .Path }}{{ .Git }}{{ .Time }}➜ ",
+    "rightPrompt": "",
+    "transientPrompt": "{{ .Shell }}> "
+  },
+  "transientPrompt": {
+    "template": "{{ if .Interrupted }}^C {{ end }}{{ .Shell }}> ",
+    "rightTemplate": "{{ .Path.Folder }}",
+    "filler": "-",
+    "newline": true,
+    "foreground": "#e0e0e0",
+    "background": "#0f0c29"
+  },
+  "tooltipsAction": "replace",
+  "tooltips": [],
+  "theme": {
+    "name": "Pablitus Stack",
+    "version": "1.0",
+    "source": "pablitus",
+    "renderer": "plain",
+    "finalSpace": true,
+    "palette": {
+      "Background": "#0f0c29",
+      "Foreground": "#e0e0e0",
+      "Primary": "#bb86fc",
+      "Secondary": "#03dac6",
+      "Success": "#03dac6",
+      "Warning": "#ff4081",
+      "Error": "#cf6679",
+      "Accent": "#03dac6",
+      "Surface": "#1a173a"
+    },
+    "template": {
+      "transientPrompt": "{{ .Shell }}> ",
+      "rightTemplate": "",
+      "filler": "",
+      "newline": true
+    },
+    "tooltipsAction": "replace",
+    "tooltips": [],
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "session",
+            "name": "session",
+            "style": "plain",
+            "foreground": "#0f0c29",
+            "background": "#bb86fc",
+            "template": "{{ .UserName }}@{{ .HostName }}"
+          },
+          {
+            "type": "path",
+            "name": "path",
+            "style": "plain",
+            "foreground": "#e0e0e0",
+            "background": "#370028",
+            "template": "{{ .Path.Display }}"
+          },
+          {
+            "type": "git",
+            "name": "git",
+            "style": "plain",
+            "foreground": "#0f0c29",
+            "background": "#03dac6",
+            "template": "{{ if .Git.Branch }}[{{ .Git.Branch }}]{{ end }}"
+          },
+          {
+            "type": "time",
+            "name": "time",
+            "style": "plain",
+            "foreground": "#0f0c29",
+            "background": "#cf6679",
+            "template": "{{ .Time }}"
+          },
+          {
+            "type": "text",
+            "name": "promptSymbol",
+            "style": "plain",
+            "foreground": "#bb86fc",
+            "background": "#0f0c29",
+            "template": "➜"
+          }
+        ]
+      }
+    ]
+  }
+}
