@@ -1,7 +1,8 @@
 # ============================================================
 # Pablitus Prompt Framework (PPF)
 # Script de instalación completa
-# Ejecuta esto desde el directorio raíz del repositorio
+#
+# Ejecuta esto para instalar PPF con todos los temas y funcionalidades
 # ============================================================
 
 $ErrorActionPreference = "Stop"
@@ -21,7 +22,7 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
     Write-Host "Creado: $modulePath" -ForegroundColor Green
 }
 
-# 2. Copiar TODO el contenido de src/ al módulo
+# 2. Copiar TODOS los archivos de src/
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
 Get-ChildItem -Path "$srcRoot" -Recurse -File | ForEach-Object {
@@ -42,7 +43,8 @@ if (Test-Path -LiteralPath $dotnetPublish) {
         Write-Host "  $($_.Name)" -ForegroundColor Green
     }
 } else {
-    Write-Host "ADVERTENCIA: No se encontró $dotnetPublish. Construya el núcleo .NET primero." -ForegroundColor Yellow
+    Write-Host "ADVERTENCIA: No se encontró $dotnetPublish" -ForegroundColor Yellow
+    Write-Host "   Ejecuta: scripts/Build-PPFDotNetCore.ps1 para compilar el núcleo .NET" -ForegroundColor Yellow
 }
 
 Write-Host ""
