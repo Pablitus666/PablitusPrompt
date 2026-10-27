@@ -7,7 +7,7 @@
 
 $ErrorActionPreference = "Stop"
 
-$srcRoot = (Get-Location).Path
+$srcRoot = Join-Path (Get-Location) "src"
 $modulePath = Join-Path $env:USERPROFILE "Documents\PowerShell\Modules\PablitusPrompt"
 
 Write-Host "================================================" -ForegroundColor Cyan
@@ -23,7 +23,7 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
 # 2. Copiar TODOS los archivos de src/Core/
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
-Get-ChildItem -Path "$srcRoot/src/Core" -Recurse -File | ForEach-Object {
+Get-ChildItem -Path "$srcRoot/Core" -Recurse -File | ForEach-Object {
     $relPath = $_.FullName.Substring($srcRoot.Length + 1)
     $destPath = Join-Path $modulePath $relPath
     if (-not (Test-Path -LiteralPath (Split-Path $destPath))) {
@@ -35,23 +35,19 @@ Get-ChildItem -Path "$srcRoot/src/Core" -Recurse -File | ForEach-Object {
 # 3. Copiar todos los temas
 Write-Host ""
 Write-Host "Copiando temas..." -ForegroundColor Cyan
-$themesDest = Join-Path $modulePath "Themes"
-if (-not (Test-Path -LiteralPath $themesDest)) {
-    $null = New-Item -ItemType Directory -Path $themesDest -Force
-}
-Get-ChildItem -Path "$srcRoot/src/Themes" -Filter "*.Theme.ps1" | ForEach-Object {
-    Copy-Item -Path $_.FullName -Destination $themesDest -Force
+Get-ChildItem -Path "$srcRoot/Themes" -Filter "*.Theme.ps1" | ForEach-Object {
+    Copy-Item -Path $_.FullName -Destination "$modulePath/Themes/" -Force
     Write-Host "  Tema: $($_.Name)" -ForegroundColor Green
 }
 
 # 4. Copiar archivos raíz del módulo
 Write-Host ""
 Write-Host "Copiando archivos del módulo..." -ForegroundColor Cyan
-Get-ChildItem -Path "$srcRoot/src" -Filter "*.ps1" | ForEach-Object {
+Get-ChildItem -Path "$srcRoot" -Filter "*.ps1" | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
     Write-Host "  $($_.Name)" -ForegroundColor Green
 }
-Get-ChildItem -Path "$srcRoot/src/PablitusPrompt.psd1" | ForEach-Object {
+Get-ChildItem -Path "$srcRoot/PablitusPrompt.psd1" | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
     Write-Host "  $($_.Name)" -ForegroundColor Green
 }
