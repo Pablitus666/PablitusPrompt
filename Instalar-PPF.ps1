@@ -2,18 +2,17 @@
 # Pablitus Prompt Framework (PPF)
 # Script de instalación completa
 #
-# Ejecuta esto para instalar PPF con TODOS los temas
-# y funcionalidades de Fase 3C y 3E
+# Ejecuta esto para instalar PPF con todos los temas y funcionalidades
 # ============================================================
 
 $ErrorActionPreference = "Stop"
 
+$repoRoot = Get-Location
+$modulePath = Join-Path $env:USERPROFILE "Documents\PowerShell\Modules\PablitusPrompt"
+
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host "  Pablitus Prompt Framework - Instalación" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
-
-$moduleRoot = Join-Path $env:USERPROFILE "Documents\PowerShell\Modules\PablitusPrompt"
-$srcRoot = Join-Path (Get-Location) "src"
 
 # 1. Crear directorio del módulo
 if (-not (Test-Path -LiteralPath $modulePath)) {
@@ -21,15 +20,16 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
     Write-Host "Creado: $modulePath" -ForegroundColor Green
 }
 
-# 2. Copiar TODO el directorio Core al módulo instalado
+# 2. Copiar TODOS los archivos de src/Core/
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
-Get-ChildItem -Path "$srcRoot/Core" -Recurse | ForEach-Object {
-    $dest = Join-Path $modulePath $_.FullName.Substring($srcRoot.Length + 1)
-    if (-not (Test-Path -LiteralPath (Split-Path $dest))) {
-        $null = New-Item -ItemType Directory -Path (Split-Path $dest) -Force
+Get-ChildItem -Path "$srcRoot/Core" -Recurse -File | ForEach-Object {
+    $relPath = $_.FullName.Substring($srcRoot.Length + 1)
+    $destPath = Join-Path $modulePath $relPath
+    if (-not (Test-Path -LiteralPath (Split-Path $destPath))) {
+        $null = New-Item -ItemType Directory -Path (Split-Path $destPath) -Force
     }
-    Copy-Item -Path $_.FullName -Destination $dest -Force
+    Copy-Item -Path $_.FullName -Destination $destPath -Force
 }
 
 # 3. Copiar todos los temas
