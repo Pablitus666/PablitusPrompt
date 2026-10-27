@@ -1,8 +1,6 @@
 # ============================================================
 # Pablitus Prompt Framework (PPF)
 # Script de instalación completa
-#
-# Ejecuta esto para instalar PPF con todos los temas y funcionalidades
 # ============================================================
 
 $ErrorActionPreference = "Stop"
@@ -20,7 +18,7 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
     Write-Host "Creado: $modulePath" -ForegroundColor Green
 }
 
-# 2. Copiar TODOS los archivos de src/ al módulo
+# 2. Copiar TODOS los archivos de src/
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
 Get-ChildItem -Path "$srcRoot" -Recurse -File | ForEach-Object {
@@ -32,16 +30,15 @@ Get-ChildItem -Path "$srcRoot" -Recurse -File | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination $destPath -Force
 }
 
-# 3. Copiar archivos raíz del módulo (.psd1, .psm1 están en src/ raíz)
+# 3. Copiar DLL del núcleo .NET desde dotnet/publish/
 Write-Host ""
-Write-Host "Copiando archivos raíz..." -ForegroundColor Cyan
-Get-ChildItem -Path "$srcRoot" -Filter "*.ps1" | ForEach-Object {
-    Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
-    Write-Host "  $($_.Name)" -ForegroundColor Green
-}
-Get-ChildItem -Path "$srcRoot/PablitusPrompt.psd1" | ForEach-Object {
-    Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
-    Write-Host "  $($_.Name)" -ForegroundColor Green
+Write-Host "Copiando núcleo .NET..." -ForegroundColor Cyan
+$dotnetPublish = Join-Path (Get-Location) "dotnet\publish"
+if (Test-Path -Path "$dotnetPublish") {
+    Get-ChildItem -Path "$dotnetPublish" -File | ForEach-Object {
+        Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
+        Write-Host "  $($_.Name)" -ForegroundColor Green
+    }
 }
 
 Write-Host ""
