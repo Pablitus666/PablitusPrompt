@@ -22,7 +22,7 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
     Write-Host "Creado: $modulePath" -ForegroundColor Green
 }
 
-# 2. Copiar TODOS los archivos de src/
+# 2. Copiar TODO el contenido de src/ al módulo
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
 Get-ChildItem -Path "$srcRoot" -Recurse -File | ForEach-Object {
@@ -43,8 +43,10 @@ if (Test-Path -LiteralPath $dotnetPublish) {
         Write-Host "  $($_.Name)" -ForegroundColor Green
     }
 } else {
-    Write-Host "ADVERTENCIA: No se encontró $dotnetPublish" -ForegroundColor Yellow
-    Write-Host "   Ejecuta: scripts/Build-PPFDotNetCore.ps1 para compilar el núcleo .NET" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "ADVERTENCIA: No se encontró el núcleo .NET compilado." -ForegroundColor Yellow
+    Write-Host "   Ejecuta primero: dotnet build dotnet/src/PablitusPrompt.Cli -c Release" -ForegroundColor Yellow
+    Write-Host "   O ejecuta: scripts/Build-PPFDotNetCore.ps1" -ForegroundColor Yellow
 }
 
 Write-Host ""
