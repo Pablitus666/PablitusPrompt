@@ -20,10 +20,10 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
     Write-Host "Creado: $modulePath" -ForegroundColor Green
 }
 
-# 2. Copiar TODO el contenido de src/Core/ al módulo
+# 2. Copiar TODOS los archivos de src/ al módulo
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
-Get-ChildItem -Path "$srcRoot/Core" -Recurse -File | ForEach-Object {
+Get-ChildItem -Path "$srcRoot" -Recurse -File | ForEach-Object {
     $relPath = $_.FullName.Substring($srcRoot.Length + 1)
     $destPath = Join-Path $modulePath $relPath
     if (-not (Test-Path -LiteralPath (Split-Path $destPath))) {
@@ -32,39 +32,15 @@ Get-ChildItem -Path "$srcRoot/Core" -Recurse -File | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination $destPath -Force
 }
 
-# 3. Copiar todos los temas
+# 3. Copiar archivos raíz del módulo (.psd1, .psm1 están en src/ raíz)
 Write-Host ""
-Write-Host "Copiando temas..." -ForegroundColor Cyan
-$themesDest = Join-Path $modulePath "Themes"
-if (-not (Test-Path -LiteralPath $themesDest)) {
-    $null = New-Item -ItemType Directory -Path $themesDest -Force
-}
-Get-ChildItem -Path "$srcRoot/Themes" -Filter "*.Theme.ps1" | ForEach-Object {
-    Copy-Item -Path $_.FullName -Destination $themesDest -Force
-    Write-Host "  Tema: $($_.Name)" -ForegroundColor Green
-}
-
-# 4. Copiar archivos raíz del módulo
-Write-Host ""
-Write-Host "Copiando archivos del módulo..." -ForegroundColor Cyan
+Write-Host "Copiando archivos raíz..." -ForegroundColor Cyan
 Get-ChildItem -Path "$srcRoot" -Filter "*.ps1" | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
     Write-Host "  $($_.Name)" -ForegroundColor Green
 }
 Get-ChildItem -Path "$srcRoot/PablitusPrompt.psd1" | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
-    Write-Host "  $($_.Name)" -ForegroundColor Green
-}
-
-# 5. Copiar scripts de ShellInit
-Write-Host ""
-Write-Host "Copiando scripts de ShellInit..." -ForegroundColor Cyan
-$shellInitDest = Join-Path $modulePath "ShellInit"
-if (-not (Test-Path -LiteralPath $shellInitDest)) {
-    $null = New-Item -ItemType Directory -Path $shellInitDest -Force
-}
-Get-ChildItem -Path "$srcRoot/ShellInit" -Filter "*.ps1" | ForEach-Object {
-    Copy-Item -Path $_.FullName -Destination $shellInitDest -Force
     Write-Host "  $($_.Name)" -ForegroundColor Green
 }
 
