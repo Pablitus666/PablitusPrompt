@@ -1,0 +1,158 @@
+{
+  "$schema": "https://pablitus.dev/schemas/ppf.schema.json",
+  "version": "1.0",
+  "renderer": "plain",
+  "finalSpace": true,
+  "cache": {
+    "enabled": true,
+    "ttlSeconds": 30,
+    "maxEntries": 256
+  },
+  "template": {
+    "prompt": "{{ .UserName }}@{{ .HostName }} {{ .Path.Display }} {{ if .Git.Branch }}[{{ .Git.Branch }}]{{ end }} ▶ ",
+    "rightPrompt": "{{ .Path.Folder }}",
+    "transientPrompt": "{{ .Shell }}> "
+  },
+  "transientPrompt": {
+    "template": "{{ if .Interrupted }}^C {{ end }}{{ .Shell }}> ",
+    "rightTemplate": "{{ .Path.Folder }}",
+    "filler": "=",
+    "newline": true,
+    "foreground": "#00ffff",
+    "background": "#000000"
+  },
+  "tooltipsAction": "extend",
+  "tooltips": [
+    {
+      "type": "text",
+      "tips": ["git", "g"],
+      "style": "plain",
+      "foreground": "#000000",
+      "background": "#ffff00",
+      "template": "git"
+    },
+    {
+      "type": "text",
+      "tips": ["docker", "d"],
+      "style": "plain",
+      "foreground": "#000000",
+      "background": "#ff00ff",
+      "template": "docker"
+    },
+    {
+      "type": "text",
+      "tips": ["npm", "node"],
+      "style": "plain",
+      "foreground": "#000000",
+      "background": "#00ff00",
+      "template": "node"
+    }
+  ],
+  "theme": {
+    "name": "Pablitus Retro",
+    "version": "1.0",
+    "source": "pablitus",
+    "renderer": "plain",
+    "finalSpace": true,
+    "palette": {
+      "Background": "#000000",
+      "Foreground": "#00ffff",
+      "Primary": "#ff00ff",
+      "Secondary": "#ffff00",
+      "Success": "#00ff00",
+      "Warning": "#ffaa00",
+      "Error": "#ff0000",
+      "SessionBg": "#ff00ff",
+      "SessionFg": "#000000",
+      "PathBg": "#00ffff",
+      "PathFg": "#000000",
+      "GitBg": "#ffff00",
+      "GitFg": "#000000",
+      "TimeBg": "#ff0000",
+      "TimeFg": "#000000",
+      "Accent": "#ff00ff",
+      "Surface": "#1a1a1a"
+    },
+    "template": {
+      "transientPrompt": "{{ .Shell }}> ",
+      "rightTemplate": "{{ .Path.Folder }}",
+      "filler": "=",
+      "newline": true
+    },
+    "tooltipsAction": "extend",
+    "tooltips": [
+      {
+        "type": "text",
+        "tips": ["git", "g"],
+        "style": "plain",
+        "foreground": "#000000",
+        "background": "#ffff00",
+        "template": "git"
+      },
+      {
+        "type": "text",
+        "tips": ["docker", "d"],
+        "style": "plain",
+        "foreground": "#000000",
+        "background": "#ff00ff",
+        "template": "docker"
+      },
+      {
+        "type": "text",
+        "tips": ["npm", "node"],
+        "style": "plain",
+        "foreground": "#000000",
+        "background": "#00ff00",
+        "template": "node"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "session",
+            "name": "session",
+            "style": "plain",
+            "foreground": "#000000",
+            "background": "#ff00ff",
+            "template": "{{ .UserName }}@{{ .HostName }}"
+          },
+          {
+            "type": "path",
+            "name": "path",
+            "style": "plain",
+            "foreground": "#000000",
+            "background": "#00ffff",
+            "template": "{{ .Path.Display }}"
+          },
+          {
+            "type": "git",
+            "name": "git",
+            "style": "plain",
+            "foreground": "#000000",
+            "background": "#ffff00",
+            "template": "{{ if .Git.Branch }}[{{ .Git.Branch }}]{{ end }}"
+          },
+          {
+            "type": "time",
+            "name": "time",
+            "style": "plain",
+            "foreground": "#000000",
+            "background": "#ff0000",
+            "template": "{{ .Time }}"
+          },
+          {
+            "type": "text",
+            "name": "promptSymbol",
+            "style": "plain",
+            "foreground": "#ff00ff",
+            "background": "#000000",
+            "template": "▶"
+          }
+        ]
+      }
+    ]
+  }
+}
