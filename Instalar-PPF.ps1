@@ -188,19 +188,56 @@ Write-Host "="*60 -ForegroundColor Cyan
 Write-Host "  INSTALACIÓN COMPLETADA" -ForegroundColor Green
 Write-Host "="*60 -ForegroundColor Cyan
 
-Write-Host ""
-Write-Host "Para usar PPF, agrega esto a tu '$PROFILE':" -ForegroundColor Yellow
-Write-Host ""
-Write-Host "  Import-Module PablitusPrompt -Force"
-Write-Host "  Set-PromptTheme -Name 'Pablitus Stack'"
-Write-Host "  function global:prompt {"
-Write-Host "    try {"
-Write-Host "      \$context = Invoke-Prompt"
-Write-Host "      Get-PromptString -Context \$context -Renderer 'Plain'"
-Write-Host "    } catch {"
-Write-Host "      'PS ' + \$executionContext.SessionState.Path.CurrentLocation + '➜ '"
-Write-Host "    }"
-Write-Host "  }"
+# Configurar $PROFILE automáticamente con la persistencia de tema
+$profilePath = $PROFILE
+$profileDir = Split-Path -Parent $profilePath
+if (-not (Test-Path -LiteralPath $profileDir)) {
+    $null = New-Item -ItemType Directory -Path $profileDir -Force
+}
+
+$profileContent = @"
+# ============================================
+# Pablitus Prompt Framework - Configuración
+# ============================================
+Import-Module PablitusPrompt -Force
+
+# Cargar función de persistencia de tema
+. `"$modulePath/src/Core/ppf-theme-persist.ps1`"
+
+# Restaurar el último tema guardado (si existe)
+Restore-PPFTHEME -ErrorAction SilentlyContinue
+
+# Configurar el prompt de PowerShell
+function global:prompt {
+    try {
+        \$context = Invoke-Prompt
+        Get-PromptString -Context \$context -Renderer 'PowerLine'
+    }
+    catch {
+        'PS ' + \$executionContext.SessionState.Path.CurrentLocation + '➜ '
+    }
+}
+"@
+
+# Verificar si ya existe una configuración de PPF en el perfil
+$existingContent = ""
+if (Test-Path -LiteralPath $profilePath) {
+    $existingContent = Get-Content -LiteralPath $profilePath -Raw
+}
+
+if ($existingContent -notlike "*Pablitus Prompt Framework - Configuración*") {
+    # Agregar configuración al final del perfil
+    Add-Content -LiteralPath $profilePath -Value "`n$profileContent"
+    Write-Host ""
+    Write-Host "Perfil de PowerShell configurado automáticamente en:" -ForegroundColor Green
+    Write-Host "  $profilePath" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Cierra y vuelve a abrir PowerShell para aplicar los cambios." -ForegroundColor Yellow
+} else {
+    Write-Host ""
+    Write-Host "El perfil de PowerShell ya contiene la configuración de PPF." -ForegroundColor Cyan
+}
+
 Write-Host ""
 Write-Host "Temas disponibles:" -ForegroundColor Cyan
 Get-ChildItem -Path "$modulePath/Themes" -Filter "*.Theme.ps1" | Select-Object Name | Sort-Object Name | ForEach-Object {
