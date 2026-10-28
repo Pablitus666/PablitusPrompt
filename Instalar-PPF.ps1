@@ -270,30 +270,90 @@ function global:prompt {
 }
 '@
 
-# Siempre escribir el perfil (forzar actualización completa)
-if (Test-Path -LiteralPath $profilePath) {
-    $existingLines = Get-Content -LiteralPath $profilePath
-    
-    # Remover CUALQUIER línea relacionada con PPF para evitar duplicados y errores
-    $existingLines = $existingLines | Where-Object {
-        $_ -notmatch 'Pablitus Prompt Framework' -and
-        $_ -notmatch 'ppf-theme-persist' -and
-        $_ -notmatch 'PPFThemePrefPath' -and
-        $_ -notmatch 'Set-PromptThemePersist' -and
-        $_ -notmatch 'Restore-PPFTHEME' -and
-        $_ -notmatch 'function global:prompt' -and
-        $_ -notmatch '\$context\s*=' -and
-        $_ -notmatch '\$executionContext\.SessionState' -and
-        $_ -notmatch '^=+$' -and
-        $_ -notmatch '^$'
-    }
-    
-    $cleanContent = ($existingLines -join "`r`n").TrimEnd("`r`n") + "`r`n"
-    Set-Content -LiteralPath $profilePath -Value $cleanContent
+# Siempre escribir el perfil completamente desde cero (sin mezcla con contenido antiguo)
+$profilePath = $PROFILE
+$profileDir = Split-Path -Parent $profilePath
+if (-not (Test-Path -LiteralPath $profileDir)) {
+    $null = New-Item -ItemType Directory -Path $profileDir -Force
 }
 
-# Agregar la nueva configuración al final
-Add-Content -LiteralPath $profilePath -Value "`n$profileContent"
+# Crear el perfil completo desde cero (sobrescribe cualquier contenido anterior)
+# El perfil contiene TODO lo necesario: importar módulo, funciones de persistencia, y función prompt
+$profileContent = @'
+# ============================================
+# Pablitus Prompt Framework - Configuración
+# ============================================
+Import-Module PablitusPrompt -Force
+
+# Función de persistencia automática de tema (incrustada)
+$script:PPFThemePrefPath = Join-Path $env:USERPROFILE "ppf-theme-pref.json"
+
+function Set-PromptThemePersist {
+    [CmdletBinding()]
+    param(
+        [string]$ThemeName,
+        [string]$DotNetThemePath
+    )
+
+    $pref = @{}
+
+    if ($PSBoundParameters.ContainsKey('ThemeName')) {
+        Set-PromptTheme -Name $ThemeName -ErrorAction Stop
+        $pref.Theme = $ThemeName
+        Write-Host "Tema PPF establecido: $ThemeName" -ForegroundColor Green
+    }
+
+    if ($PSBoundParameters.ContainsKey('DotNetThemePath')) {
+        $fullPath = (Resolve-Path -LiteralPath $DotNetThemePath -ErrorAction Stop).Path
+        $env:PPF_USE_DOTNET_CORE = "1"
+        Enable-PPFDotNetCore -ThemePath $fullPath -IgnoreUnsupported -ErrorAction Stop | Out-Null
+        $pref.DotNetTheme = $fullPath
+        Write-Host "Tema .NET/OMP establecido: $fullPath" -ForegroundColor Green
+    }
+
+    $pref | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $script:PPFThemePrefPath -Force
+    Write-Host "Preferencia guardada en $($script:PPFThemePrefPath)" -ForegroundColor Cyan
+}
+
+function Restore-PPFTHEME {
+    if (-not (Test-Path -LiteralPath $script:PPFThemePrefPath -PathType Leaf)) {
+        return
+    }
+
+    try {
+        $pref = Get-Content -LiteralPath $script:PPFThemePrefPath -Raw | ConvertFrom-Json
+
+        if ($pref.DotNetTheme) {
+            $env:PPF_USE_DOTNET_CORE = "1"
+            Enable-PPFDotNetCore -ThemePath $pref.DotNetTheme -IgnoreUnsupported -ErrorAction SilentlyContinue | Out-Null
+        }
+
+        if ($pref.Theme) {
+            Set-PromptTheme -Name $pref.Theme -ErrorAction SilentlyContinue
+        }
+    }
+    catch {
+        # Silenciosamente ignorar errores de restauración
+    }
+}
+
+# Restaurar el último tema guardado (si existe)
+Restore-PPFTHEME -ErrorAction SilentlyContinue
+
+# Configurar el prompt de PowerShell
+function global:prompt {
+    try {
+        $context = Invoke-Prompt
+        Get-PromptString -Context $context -Renderer 'PowerLine'
+    }
+    catch {
+        'PS ' + $executionContext.SessionState.Path.CurrentLocation + '➜ '
+    }
+}
+'@
+
+# Sobrescribir completamente el perfil (no agregar, sino reemplazar todo)
+Set-Content -LiteralPath $profilePath -Value $profileContent
 Write-Host ""
 Write-Host "Perfil de PowerShell configurado automáticamente en:" -ForegroundColor Green
 Write-Host "  $profilePath" -ForegroundColor Green
