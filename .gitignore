@@ -1,112 +1,17 @@
-# ============================================================
-# Pablitus Prompt Framework (.gitignore)
-# ============================================================
+# Carpeta de temas de Oh My Posh (archivos de terceros, descargados localmente)
+Temas oh my posh/
 
-# ------------------------------------------------------------
-# Operating System
-# ------------------------------------------------------------
-Thumbs.db
-Desktop.ini
-.DS_Store
+# Salidas de build .NET
+dotnet/**/bin/
+dotnet/**/obj/
+dotnet/publish/
 
-# ------------------------------------------------------------
-# Visual Studio Code
-# ------------------------------------------------------------
-.vscode/
-.history/
+# Archivos de preferencia de usuario
+ppf-theme-pref.json
 
-# ------------------------------------------------------------
-# Visual Studio
-# ------------------------------------------------------------
-.vs/
-bin/
-obj/
+# Módulo instalado (no rastrear instalación local)
+$env:USERPROFILE\Documents\PowerShell\Modules\PablitusPrompt/
 
-# ------------------------------------------------------------
-# PowerShell Editor Services
-# ------------------------------------------------------------
-*.psesxml
-
-# ------------------------------------------------------------
-# Logs
-# ------------------------------------------------------------
-*.log
-logs/
-
-# ------------------------------------------------------------
-# Temporary files
-# ------------------------------------------------------------
-*.tmp
-*.temp
-*.bak
-*.old
-*.orig
-*.swp
-*~
-
-# ------------------------------------------------------------
-# Test & Coverage
-# ------------------------------------------------------------
-TestResults/
-coverage/
-coverage.xml
-*.coverage
-*.trx
-
-# ------------------------------------------------------------
-# Benchmark outputs (generados automáticamente)
-# ------------------------------------------------------------
-benchmarks/*.csv
+# Logs y benchmarks generados localmente
 benchmarks/*.json
-benchmarks/*.html
-benchmarks/*.md
-
-# Mantener reportes importantes
-!benchmarks/release-benchmark-report.txt
-
-# ------------------------------------------------------------
-# Build outputs
-# ------------------------------------------------------------
-artifacts/
-publish/
-dist/
-
-# Ignorar build generado...
-build/
-
-# ...excepto si deseas versionar la plantilla
-#!build/PablitusPrompt/**
-
-# ------------------------------------------------------------
-# PowerShell modules
-# (NO ignorar los módulos fuente del proyecto)
-# ------------------------------------------------------------
-# *.psd1
-# *.psm1
-
-# ------------------------------------------------------------
-# Secrets
-# ------------------------------------------------------------
-*.pfx
-*.snk
-.env
-.env.*
-*.key
-*.pem
-
-# ------------------------------------------------------------
-# Design assets (Photoshop files - NOT versioned remotely)
-# ------------------------------------------------------------
-*.psd
-
-# ------------------------------------------------------------
-# PowerShell cache
-# ------------------------------------------------------------
-__pycache__/
-.cache/
-
-# ------------------------------------------------------------
-# Git
-# ------------------------------------------------------------
-*.rej
-*.patch
+*.log

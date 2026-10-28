@@ -962,6 +962,113 @@ El contrato completo de temas está documentado en [`docs/Themes.md`](docs/Theme
 
 ---
 
+## Temas de Oh My Posh (OMP)
+
+PPF puede importar y usar temas oficiales de [Oh My Posh](https://ohmyposh.dev/) a través de su núcleo .NET. El núcleo detecta automáticamente un archivo `.omp.json` de Oh My Posh y lo convierte al formato interno de PPF.
+
+### Segmentos soportados
+
+El importador de Oh My Posh reconoce los siguientes tipos de segmento:
+
+| Tipo | Descripción |
+|------|-------------|
+| `session` | Usuario y host |
+| `path` | Directorio actual |
+| `git` | Rama y estado de Git |
+| `text` | Texto estático |
+| `time` | Hora y fecha |
+| `exit` | Código de salida del último comando |
+
+También importa `transient_prompt`, `tooltips`, `tooltips_action` y `palette`.
+
+**Nota:** Algunos temas de Oh My Posh usan segmentos que PPF aún no soporta (por ejemplo `aws`, `kubernetes`, `battery`, `cpu`, etc.). Si al importar un tema obtienes un error de segmento no soportado, usa el parámetro `-IgnoreUnsupported` para saltarlos en lugar de fallar.
+
+### Descargar todos los temas de Oh My Posh
+
+Para tener una base local de temas y no depender de internet, clona el repositorio oficial:
+
+```powershell
+# Crear la carpeta de temas
+$temasOmp = "D:\PablitusPrompt\Temas oh my posh"
+if (-not (Test-Path -LiteralPath $temasOmp)) {
+    $null = New-Item -ItemType Directory -Path $temasOmp -Force
+}
+
+# Clonar el repositorio de Oh My Posh (solo lo necesario)
+$temp = Join-Path $env:TEMP "oh-my-posh-temp"
+Remove-Item -Path $temp -Recurse -Force -ErrorAction SilentlyContinue
+git clone --depth 1 https://github.com/JanDeDobbeleer/oh-my-posh.git $temp
+
+# Copiar solo la carpeta de temas
+Copy-Item -Path (Join-Path $temp "themes\*") -Destination $temasOmp -Recurse -Force
+
+# Limpiar carpeta temporal
+Remove-Item -Path $temp -Recurse -Force
+
+Write-Host "Temas descargados: $(Get-ChildItem -Path "$temasOmp\*.omp.json" | Measure-Object).Count" -ForegroundColor Green
+```
+
+Esto descarga los **123 temas oficiales** de Oh My Posh a tu carpeta local.
+
+### Importar y activar un tema de Oh My Posh
+
+```powershell
+# 1. Cargar PPF y activar el núcleo .NET
+Import-Module PablitusPrompt -Force
+$env:PPF_USE_DOTNET_CORE = "1"
+
+# 2. Importar y activar un tema (ejemplo: cobalt2)
+Import-PPFDotNetTheme -Path "D:\PablitusPrompt\Temas oh my posh\cobalt2.omp.json" -Activate -IgnoreUnsupported
+
+# 3. Renderizar el prompt
+Get-PromptString -TerminalWidth 120 -NoColor
+
+# 4. (Opcional) Guardar como tema persistente para sesiones futuras
+Set-PromptThemePersist -DotNetThemePath "D:\PablitusPrompt\Temas oh my posh\cobalt2.omp.json"
+```
+
+### Parámetros de `Import-PPFDotNetTheme`
+
+| Parámetro | Descripción |
+|-----------|-------------|
+| `-Path` | Ruta al archivo `.omp.json` de Oh My Posh (obligatorio) |
+| `-Activate` | Importa y activa el tema en un solo paso |
+| `-IgnoreUnsupported` | Salta segmentos no soportados en lugar de fallar |
+
+### Persistencia automática de tema
+
+PPF incluye una función para guardar tu tema favorito y restaurarlo automáticamente al abrir PowerShell:
+
+```powershell
+# Guardar un tema PPF nativo
+Set-PromptThemePersist -ThemeName "Pablitus Minimal"
+
+# Guardar un tema de Oh My Posh (.NET)
+Set-PromptThemePersist -DotNetThemePath "D:\PablitusPrompt\Temas oh my posh\cobalt2.omp.json"
+
+# Guardar ambos
+Set-PromptThemePersist -ThemeName "Pablitus Minimal" -DotNetThemePath "D:\PablitusPrompt\Temas oh my posh\cobalt2.omp.json"
+```
+
+La preferencia se guarda en `$env:USERPROFILE\ppf-theme-pref.json` y se restaura automáticamente desde tu `$PROFILE` (el instalador ya incluye la configuración necesaria).
+
+### Funciones relacionadas con Fase 3C
+
+Una vez activado un tema con el núcleo .NET, puedes usar:
+
+```powershell
+# Prompt principal con right prompt
+Get-PromptString -TerminalWidth 120
+
+# Prompt transitorio (después de aceptar un comando)
+Get-PromptString -Transient -TerminalWidth 120
+
+# Tooltip para un comando específico
+Get-PromptTooltip -Command "git" -TerminalWidth 120 -Column 5
+```
+
+---
+
 ## Rendimiento
 
 PPF está optimizado para que el prompt no agregue una latencia innecesaria a la terminal.
