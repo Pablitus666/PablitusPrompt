@@ -62,7 +62,30 @@ $nerdFontFallbackUrl = "https://github.com/ryanox/nerd-fonts/releases/download/v
 
 $tempFontZip = Join-Path $env:TEMP "JetBrainsMonoNerdFont.zip"
 $tempFontDir = Join-Path $env:TEMP "JetBrainsMonoNerdFont"
-$fontsDir = Join-Path $env:SystemRoot "Fonts"
+
+# Determinar directorio de fuentes según el SO
+$fontsDir = $null
+$fontCacheCommand = $null
+$isWindows = [System.OperatingSystem]::IsWindows()
+$isMacOS = [System.OperatingSystem]::IsMacOS()
+$isLinux = [System.OperatingSystem]::IsLinux()
+
+if ($isWindows) {
+    $fontsDir = Join-Path $env:SystemRoot "Fonts"
+}
+elseif ($isMacOS) {
+    $fontsDir = Join-Path (Join-Path $env:HOME "Library") "Fonts"
+    if (-not (Test-Path -LiteralPath $fontsDir)) {
+        $null = New-Item -ItemType Directory -Path $fontsDir -Force
+    }
+}
+elseif ($isLinux) {
+    $fontsDir = Join-Path (Join-Path $env:HOME ".local") "share/fonts"
+    if (-not (Test-Path -LiteralPath $fontsDir)) {
+        $null = New-Item -ItemType Directory -Path $fontsDir -Force
+    }
+    $fontCacheCommand = "fc-cache"
+}
 
 try {
     if (-not (Test-Path -LiteralPath $tempFontZip)) {
@@ -101,6 +124,17 @@ try {
             Write-Host "  Instalada: $($fontFile.Name)" -ForegroundColor Green
         }
         $installedCount++
+    }
+
+    # Ejecutar fc-cache en Linux para actualizar el caché de fuentes
+    if ($fontCacheCommand -and $installedCount -gt 0) {
+        try {
+            & $fontCacheCommand -f $fontsDir | Out-Null
+            Write-Host "  Caché de fuentes actualizado (fc-cache)" -ForegroundColor Green
+        }
+        catch {
+            # fc-cache puede no estar disponible; no es crítico
+        }
     }
 
     Write-Host "  Total fuentes instaladas: $installedCount" -ForegroundColor Green

@@ -82,6 +82,11 @@ public sealed class BatterySegmentProvider : TemplateSegmentProvider
             return ReadBatteryLinux();
         }
 
+        if (OperatingSystem.IsMacOS())
+        {
+            return ReadBatteryMacOS();
+        }
+
         return null;
     }
 
@@ -199,5 +204,122 @@ public sealed class BatterySegmentProvider : TemplateSegmentProvider
         {
             return null;
         }
+    }
+
+    private static BatteryInfo? ReadBatteryMacOS()
+    {
+        try
+        {
+            // Use pmset to get battery information on macOS
+            var output = RunProcess("pmset", new[] { "-g", "batt" }, 5000);
+            if (string.IsNullOrEmpty(output))
+            {
+                return null;
+            }
+
+            // Example output:
+            // Now drawing from 'AC Power'
+            // -InternalBattery-0   87%; charging; 0:00 remaining present: true
+            var lines = output.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var line in lines)
+            {
+                var trimmed = line.Trim();
+                if (!trimmed.StartsWith("-InternalBattery", StringComparison.Ordinal) &&
+                    !trimmed.StartsWith("-", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                // Parse percentage
+                int percent = 0;
+                var percentMatch = System.Text.RegularExpressions.Regex.Match(trimmed, @"(\d+)%");
+                if (percentMatch.Success && int.TryParse(percentMatch.Groups[1].Value, out var parsedPercent))
+                {
+                    percent = parsedPercent;
+                }
+
+                // Parse charging status
+                bool charging = trimmed.Contains("charging", StringComparison.OrdinalIgnoreCase) ||
+                                trimmed.Contains("AC Power", StringComparison.OrdinalIgnoreCase);
+
+                return new BatteryInfo(percent, charging);
+            }
+
+            return null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>Runs an external command and returns its trimmed standard output.</summary>
+    private static string? RunProcess(string command, IEnumerable<string> arguments, int timeoutMs)
+    {
+        var startInfo = new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = command,
+            Arguments = string.Join(" ", arguments.Select(QuoteArgument)),
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        };
+
+        using var process = new System.Diagnostics.Process { StartInfo = startInfo };
+        var output = new System.Text.StringBuilder();
+        var outputCompleted = new System.Threading.Tasks.TaskCompletionSource<bool>();
+
+        process.OutputDataReceived += (_, e) =>
+        {
+            if (e.Data is not null)
+            {
+                output.AppendLine(e.Data);
+            }
+            else
+            {
+                outputCompleted.TrySetResult(true);
+            }
+        };
+
+        try
+        {
+            if (!process.Start())
+            {
+                return null;
+            }
+
+            process.BeginOutputReadLine();
+
+            var waited = process.WaitForExit(timeoutMs);
+            if (!waited)
+            {
+                try { process.Kill(); } catch { }
+                return null;
+            }
+
+            outputCompleted.TrySetResult(true);
+            return output.Length > 0 ? output.ToString().Trim() : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>Quotes a command argument for safe passing to a process.</summary>
+    private static string QuoteArgument(string argument)
+    {
+        if (string.IsNullOrEmpty(argument))
+        {
+            return "\"\"";
+        }
+
+        if (OperatingSystem.IsWindows())
+        {
+            return $"\"{argument.Replace("\"", "\"\"")}\"";
+        }
+
+        return $"'{argument.Replace("'", "'\\''")}'";
     }
 }
