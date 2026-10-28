@@ -15,3 +15,7 @@ $env:USERPROFILE\Documents\PowerShell\Modules\PablitusPrompt/
 # Logs y benchmarks generados localmente
 benchmarks/*.json
 *.log
+
+# Fuente Nerd Font (se sube a GitHub Releases, no al repositorio git)
+JetBrains_Mono.zip
+*.zip

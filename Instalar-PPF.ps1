@@ -55,15 +55,27 @@ if (Test-Path -LiteralPath $dotnetPublish) {
 Write-Host ""
 Write-Host "Instalando Nerd Font (necesaria para glifos PowerLine)..." -ForegroundColor Cyan
 
-$nerdFontUrl = "https://github.com/ryanox/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip"
+# Fuente primaria: nuestro release de GitHub (sin dependencia de terceros)
+$nerdFontPrimaryUrl = "https://github.com/Pablitus666/PablitusPrompt/releases/latest/download/JetBrains_Mono.zip"
+# Fuente de respaldo: repositorio oficial de nerd-fonts
+$nerdFontFallbackUrl = "https://github.com/ryanox/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip"
+
 $tempFontZip = Join-Path $env:TEMP "JetBrainsMonoNerdFont.zip"
 $tempFontDir = Join-Path $env:TEMP "JetBrainsMonoNerdFont"
 $fontsDir = Join-Path $env:SystemRoot "Fonts"
 
 try {
     if (-not (Test-Path -LiteralPath $tempFontZip)) {
-        Write-Host "  Descargando JetBrainsMono Nerd Font..." -ForegroundColor Cyan
-        Invoke-WebRequest -Uri $nerdFontUrl -OutFile $tempFontZip -ErrorAction Stop
+        Write-Host "  Descargando JetBrainsMono Nerd Font desde nuestro release de GitHub..." -ForegroundColor Cyan
+        try {
+            Invoke-WebRequest -Uri $nerdFontPrimaryUrl -OutFile $tempFontZip -ErrorAction Stop
+            Write-Host "  Descargado desde PPF GitHub Release" -ForegroundColor Green
+        }
+        catch {
+            Write-Host "  No se pudo descargar desde PPF Release, intentando fuente de respaldo..." -ForegroundColor Yellow
+            Invoke-WebRequest -Uri $nerdFontFallbackUrl -OutFile $tempFontZip -ErrorAction Stop
+            Write-Host "  Descargado desde nerd-fonts (respaldo)" -ForegroundColor Green
+        }
     }
 
     if (-not (Test-Path -LiteralPath $tempFontDir)) {
