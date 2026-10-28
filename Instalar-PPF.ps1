@@ -188,11 +188,18 @@ Write-Host "="*60 -ForegroundColor Cyan
 Write-Host "  INSTALACIÓN COMPLETADA" -ForegroundColor Green
 Write-Host "="*60 -ForegroundColor Cyan
 
-# Configurar $PROFILE automáticamente con la persistencia de tema
+# Configurar $PROFILE automáticamente con la persistencia de tema (totalmente autocontenido)
 $profilePath = $PROFILE
 $profileDir = Split-Path -Parent $profilePath
 if (-not (Test-Path -LiteralPath $profileDir)) {
     $null = New-Item -ItemType Directory -Path $profileDir -Force
+}
+
+# Leer el contenido de ppf-theme-persist.ps1 para incrustarlo en el perfil
+$ppfPersistContent = ""
+$ppfPersistSourcePath = Join-Path $repoRoot "src/Core/ppf-theme-persist.ps1"
+if (Test-Path -LiteralPath $ppfPersistSourcePath) {
+    $ppfPersistContent = Get-Content -LiteralPath $ppfPersistSourcePath -Raw
 }
 
 $profileContent = @"
@@ -201,8 +208,57 @@ $profileContent = @"
 # ============================================
 Import-Module PablitusPrompt -Force
 
-# Cargar función de persistencia de tema
-. `"$modulePath/src/Core/ppf-theme-persist.ps1`"
+# Función de persistencia automática de tema (incrustada)
+$script:PPFThemePrefPath = Join-Path $env:USERPROFILE "ppf-theme-pref.json"
+
+function Set-PromptThemePersist {
+    [CmdletBinding()]
+    param(
+        [string]$ThemeName,
+        [string]$DotNetThemePath
+    )
+
+    $pref = @{}
+
+    if ($PSBoundParameters.ContainsKey('ThemeName')) {
+        Set-PromptTheme -Name $ThemeName -ErrorAction Stop
+        $pref.Theme = $ThemeName
+        Write-Host "Tema PPF establecido: $ThemeName" -ForegroundColor Green
+    }
+
+    if ($PSBoundParameters.ContainsKey('DotNetThemePath')) {
+        $fullPath = (Resolve-Path -LiteralPath $DotNetThemePath -ErrorAction Stop).Path
+        $env:PPF_USE_DOTNET_CORE = "1"
+        Enable-PPFDotNetCore -ThemePath $fullPath -IgnoreUnsupported -ErrorAction Stop | Out-Null
+        $pref.DotNetTheme = $fullPath
+        Write-Host "Tema .NET/OMP establecido: $fullPath" -ForegroundColor Green
+    }
+
+    $pref | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $script:PPFThemePrefPath -Force
+    Write-Host "Preferencia guardada en $($script:PPFThemePrefPath)" -ForegroundColor Cyan
+}
+
+function Restore-PPFTHEME {
+    if (-not (Test-Path -LiteralPath $script:PPFThemePrefPath -PathType Leaf)) {
+        return
+    }
+
+    try {
+        $pref = Get-Content -LiteralPath $script:PPFThemePrefPath -Raw | ConvertFrom-Json
+
+        if ($pref.DotNetTheme) {
+            $env:PPF_USE_DOTNET_CORE = "1"
+            Enable-PPFDotNetCore -ThemePath $pref.DotNetTheme -IgnoreUnsupported -ErrorAction SilentlyContinue | Out-Null
+        }
+
+        if ($pref.Theme) {
+            Set-PromptTheme -Name $pref.Theme -ErrorAction SilentlyContinue
+        }
+    }
+    catch {
+        # Silenciosamente ignorar errores de restauración
+    }
+}
 
 # Restaurar el último tema guardado (si existe)
 Restore-PPFTHEME -ErrorAction SilentlyContinue
@@ -219,24 +275,25 @@ function global:prompt {
 }
 "@
 
-# Verificar si ya existe una configuración de PPF en el perfil
-$existingContent = ""
+# Siempre escribir el perfil (forzar actualización completa)
+# Primero, eliminar cualquier sección anterior de PPF del perfil
 if (Test-Path -LiteralPath $profilePath) {
     $existingContent = Get-Content -LiteralPath $profilePath -Raw
+    # Remover secciones anteriores de PPF (entre marcadores)
+    if ($existingContent -match '# ============================================\r?\n# Pablitus Prompt Framework - Configuración.*?\r?\n# ============================================') {
+        $existingContent = $existingContent -replace '# ============================================\r?\n# Pablitus Prompt Framework - Configuración.*?\r?\n# ============================================\r?\n?', ''
+        $existingContent = $existingContent.TrimEnd("`r`n") + "`r`n"
+        Set-Content -LiteralPath $profilePath -Value $existingContent
+    }
 }
 
-if ($existingContent -notlike "*Pablitus Prompt Framework - Configuración*") {
-    # Agregar configuración al final del perfil
-    Add-Content -LiteralPath $profilePath -Value "`n$profileContent"
-    Write-Host ""
-    Write-Host "Perfil de PowerShell configurado automáticamente en:" -ForegroundColor Green
-    Write-Host "  $profilePath" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "Cierra y vuelve a abrir PowerShell para aplicar los cambios." -ForegroundColor Yellow
-} else {
-    Write-Host ""
-    Write-Host "El perfil de PowerShell ya contiene la configuración de PPF." -ForegroundColor Cyan
-}
+# Agregar la nueva configuración al final
+Add-Content -LiteralPath $profilePath -Value "`n$profileContent"
+Write-Host ""
+Write-Host "Perfil de PowerShell configurado automáticamente en:" -ForegroundColor Green
+Write-Host "  $profilePath" -ForegroundColor Green
+Write-Host ""
+Write-Host "Cierra y vuelve a abrir PowerShell para aplicar los cambios." -ForegroundColor Yellow
 
 Write-Host ""
 Write-Host "Temas disponibles:" -ForegroundColor Cyan
