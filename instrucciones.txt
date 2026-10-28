@@ -240,12 +240,33 @@ Parámetros de Import-PPFDotNetTheme:
   -Activate        Importa y activa el tema en un solo paso
   -IgnoreUnsupported Salta segmentos no soportados en lugar de fallar
 
-Segmentos de Oh My Posh soportados por PPF:
-  session, path, git, text, time, exit
+Segmentos de Oh My Posh soportados por PPF (.NET core):
+  session, path, git, text, time, exit,
+  aws, az, azure, azd, az_functions, gcp, firebase,
+  battery, cmd_duration,
+  docker, docker_context,
+  dotnet,
+  gitcommit, gitversion,
+  go, golang,
+  helm, kubernetes, kubectl,
+  node, npm, npx, pnpm, yarn, bun, deno,
+  python,
+  terraform, terraform_required_version,
+  gradle, mvn, mvnw,
+  ruby, rust, cargo,
+  php, composer,
+  swift, kotlin, scala
 
-Nota: Algunos temas usan segmentos que PPF aún no soporta (aws, kubernetes,
-battery, cpu, etc.). Si obtienes un error al importar, usa -IgnoreUnsupported
-para saltar esos segmentos y renderizar el resto del tema normalmente.
+Total: 46 tipos de segmento soportados (6 built-in + 40 de Oh My Posh).
+
+Nota: Aunque PPF soporta estos tipos de segmento, algunos dependen de
+herramientas externas que pueden no estar instaladas en tu sistema
+(kubectl, aws, docker, terraform, etc.). Si una herramienta no está
+disponible, el segmento se omite silenciosamente y el prompt sigue
+renderizándose con los segmentos que sí estén disponibles.
+
+Para importar temas que usen segmentos no listados arriba, usa el parámetro
+-IgnoreUnsupported para saltarlos en lugar de fallar.
 
 --------------------------------------------------------------------------------
 9. COMANDOS RÁPIDOS DE REFERENCIA
