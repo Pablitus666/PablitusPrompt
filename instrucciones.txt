@@ -20,8 +20,8 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
   - Git (para clonar el repositorio)
   - Una terminal compatible con ANSI truecolor y Nerd Font
     (recomendado: Windows Terminal, WezTerm, Alacritty, Kitty, iTerm2)
-  - Una Nerd Font instalada y seleccionada en tu terminal
-    (para ver correctamente los glifos y símbolos PowerLine)
+  - El instalador descarga e instala automáticamente JetBrainsMono Nerd Font
+    (licencia SIL OFL, distribución libre permitida)
 
 Verifica tu versión de PowerShell:
 
@@ -304,9 +304,11 @@ Para importar temas que usen segmentos no listados arriba, usa el parámetro
               la ruta $PPF apunte a la carpeta src correcta.
 
 10.4 Glifos se ven como cuadros o signos de interrogación
-     Causa: No tienes una Nerd Font instalada o no está seleccionada en la terminal.
-     Solución: Instala una Nerd Font (ej: MesloLGS NF, JetBrainsMono NF) y
-              configúrala en tu terminal.
+     Causa: La Nerd Font no está instalada o no está seleccionada en la terminal.
+     Solución: El instalador ya descarga e instala JetBrainsMono Nerd Font
+              automáticamente. Si persiste el problema, reinicia tu terminal
+              y selecciona 'JetBrainsMono Nerd Font' en la configuración
+              de tu terminal.
 
 10.5 "Cannot find path 'ruta\al\tema.omp.json'"
      Causa: La ruta del tema no existe.
