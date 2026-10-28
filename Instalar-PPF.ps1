@@ -22,6 +22,21 @@ if (-not (Test-Path -LiteralPath $modulePath)) {
     Write-Host "Creado: $modulePath" -ForegroundColor Green
 }
 
+# 1.5. Descargar el módulo si está cargado para liberar los archivos DLL
+$moduleLoadAttempts = 0
+while ((Get-Module PablitusPrompt -ErrorAction SilentlyContinue) -and $moduleLoadAttempts -lt 3) {
+    $moduleLoadAttempts++
+    Write-Host ""
+    Write-Host "Descargando módulo PablitusPrompt cargado (intento $moduleLoadAttempts) para liberar archivos DLL..." -ForegroundColor Cyan
+    Remove-Module PablitusPrompt -ErrorAction SilentlyContinue
+    Start-Sleep -Milliseconds 500
+}
+if (Get-Module PablitusPrompt -ErrorAction SilentlyContinue) {
+    Write-Host ""
+    Write-Host "ADVERTENCIA: No se pudo descargar el módulo PablitusPrompt." -ForegroundColor Yellow
+    Write-Host "   Cierre todas las sesiones de PowerShell y vuelva a ejecutar el instalador." -ForegroundColor Yellow
+}
+
 # 2. Copiar TODO el contenido de src/ al módulo
 Write-Host ""
 Write-Host "Copiando archivos del núcleo..." -ForegroundColor Cyan
@@ -42,9 +57,24 @@ if (Test-Path -LiteralPath $dotnetPublish) {
     if (-not (Test-Path -LiteralPath $dotnetPublishDest)) {
         $null = New-Item -ItemType Directory -Path $dotnetPublishDest -Force
     }
+    $copyFailed = $false
     Get-ChildItem -Path "$dotnetPublish" -File | ForEach-Object {
-        Copy-Item -Path $_.FullName -Destination "$dotnetPublishDest/" -Force
-        Write-Host "  $($_.Name)" -ForegroundColor Green
+        $fileName = $_.Name
+        $sourcePath = $_.FullName
+        try {
+            Copy-Item -Path $sourcePath -Destination "$dotnetPublishDest/" -Force -ErrorAction Stop
+            Write-Host "  $fileName" -ForegroundColor Green
+        }
+        catch {
+            $copyFailed = $true
+            Write-Host "  ERROR: No se pudo copiar '$fileName' (el archivo está en uso por otro proceso)." -ForegroundColor Red
+            Write-Host "         Cierre todas las sesiones de PowerShell y ejecute nuevamente: .\Instalar-PPF.ps1" -ForegroundColor Red
+        }
+    }
+    if ($copyFailed) {
+        Write-Host ""
+        Write-Host "ADVERTENCIA: Algunos archivos no se pudieron copiar porque están en uso." -ForegroundColor Yellow
+        Write-Host "   Cierre todas las ventanas de PowerShell y ejecute nuevamente: .\Instalar-PPF.ps1" -ForegroundColor Yellow
     }
 } else {
     Write-Host "ADVERTENCIA: No se encontró $dotnetPublish" -ForegroundColor Yellow
@@ -66,20 +96,20 @@ $tempFontDir = Join-Path $env:TEMP "JetBrainsMonoNerdFont"
 # Determinar directorio de fuentes según el SO
 $fontsDir = $null
 $fontCacheCommand = $null
-$isWindows = [System.OperatingSystem]::IsWindows()
-$isMacOS = [System.OperatingSystem]::IsMacOS()
-$isLinux = [System.OperatingSystem]::IsLinux()
+$osIsWindows = [System.OperatingSystem]::IsWindows()
+$osIsMacOS = [System.OperatingSystem]::IsMacOS()
+$osIsLinux = [System.OperatingSystem]::IsLinux()
 
-if ($isWindows) {
+if ($osIsWindows) {
     $fontsDir = Join-Path $env:SystemRoot "Fonts"
 }
-elseif ($isMacOS) {
+elseif ($osIsMacOS) {
     $fontsDir = Join-Path (Join-Path $env:HOME "Library") "Fonts"
     if (-not (Test-Path -LiteralPath $fontsDir)) {
         $null = New-Item -ItemType Directory -Path $fontsDir -Force
     }
 }
-elseif ($isLinux) {
+elseif ($osIsLinux) {
     $fontsDir = Join-Path (Join-Path $env:HOME ".local") "share/fonts"
     if (-not (Test-Path -LiteralPath $fontsDir)) {
         $null = New-Item -ItemType Directory -Path $fontsDir -Force
