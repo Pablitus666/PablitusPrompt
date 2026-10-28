@@ -272,17 +272,24 @@ function global:prompt {
 
 # Siempre escribir el perfil (forzar actualización completa)
 if (Test-Path -LiteralPath $profilePath) {
-    $existingContent = Get-Content -LiteralPath $profilePath -Raw
+    $existingLines = Get-Content -LiteralPath $profilePath
     
-    # Remover TODAS las líneas que hagan referencia a ppf-theme-persist.ps1
-    $existingContent = $existingContent -replace ".*ppf-theme-persist\.ps1.*\r?\n", ''
+    # Remover CUALQUIER línea relacionada con PPF para evitar duplicados y errores
+    $existingLines = $existingLines | Where-Object {
+        $_ -notmatch 'Pablitus Prompt Framework - Configuración' -and
+        $_ -notmatch 'ppf-theme-persist' -and
+        $_ -notmatch 'PPFThemePrefPath' -and
+        $_ -notmatch 'Set-PromptThemePersist' -and
+        $_ -notmatch 'Restore-PPFTHEME' -and
+        $_ -notmatch 'function global:prompt' -and
+        $_ -notmatch '\$context = Invoke-Prompt' -and
+        $_ -notmatch '\$executionContext.SessionState.Path.CurrentLocation' -and
+        $_ -notmatch '^=+$' -and
+        $_ -notmatch '^$'
+    }
     
-    # Remover secciones anteriores de PPF (entre marcadores)
-    $existingContent = $existingContent -replace '# ============================================\r?\n# Pablitus Prompt Framework - Configuración.*?\r?\n# ============================================\r?\n?', ''
-    
-    # Limpiar líneas vacías múltiples al final
-    $existingContent = $existingContent.TrimEnd("`r`n") + "`r`n"
-    Set-Content -LiteralPath $profilePath -Value $existingContent
+    $cleanContent = ($existingLines -join "`r`n").TrimEnd("`r`n") + "`r`n"
+    Set-Content -LiteralPath $profilePath -Value $cleanContent
 }
 
 # Agregar la nueva configuración al final
