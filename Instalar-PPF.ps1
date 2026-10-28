@@ -34,17 +34,21 @@ Get-ChildItem -Path "$srcRoot" -Recurse -File | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination $destPath -Force
 }
 
-# 3. Copiar el núcleo .NET compilado
+# 3. Copiar el núcleo .NET compilado a dotnet/publish/ dentro del módulo
 Write-Host ""
 Write-Host "Copiando núcleo .NET..." -ForegroundColor Cyan
+$dotnetPublishDest = Join-Path $modulePath "dotnet/publish"
 if (Test-Path -LiteralPath $dotnetPublish) {
+    if (-not (Test-Path -LiteralPath $dotnetPublishDest)) {
+        $null = New-Item -ItemType Directory -Path $dotnetPublishDest -Force
+    }
     Get-ChildItem -Path "$dotnetPublish" -File | ForEach-Object {
-        Copy-Item -Path $_.FullName -Destination "$modulePath/" -Force
+        Copy-Item -Path $_.FullName -Destination "$dotnetPublishDest/" -Force
         Write-Host "  $($_.Name)" -ForegroundColor Green
     }
 } else {
     Write-Host "ADVERTENCIA: No se encontró $dotnetPublish" -ForegroundColor Yellow
-    Write-Host "   Ejecuta primero: dotnet build dotnet/src/PablitusPrompt.Cli -c Release" -ForegroundColor Yellow
+    Write-Host "   Ejecuta primero: scripts/Build-PPFDotNetCore.ps1" -ForegroundColor Yellow
 }
 
 Write-Host ""
