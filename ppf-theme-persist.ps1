@@ -77,12 +77,10 @@ function Restore-PPFTHEME {
         if ($pref.DotNetTheme) {
             $env:PPF_USE_DOTNET_CORE = "1"
             Enable-PPFDotNetCore -ThemePath $pref.DotNetTheme -IgnoreUnsupported -ErrorAction SilentlyContinue | Out-Null
-            Write-Host "Tema .NET restaurado: $($pref.DotNetTheme)" -ForegroundColor Cyan
         }
 
         if ($pref.Theme) {
             Set-PromptTheme -Name $pref.Theme -ErrorAction SilentlyContinue
-            Write-Host "Tema PPF restaurado: $($pref.Theme)" -ForegroundColor Cyan
         }
     }
     catch {
