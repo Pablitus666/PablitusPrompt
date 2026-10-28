@@ -1,0 +1,320 @@
+================================================================================
+  PABLITUS PROMPT FRAMEWORK (PPF) - GUÍA DE INSTALACIÓN Y USO
+  ================================================================================
+  Versión: 1.5.0
+  Autor: Walter Pablo Téllez Ayala
+  Repositorio: https://github.com/Pablitus666/PablitusPrompt
+================================================================================
+
+Este documento explica paso a paso cómo instalar, configurar y usar PPF desde cero,
+incluido el soporte para temas de Oh My Posh y las funciones de Fase 3C (prompt
+transitorio, tooltips y right prompt).
+
+--------------------------------------------------------------------------------
+1. REQUISITOS PREVIOS
+--------------------------------------------------------------------------------
+
+Antes de comenzar, asegúrate de tener instalado lo siguiente:
+
+  - PowerShell 7.0 o superior (se recomienda 7.6 o posterior)
+  - Git (para clonar el repositorio)
+  - Una terminal compatible con ANSI truecolor y Nerd Font
+    (recomendado: Windows Terminal, WezTerm, Alacritty, Kitty, iTerm2)
+  - Una Nerd Font instalada y seleccionada en tu terminal
+    (para ver correctamente los glifos y símbolos PowerLine)
+
+Verifica tu versión de PowerShell:
+
+  pwsh --version
+
+--------------------------------------------------------------------------------
+2. PASO 1: CLONAR EL REPOSITORIO
+--------------------------------------------------------------------------------
+
+Abre PowerShell y ejecuta:
+
+  git clone https://github.com/Pablitus666/PablitusPrompt.git
+  cd PablitusPrompt
+
+Esto descargará todo el código fuente, temas, ejemplos, pruebas y scripts.
+
+--------------------------------------------------------------------------------
+3. PASO 2: EJECUTAR EL INSTALADOR
+--------------------------------------------------------------------------------
+
+Desde la carpeta raíz del repositorio (D:\PablitusPrompt), ejecuta:
+
+  .\Instalar-PPF.ps1
+
+El instalador hará lo siguiente:
+
+  - Creará la carpeta del módulo en:
+        C:\Users\<TuUsuario>\Documents\PowerShell\Modules\PablitusPrompt
+  - Copiará TODO el contenido de src/ al módulo
+  - Copiará el núcleo .NET compilado a:
+        ...\PablitusPrompt\dotnet\publish\PablitusPrompt.Core.dll
+  - Listará los temas disponibles al finalizar
+
+Salida esperada:
+
+  ================================================
+    Pablitus Prompt Framework - Instalación
+  ================================================
+  Copiando archivos del núcleo...
+  Copiando núcleo .NET...
+    PablitusPrompt.Core.deps.json
+    PablitusPrompt.Core.dll
+    PablitusPrompt.Core.pdb
+  ================================================
+    INSTALACIÓN COMPLETADA
+  ================================================
+
+Nota: Si el instalador advierte que no encontró dotnet/publish, compila primero el
+núcleo .NET con:
+
+  dotnet build dotnet/src/PablitusPrompt.Cli -c Release
+
+--------------------------------------------------------------------------------
+4. PASO 3: IMPORTAR EL MÓDULO Y VERIFICAR
+--------------------------------------------------------------------------------
+
+En una nueva sesión de PowerShell (o en la misma):
+
+  Import-Module PablitusPrompt -Force
+
+Verifica que los temas estén disponibles:
+
+  Get-PromptThemes | Select-Object Name | Sort-Object Name | Format-Table -AutoSize
+
+Deberías ver una lista con temas como:
+  - Default, Nord, Dracula, Kali, Catppuccin, Pablitus, Pablitus Stack, etc.
+
+Cambia a un tema y prueba el prompt:
+
+  Set-PromptTheme -Name "Pablitus Minimal"
+  Get-PromptString -TerminalWidth 100 -NoColor
+
+Ejemplo de salida esperada:
+
+    Pablo   D:\PablitusPrompt   main   11:24 
+
+--------------------------------------------------------------------------------
+5. PASO 4: CONFIGURAR EL PROMPT EN TU PERFIL ($PROFILE)
+--------------------------------------------------------------------------------
+
+Para que PPF se cargue automáticamente cada vez que abras PowerShell, edita tu
+perfil de PowerShell:
+
+  notepad $PROFILE
+
+O con Visual Studio Code:
+
+  code $PROFILE
+
+Agrega el siguiente bloque al final del archivo (ajusta la ruta si clonaste en
+otra ubicación):
+
+  # ==========================================
+  # Pablitus Prompt Framework
+  # ==========================================
+  $PPF = "D:\PablitusPrompt\src"
+
+  if (Test-Path (Join-Path $PPF "Bootstrap.ps1")) {
+      try {
+          . (Join-Path $PPF "Bootstrap.ps1")
+
+          $env:PPF_USE_DOTNET_CORE = "1"
+          Set-PromptTheme -Name "Pablitus Minimal"
+          $global:PPF_SkipHiddenProviders = $true
+
+          function global:prompt {
+              try {
+                  $context = Invoke-Prompt
+                  Get-PromptString -Context $context -Renderer "PowerLine"
+              }
+              catch {
+                  "PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
+              }
+          }
+      }
+      catch {
+          Write-Warning "[PPF] No se pudo cargar el prompt: $_"
+      }
+  }
+
+Guarda el archivo, cierra y vuelve a abrir PowerShell. El tema se cargará solo.
+
+--------------------------------------------------------------------------------
+6. PASO 5: PERSISTENCIA AUTOMÁTICA DE TEMA (OPCIONAL)
+--------------------------------------------------------------------------------
+
+PPF incluye una función para guardar tu tema favorito y restaurarlo
+automáticamente al iniciar cada sesión:
+
+  # Guardar un tema PPF nativo
+  Set-PromptThemePersist -ThemeName "Pablitus Minimal"
+
+  # Guardar un tema de Oh My Posh (.NET core)
+  Set-PromptThemePersist -DotNetThemePath "D:\PablitusPrompt\Temas oh my posh\cobalt2.omp.json"
+
+  # Guardar ambos a la vez
+  Set-PromptThemePersist -ThemeName "Pablitus Minimal" -DotNetThemePath "D:\PablitusPrompt\Temas oh my posh\cobalt2.omp.json"
+
+La preferencia se guarda en:
+  C:\Users\<TuUsuario>\ppf-theme-pref.json
+
+Al abrir PowerShell, el perfil restaurará automáticamente el último tema guardado
+sin mostrar mensajes adicionales.
+
+--------------------------------------------------------------------------------
+7. FASE 3C: PROMPT TRANSITORIO, TOOLTIPS Y RIGHT PROMPT (.NET CORE)
+--------------------------------------------------------------------------------
+
+Estas funciones avanzadas requieren el núcleo .NET de PPF (modo opt-in).
+
+7.1 Activar el núcleo .NET
+
+  $env:PPF_USE_DOTNET_CORE = "1"
+  Enable-PPFDotNetCore -ThemePath "D:\PablitusPrompt\examples\dotnet\theme.pablitusminimal.ppf.json"
+
+Verifica el estado:
+
+  Get-PPFDotNetCoreStatus
+
+Deberías ver:
+  Enabled           : True
+  AssemblyLoaded    : True
+  EngineReady       : True
+  Available         : True
+
+7.2 Usar las funciones de Fase 3C
+
+  # Prompt principal con right prompt (si el tema lo define)
+  Get-PromptString -TerminalWidth 120 -NoColor
+
+  # Prompt transitorio (se muestra tras aceptar un comando)
+  Get-PromptString -Transient -TerminalWidth 120 -NoColor
+
+  # Tooltip para un comando específico
+  Get-PromptTooltip -Command "git" -TerminalWidth 120 -Column 5 -NoColor
+
+Desactiva el núcleo .NET cuando ya no lo necesites:
+
+  Disable-PPFDotNetCore
+  Remove-Item Env:\PPF_USE_DOTNET_CORE -ErrorAction SilentlyContinue
+
+--------------------------------------------------------------------------------
+8. TEMAS DE OH MY POSH (OMP)
+--------------------------------------------------------------------------------
+
+PPF puede importar y usar temas oficiales de Oh My Posh a través de su núcleo .NET.
+
+8.1 Descargar todos los temas de Oh My Posh (recomendado)
+
+Ejecuta esto desde la raíz del repositorio:
+
+  $temasOmp = "D:\PablitusPrompt\Temas oh my posh"
+  if (-not (Test-Path -LiteralPath $temasOmp)) {
+      $null = New-Item -ItemType Directory -Path $temasOmp -Force
+  }
+  $temp = Join-Path $env:TEMP "oh-my-posh-temp"
+  Remove-Item -Path $temp -Recurse -Force -ErrorAction SilentlyContinue
+  git clone --depth 1 https://github.com/JanDeDobbeleer/oh-my-posh.git $temp
+  Copy-Item -Path (Join-Path $temp "themes\*") -Destination $temasOmp -Recurse -Force
+  Remove-Item -Path $temp -Recurse -Force
+
+  Write-Host "Temas descargados: $(Get-ChildItem -Path "$temasOmp\*.omp.json" | Measure-Object).Count" -ForegroundColor Green
+
+Esto descarga los 123 temas oficiales de Oh My Posh a tu carpeta local.
+
+8.2 Importar y activar un tema de Oh My Posh
+
+  Import-Module PablitusPrompt -Force
+  $env:PPF_USE_DOTNET_CORE = "1"
+
+  Import-PPFDotNetTheme -Path "D:\PablitusPrompt\Temas oh my posh\cobalt2.omp.json" -Activate -IgnoreUnsupported
+  Get-PromptString -TerminalWidth 120 -NoColor
+
+Parámetros de Import-PPFDotNetTheme:
+  -Path            Ruta al archivo .omp.json (obligatorio)
+  -Activate        Importa y activa el tema en un solo paso
+  -IgnoreUnsupported Salta segmentos no soportados en lugar de fallar
+
+Segmentos de Oh My Posh soportados por PPF:
+  session, path, git, text, time, exit
+
+Nota: Algunos temas usan segmentos que PPF aún no soporta (aws, kubernetes,
+battery, cpu, etc.). Si obtienes un error al importar, usa -IgnoreUnsupported
+para saltar esos segmentos y renderizar el resto del tema normalmente.
+
+--------------------------------------------------------------------------------
+9. COMANDOS RÁPIDOS DE REFERENCIA
+--------------------------------------------------------------------------------
+
+  Import-Module PablitusPrompt -Force          # Cargar el módulo
+  Get-PromptThemes                             # Listar temas disponibles
+  Set-PromptTheme -Name "<tema>"               # Cambiar de tema
+  Get-PromptString -TerminalWidth 120          # Renderizar prompt principal
+  Get-PromptString -Transient -TerminalWidth 80 # Prompt transitorio
+  Get-PromptTooltip -Command "git" -TerminalWidth 120 -Column 5 # Tooltip
+  Enable-PPFDotNetCore -ThemePath "<ruta>"     # Activar núcleo .NET
+  Disable-PPFDotNetCore                        # Desactivar núcleo .NET
+  Get-PPFDotNetCoreStatus                      # Ver estado del núcleo .NET
+  Set-PromptThemePersist ...                   # Guardar tema persistente
+  Get-PromptHealth                             # Diagnóstico del framework
+  Measure-Prompt                             # Medir rendimiento del prompt
+
+--------------------------------------------------------------------------------
+10. SOLUCIÓN DE PROBLEMAS COMUNES
+--------------------------------------------------------------------------------
+
+10.1 "PPF .NET core assembly not found"
+     Causa: El instalador no copió la DLL o la ruta es incorrecta.
+     Solución: Vuelve a ejecutar .\Instalar-PPF.ps1 o define la variable:
+       $env:PPF_DOTNET_CORE_DLL = "C:\ruta\completa\PablitusPrompt.Core.dll"
+
+10.2 El tema de Oh My Posh falla al importar
+     Causa: Segmentos no soportados.
+     Solución: Agrega -IgnoreUnsupported al comando Import-PPFDotNetTheme.
+
+10.3 El prompt no aparece al abrir PowerShell
+     Causa: El perfil no cargó el módulo.
+     Solución: Verifica que $PROFILE contenga el bloque de configuración y que
+              la ruta $PPF apunte a la carpeta src correcta.
+
+10.4 Glifos se ven como cuadros o signos de interrogación
+     Causa: No tienes una Nerd Font instalada o no está seleccionada en la terminal.
+     Solución: Instala una Nerd Font (ej: MesloLGS NF, JetBrainsMono NF) y
+              configúrala en tu terminal.
+
+10.5 "Cannot find path 'ruta\al\tema.omp.json'"
+     Causa: La ruta del tema no existe.
+     Solución: Usa una ruta real, por ejemplo:
+       D:\PablitusPrompt\Temas oh my posh\cobalt2.omp.json
+
+--------------------------------------------------------------------------------
+11. ¿SE GENERA UN .EXE?
+--------------------------------------------------------------------------------
+
+NO. PPF es un módulo de PowerShell, no una aplicación independiente. No se genera
+ni se necesita un archivo .exe. Todo se ejecuta dentro de PowerShell 7+ mediante
+los comandos del módulo.
+
+--------------------------------------------------------------------------------
+12. ESTRUCTURA DEL PROYECTO
+--------------------------------------------------------------------------------
+
+  PablitusPrompt/
+  ├── src/                 # Código fuente del módulo PowerShell
+  ├── dotnet/              # Núcleo .NET (Fase 3C)
+  ├── examples/            # Temas y ejemplos de uso
+  ├── tests/               # Pruebas Pester y xUnit
+  ├── docs/                # Documentación de arquitectura y ADR
+  ├── Instalar-PPF.ps1     # Instalador del módulo
+  ├── ppf-theme-persist.ps1# Función de persistencia de tema
+  ├── instrucciones.txt    # Este archivo
+  └── README.md            # Documentación completa del proyecto
+
+--------------------------------------------------------------------------------
+Fin de la guía
+================================================================================
