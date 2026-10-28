@@ -4,7 +4,7 @@ namespace PablitusPrompt.Core.Segments;
 
 public abstract class TemplateSegmentProvider : ISegmentProvider
 {
-    private readonly TemplateEngine _templates;
+    protected readonly TemplateEngine _templates;
 
     protected TemplateSegmentProvider(TemplateEngine templates, SegmentDefinition definition)
     {
@@ -148,11 +148,80 @@ public sealed class SegmentProviderRegistry
         templates ??= new TemplateEngine();
 
         return new SegmentProviderRegistry()
+            // Built-in PPF segments
             .Register(new SessionSegmentProvider(templates))
             .Register(new PathSegmentProvider(templates))
             .Register(new GitSegmentProvider(templates))
             .Register(new TextSegmentProvider(templates))
             .Register(new TimeSegmentProvider(templates))
-            .Register(new ExitSegmentProvider(templates));
+            .Register(new ExitSegmentProvider(templates))
+
+            // Cloud providers (Oh My Posh compatibility)
+            .Register(new AwsSegmentProvider(templates))
+            .Register(new AzSegmentProvider(templates))
+            .Register(new AzureSegmentProvider(templates))
+            .Register(new AzdSegmentProvider(templates))
+            .Register(new AzFunctionsSegmentProvider(templates))
+            .Register(new GcpSegmentProvider(templates))
+            .Register(new FirebaseSegmentProvider(templates))
+
+            // System
+            .Register(new BatterySegmentProvider(templates))
+            .Register(new CmdDurationSegmentProvider(templates))
+
+            // Containers
+            .Register(new DockerSegmentProvider(templates))
+            .Register(new DockerContextSegmentProvider(templates))
+
+            // .NET
+            .Register(new DotnetSegmentProvider(templates))
+
+            // Git
+            .Register(new GitCommitSegmentProvider(templates))
+            .Register(new GitVersionSegmentProvider(templates))
+
+            // Go
+            .Register(new GoSegmentProvider(templates))
+            .Register(new GolangSegmentProvider(templates))
+
+            // Kubernetes
+            .Register(new HelmSegmentProvider(templates))
+            .Register(new KubernetesSegmentProvider(templates))
+            .Register(new KubectlSegmentProvider(templates))
+
+            // JavaScript / TypeScript ecosystem
+            .Register(new NodeSegmentProvider(templates))
+            .Register(new NpmSegmentProvider(templates))
+            .Register(new NpxSegmentProvider(templates))
+            .Register(new PnpmSegmentProvider(templates))
+            .Register(new YarnSegmentProvider(templates))
+            .Register(new BunSegmentProvider(templates))
+            .Register(new DenoSegmentProvider(templates))
+
+            // Python
+            .Register(new PythonSegmentProvider(templates))
+
+            // Terraform
+            .Register(new TerraformSegmentProvider(templates))
+            .Register(new TerraformRequiredVersionSegmentProvider(templates))
+
+            // Build tools / JVM
+            .Register(new GradleSegmentProvider(templates))
+            .Register(new MvnSegmentProvider(templates))
+            .Register(new MvnwSegmentProvider(templates))
+
+            // Ruby / Rust / Cargo
+            .Register(new RubySegmentProvider(templates))
+            .Register(new RustSegmentProvider(templates))
+            .Register(new CargoSegmentProvider(templates))
+
+            // PHP
+            .Register(new PhpSegmentProvider(templates))
+            .Register(new ComposerSegmentProvider(templates))
+
+            // Swift / Kotlin / Scala
+            .Register(new SwiftSegmentProvider(templates))
+            .Register(new KotlinSegmentProvider(templates))
+            .Register(new ScalaSegmentProvider(templates));
     }
 }

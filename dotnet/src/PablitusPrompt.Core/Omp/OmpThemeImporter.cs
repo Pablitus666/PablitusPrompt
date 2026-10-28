@@ -11,7 +11,53 @@ public sealed class OmpThemeImporter
 {
     public static readonly IReadOnlyList<string> SupportedSegmentTypes = new[]
     {
+        // Built-in (already supported by PPF)
         "session", "path", "git", "text", "time", "exit",
+
+        // Cloud providers
+        "aws", "az", "azure", "azd", "az_functions", "gcp", "firebase",
+
+        // Battery / system
+        "battery",
+
+        // Command duration
+        "cmd_duration",
+
+        // Containers / virtualization
+        "docker", "docker_context",
+
+        // .NET ecosystem
+        "dotnet",
+
+        // Git
+        "gitcommit", "gitversion",
+
+        // Go
+        "go", "golang",
+
+        // Kubernetes
+        "helm", "kubernetes", "kubectl",
+
+        // JavaScript / TypeScript ecosystem
+        "node", "npm", "npx", "pnpm", "yarn", "bun", "deno",
+
+        // Python
+        "python",
+
+        // Terraform
+        "terraform", "terraform_required_version",
+
+        // Build tools / JVM
+        "gradle", "mvn", "mvnw",
+
+        // Ruby / Rust / Cargo
+        "ruby", "rust", "cargo",
+
+        // PHP
+        "php", "composer",
+
+        // Swift / Kotlin / Scala
+        "swift", "kotlin", "scala",
     };
 
     private static readonly Dictionary<string, string> DefaultTemplates =
