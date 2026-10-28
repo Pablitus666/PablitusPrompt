@@ -271,27 +271,18 @@ function global:prompt {
 '@
 
 # Siempre escribir el perfil (forzar actualización completa)
-# Primero, eliminar cualquier sección anterior de PPF del perfil
 if (Test-Path -LiteralPath $profilePath) {
     $existingContent = Get-Content -LiteralPath $profilePath -Raw
+    
+    # Remover TODAS las líneas que hagan referencia a ppf-theme-persist.ps1
+    $existingContent = $existingContent -replace ".*ppf-theme-persist\.ps1.*\r?\n", ''
+    
     # Remover secciones anteriores de PPF (entre marcadores)
-    if ($existingContent -match '# ============================================\r?\n# Pablitus Prompt Framework - Configuración.*?\r?\n# ============================================') {
-        $existingContent = $existingContent -replace '# ============================================\r?\n# Pablitus Prompt Framework - Configuración.*?\r?\n# ============================================\r?\n?', ''
-        $existingContent = $existingContent.TrimEnd("`r`n") + "`r`n"
-        Set-Content -LiteralPath $profilePath -Value $existingContent
-    }
-}
-
-# Siempre escribir el perfil (forzar actualización completa)
-# Primero, eliminar cualquier sección anterior de PPF del perfil
-if (Test-Path -LiteralPath $profilePath) {
-    $existingContent = Get-Content -LiteralPath $profilePath -Raw
-    # Remover secciones anteriores de PPF (entre marcadores)
-    if ($existingContent -match '# ============================================\r?\n# Pablitus Prompt Framework - Configuración.*?\r?\n# ============================================') {
-        $existingContent = $existingContent -replace '# ============================================\r?\n# Pablitus Prompt Framework - Configuración.*?\r?\n# ============================================\r?\n?', ''
-        $existingContent = $existingContent.TrimEnd("`r`n") + "`r`n"
-        Set-Content -LiteralPath $profilePath -Value $existingContent
-    }
+    $existingContent = $existingContent -replace '# ============================================\r?\n# Pablitus Prompt Framework - Configuración.*?\r?\n# ============================================\r?\n?', ''
+    
+    # Limpiar líneas vacías múltiples al final
+    $existingContent = $existingContent.TrimEnd("`r`n") + "`r`n"
+    Set-Content -LiteralPath $profilePath -Value $existingContent
 }
 
 # Agregar la nueva configuración al final
