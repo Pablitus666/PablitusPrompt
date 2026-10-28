@@ -75,6 +75,25 @@ núcleo .NET con:
   dotnet build dotnet/src/PablitusPrompt.Cli -c Release
 
 --------------------------------------------------------------------------------
+3.5. PASO 2B: INSTALACIÓN EN macOS Y LINUX
+--------------------------------------------------------------------------------
+
+En macOS y Linux, el instalador funciona de forma similar pero con rutas
+específicas de cada sistema:
+
+  cd PablitusPrompt
+  pwsh ./Instalar-PPF.ps1
+
+El instalador detectará automáticamente el sistema operativo y:
+
+  - macOS: instalará JetBrainsMono Nerd Font en ~/Library/Fonts/
+  - Linux: instalará JetBrainsMono Nerd Font en ~/.local/share/fonts/
+    y ejecutará fc-cache para actualizar el caché de fuentes
+
+Después de la instalación, selecciona 'JetBrainsMono Nerd Font' en la
+configuración de tu terminal (iTerm2, Terminal, Alacritty, Kitty, etc.).
+
+--------------------------------------------------------------------------------
 4. PASO 3: IMPORTAR EL MÓDULO Y VERIFICAR
 --------------------------------------------------------------------------------
 
@@ -339,5 +358,31 @@ los comandos del módulo.
   └── README.md            # Documentación completa del proyecto
 
 --------------------------------------------------------------------------------
+13. SOPORTE MULTI-SHELL (bash, zsh, fish, cmd)
+----------------------------------------------------------------------------
+
+PPF es un módulo de PowerShell nativo, pero incluye scripts de inicialización
+en src/ShellInit/ que permiten usarlo desde otros shells invocando a pwsh:
+
+  | Archivo     | Shell  | Uso                                                  |
+  |-------------|--------|------------------------------------------------------|
+  | ppf.bash    | bash   | source /ruta/a/ppf.bash en ~/.bashrc                 |
+  | ppf.zsh     | zsh    | source /ruta/a/ppf.zsh en ~/.zshrc                   |
+  | ppf.fish    | fish   | source /ruta/a/ppf.fish en ~/.config/fish/config.fish |
+  | ppf.cmd     | cmd    | Llamar desde un macro o AutoRun                      |
+  | ppf.ps1     | PowerShell | Importar directamente en PowerShell 7+            |
+
+Ejemplo para bash (~/.bashrc):
+
+  source /ruta/a/PablitusPrompt/src/ShellInit/ppf.bash
+
+Ejemplo para zsh (~/.zshrc):
+
+  source /ruta/a/PablitusPrompt/src/ShellInit/ppf.zsh
+
+Nota: iniciar pwsh en cada prompt añade un coste de arranque; para uso
+diario se recomienda usar PPF directamente desde PowerShell 7+.
+
+----------------------------------------------------------------------------
 Fin de la guía
 ================================================================================

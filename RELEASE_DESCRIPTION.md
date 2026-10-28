@@ -1,6 +1,6 @@
 # 🚀 Pablitus Prompt Framework (PPF) v1.5.1 — Prompt modular para PowerShell
 
-> **Lanzamiento estable — Bootstrap rápido, temas PowerLine, núcleo .NET opt-in, Fase 3C (transient, tooltips, right prompt), Fase 3D (multi-shell, packaging) y Fase 3E (soporte completo para segmentos de Oh My Posh).**
+> **Lanzamiento estable — Bootstrap rápido, temas PowerLine, núcleo .NET opt-in, Fase 3C (transient, tooltips, right prompt), Fase 3D (multi-shell, packaging), Fase 3E (soporte completo para segmentos de Oh My Posh) y soporte multiplataforma (Windows, macOS, Linux).**
 
 Esta versión consolida **Pablitus Prompt Framework (PPF)** como un framework modular para construir prompts de PowerShell con una arquitectura clara, rápida y personalizable. PPF separa la recolección de datos, la construcción del contexto, el middleware, los segmentos, los temas y el renderizado en capas independientes.
 
@@ -101,6 +101,38 @@ $env:PPF_USE_DOTNET_CORE = "1"
 Import-PPFDotNetTheme -Path "ruta\al\tema.omp.json" -Activate -IgnoreUnsupported
 Get-PromptString -TerminalWidth 120 -NoColor
 ```
+
+---
+
+## 🆕 Soporte Multiplataforma (Windows, macOS, Linux)
+
+PPF está diseñado para funcionar en los tres sistemas operativos principales:
+
+| Componente | Windows | macOS | Linux |
+|------------|---------|-------|-------|
+| Núcleo .NET | ✅ | ✅ | ✅ |
+| PowerShell 7+ | ✅ | ✅ | ✅ |
+| Batería (WMI/pmset/sysfs) | ✅ Win32_Battery | ✅ pmset | ✅ /sys/class/power_supply |
+| Instalación de Nerd Font | C:\Windows\Fonts\ | ~/Library/Fonts/ | ~/.local/share/fonts/ + fc-cache |
+| Caché del módulo | %LOCALAPPDATA% | ~/Library/Caches/ | ~/.cache/ |
+| ShellInit | ppf.cmd, ppf.ps1 | ppf.bash, ppf.zsh, ppf.fish | ppf.bash, ppf.zsh, ppf.fish |
+
+### Instalación en macOS y Linux
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/Pablitus666/PablitusPrompt.git
+cd PablitusPrompt
+
+# Ejecutar el instalador con PowerShell
+pwsh ./Instalar-PPF.ps1
+
+# Importar el módulo
+pwsh -Command "Import-Module PablitusPrompt -Force"
+```
+
+El instalador detectará automáticamente el sistema operativo e instalará
+JetBrainsMono Nerd Font en la ubicación correcta para cada plataforma.
 
 ---
 
