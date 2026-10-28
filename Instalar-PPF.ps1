@@ -210,11 +210,11 @@ Restore-PPFTHEME -ErrorAction SilentlyContinue
 # Configurar el prompt de PowerShell
 function global:prompt {
     try {
-        \$context = Invoke-Prompt
-        Get-PromptString -Context \$context -Renderer 'PowerLine'
+        $context = Invoke-Prompt
+        Get-PromptString -Context $context -Renderer 'PowerLine'
     }
     catch {
-        'PS ' + \$executionContext.SessionState.Path.CurrentLocation + '➜ '
+        'PS ' + $executionContext.SessionState.Path.CurrentLocation + '➜ '
     }
 }
 "@
