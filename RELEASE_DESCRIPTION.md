@@ -1,6 +1,6 @@
-# 🚀 Pablitus Prompt Framework (PPF) v1.5.0 — Prompt modular para PowerShell
+# 🚀 Pablitus Prompt Framework (PPF) v1.5.1 — Prompt modular para PowerShell
 
-> **Lanzamiento estable — Bootstrap rápido, temas PowerLine, núcleo .NET opt-in, fase 3C (transient, tooltips, right prompt) y fase 3D (multi-shell, packaging para PowerShell Gallery).**
+> **Lanzamiento estable — Bootstrap rápido, temas PowerLine, núcleo .NET opt-in, Fase 3C (transient, tooltips, right prompt), Fase 3D (multi-shell, packaging) y Fase 3E (soporte completo para segmentos de Oh My Posh).**
 
 Esta versión consolida **Pablitus Prompt Framework (PPF)** como un framework modular para construir prompts de PowerShell con una arquitectura clara, rápida y personalizable. PPF separa la recolección de datos, la construcción del contexto, el middleware, los segmentos, los temas y el renderizado en capas independientes.
 
@@ -8,7 +8,7 @@ El resultado es un prompt propio, comprensible y extensible, sin depender de ser
 
 ---
 
-## 🔧 Innovaciones técnicas en v1.5.0
+## 🔧 Innovaciones técnicas en v1.5.1
 
 - **Bootstrap rápido:** las fuentes modulares se leen en orden de dependencia, se concatenan y se ejecutan una sola vez. El modo activo se expone en `$global:PPF_BootstrapMode` (`Fast` o `Modular`).
 - **Cargador modular de compatibilidad:** se puede forzar con `$env:PPF_USE_MODULAR_LOADER = "1"` para cobertura con Pester o depuración archivo por archivo.
@@ -23,7 +23,7 @@ El resultado es un prompt propio, comprensible y extensible, sin depender de ser
 - **Caché en memoria y disco:** reutilización de información con TTL y persistencia opcional.
 - **Configuración flexible:** importación/exportación JSON y PSD1, además de recarga en caliente.
 - **Sistema de eventos:** hooks para `BeforeRender`, `AfterRender`, `ThemeChanged`, `ConfigurationChanged` y `ModuleLoaded`.
-- **Sampler de CPU:** recolección en segundo plano respaldada por runspaces.
+- **Sampler de CPU:** recolección en segundo plano respaldado por runspaces.
 - **Git watcher:** seguimiento del estado del repositorio sin bloquear el prompt.
 - **Diagnóstico y benchmarks:** `Get-PromptHealth`, `Test-PromptFramework`, `Measure-Prompt`, `Measure-PromptDetailed` y `Measure-PromptCacheComparison`.
 - **Multiplataforma:** Windows, Linux y macOS con PowerShell 7+.
@@ -73,21 +73,61 @@ Get-PromptTooltip -Command "git" -TerminalWidth 80 -Column 5
 
 ---
 
-## 🚀 Guía de instalación
+## 🆕 Fase 3E — Soporte completo para segmentos de Oh My Posh
 
+- **40 proveedores de segmento .NET nuevos** para compatibilidad total con temas de Oh My Posh:
+  - **Cloud:** aws, az, azure, azd, az_functions, gcp, firebase
+  - **Sistema:** battery, cmd_duration
+  - **Contenedores:** docker, docker_context
+  - **.NET:** dotnet
+  - **Git:** gitcommit, gitversion
+  - **Go:** go, golang
+  - **Kubernetes:** helm, kubernetes, kubectl
+  - **JavaScript/TypeScript:** node, npm, npx, pnpm, yarn, bun, deno
+  - **Python:** python
+  - **Terraform:** terraform, terraform_required_version
+  - **Build tools:** gradle, mvn, mvnw
+  - **Ruby/Rust/Cargo:** ruby, rust, cargo
+  - **PHP:** php, composer
+  - **Swift/Kotlin/Scala:** swift, kotlin, scala
+- **Total: 46 tipos de segmento soportados** (6 built-in + 40 de Oh My Posh).
+- **Nerd Font automática:** el instalador (`Instalar-PPF.ps1`) descarga e instala JetBrainsMono Nerd Font automáticamente desde el release de GitHub (licencia SIL OFL, distribución libre permitida), eliminando la dependencia de terceros.
+
+#### Importar temas de Oh My Posh
+
+```powershell
+Import-Module PablitusPrompt -Force
+$env:PPF_USE_DOTNET_CORE = "1"
+Import-PPFDotNetTheme -Path "ruta\al\tema.omp.json" -Activate -IgnoreUnsupported
+Get-PromptString -TerminalWidth 120 -NoColor
+```
+
+---
+
+## 🆕 Instalador mejorado (Instalar-PPF.ps1)
+
+- Copia `src/` completo al módulo de PowerShell
+- Copia el núcleo .NET compilado (DLL, PDB, deps.json) a `dotnet/publish/`
+- **Descarga e instala JetBrainsMono Nerd Font automáticamente** (fuente primaria: release de GitHub, respaldo: nerd-fonts oficial)
+- Lista los temas disponibles al finalizar
+
+---
+
+## 🚀 Guía de instalación
 
 ### 📦 Requisitos
 
 - PowerShell 7.0 o superior.
 - Windows, Linux o macOS.
-- Una Nerd Font instalada en la terminal para los glifos PowerLine.
+- El instalador descarga e instala JetBrainsMono Nerd Font automáticamente.
 - Git, Node, Python, Docker o Kubernetes son **opcionales**; sus segmentos se degradan si no están disponibles.
 
 ### ⚡ Importar el módulo
 
 ```powershell
 git clone https://github.com/Pablitus666/PablitusPrompt.git
-Import-Module .\PablitusPrompt\src\PablitusPrompt.psd1 -Force
+.\Instalar-PPF.ps1
+Import-Module PablitusPrompt -Force
 ```
 
 También se puede usar el bootstrap:
@@ -107,7 +147,8 @@ if (Test-Path (Join-Path $PPF "Bootstrap.ps1")) {
     try {
         . (Join-Path $PPF "Bootstrap.ps1")
 
-        Set-PromptTheme -Name "Dracula"
+        $env:PPF_USE_DOTNET_CORE = "1"
+        Set-PromptTheme -Name "Pablitus Minimal"
         $global:PPF_SkipHiddenProviders = $true
 
         function global:prompt {
@@ -139,6 +180,12 @@ Set-PromptTheme -Name "Default"
 Set-PromptTheme -Name "Pablitus"
 Set-PromptTheme -Name "Pablitus Dark"
 Set-PromptTheme -Name "Pablitus Light"
+Set-PromptTheme -Name "Pablitus Neon"
+Set-PromptTheme -Name "Pablitus Matrix"
+Set-PromptTheme -Name "Pablitus Ocean"
+Set-PromptTheme -Name "Pablitus Sunset"
+Set-PromptTheme -Name "Pablitus Forest"
+Set-PromptTheme -Name "Pablitus Cyberpunk"
 ```
 
 ### 🛠️ Temas personalizados
@@ -165,9 +212,9 @@ El contrato completo está documentado en `docs/Themes.md` y hay un ejemplo en `
 - **Arquitectura:** modular, con capas para Core, Configuration, Utils, Modules, Themes y Renderers.
 - **Bootstrap:** Fast por defecto; Modular disponible por variable de entorno.
 - **Proveedores:** 13 integrados.
-- **Segmentos:** 14 integrados.
+- **Segmentos:** 14 integrados + 40 de Oh My Posh = 54 totales.
 - **Renderers:** 8 integrados.
-- **Temas:** 8 integrados.
+- **Temas:** 12 integrados.
 - **Salida destacada:** PowerLine truecolor, ANSI, JSON, Markdown y HTML.
 - **Caché:** memoria y disco.
 - **Configuración:** JSON, PSD1 y hot reload.
@@ -199,6 +246,8 @@ Los valores pueden variar según el hardware, la terminal, los proveedores visib
 - **Pruebas de caché:** memoria, disco y TTL.
 - **Pruebas de configuración:** importación, exportación y hot reload.
 - **Pruebas de temas:** contrato PowerLine, truecolor y diamantes.
+- **Pruebas de Fase 3C:** transient prompt, tooltips y right prompt.
+- **Pruebas xUnit .NET:** 125 pruebas aprobadas, 0 fallos.
 
 Comandos de validación:
 
@@ -222,6 +271,7 @@ PPF se distribuye como módulo de PowerShell. Los artefactos de build incluyen:
 
 - `PablitusPrompt-v<version>.zip` — módulo listo para copiar manualmente.
 - `PablitusPrompt.<version>.nupkg` — paquete para PowerShell Gallery (`Install-Module`).
+- `JetBrains_Mono.zip` — fuente Nerd Font incluida en el release para instalación automática.
 
 Para generar los artefactos de build, ejecutar pruebas, cobertura, benchmarks y documentación de API:
 
@@ -242,9 +292,10 @@ Software Developer<br>
 
 ---
 
-**Descarga o clona el repositorio, importa el módulo y empezá a construir tu prompt.**
+**Descarga o clona el repositorio, ejecuta el instalador y empezá a construir tu prompt.**
 
 ```powershell
-Import-Module .\src\PablitusPrompt.psd1 -Force
-Set-PromptTheme -Name "Dracula"
+.\Instalar-PPF.ps1
+Import-Module PablitusPrompt -Force
+Set-PromptTheme -Name "Pablitus Minimal"
 ```
