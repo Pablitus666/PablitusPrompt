@@ -51,6 +51,62 @@ if (Test-Path -LiteralPath $dotnetPublish) {
     Write-Host "   Ejecuta primero: scripts/Build-PPFDotNetCore.ps1" -ForegroundColor Yellow
 }
 
+# 4. Descargar e instalar Nerd Font (JetBrainsMono Nerd Font)
+Write-Host ""
+Write-Host "Instalando Nerd Font (necesaria para glifos PowerLine)..." -ForegroundColor Cyan
+
+$nerdFontUrl = "https://github.com/ryanox/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip"
+$tempFontZip = Join-Path $env:TEMP "JetBrainsMonoNerdFont.zip"
+$tempFontDir = Join-Path $env:TEMP "JetBrainsMonoNerdFont"
+$fontsDir = Join-Path $env:SystemRoot "Fonts"
+
+try {
+    if (-not (Test-Path -LiteralPath $tempFontZip)) {
+        Write-Host "  Descargando JetBrainsMono Nerd Font..." -ForegroundColor Cyan
+        Invoke-WebRequest -Uri $nerdFontUrl -OutFile $tempFontZip -ErrorAction Stop
+    }
+
+    if (-not (Test-Path -LiteralPath $tempFontDir)) {
+        $null = New-Item -ItemType Directory -Path $tempFontDir -Force
+    }
+
+    Expand-Archive -Path $tempFontZip -DestinationPath $tempFontDir -Force
+
+    $fontFiles = Get-ChildItem -Path $tempFontDir -Filter "*.ttf" -Recurse | Where-Object {
+        $_.Name -like "*NerdFont*" -or $_.Name -like "*Nerd Font*" -or $_.Name -like "*Complete*"
+    }
+
+    if ($fontFiles.Count -eq 0) {
+        # Fallback: tomar todos los .ttf si no encontramos los específicos
+        $fontFiles = Get-ChildItem -Path $tempFontDir -Filter "*.ttf" -Recurse
+    }
+
+    $installedCount = 0
+    foreach ($fontFile in $fontFiles) {
+        $destFont = Join-Path $fontsDir $fontFile.Name
+        if (-not (Test-Path -LiteralPath $destFont)) {
+            Copy-Item -Path $fontFile.FullName -Destination $destFont -Force
+            Write-Host "  Instalada: $($fontFile.Name)" -ForegroundColor Green
+        }
+        $installedCount++
+    }
+
+    Write-Host "  Total fuentes instaladas: $installedCount" -ForegroundColor Green
+
+    # Limpiar archivos temporales
+    Remove-Item -Path $tempFontZip -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $tempFontDir -Recurse -Force -ErrorAction SilentlyContinue
+
+    Write-Host ""
+    Write-Host "  NOTA: Puede que necesites reiniciar tu terminal para que la fuente surta efecto." -ForegroundColor Yellow
+    Write-Host "  Luego selecciona 'JetBrainsMono Nerd Font' en la configuración de tu terminal." -ForegroundColor Yellow
+}
+catch {
+    Write-Host "  ADVERTENCIA: No se pudo instalar la Nerd Font automáticamente." -ForegroundColor Yellow
+    Write-Host "   Error: $($_.Exception.Message)" -ForegroundColor Yellow
+    Write-Host "   Puedes instalarla manualmente desde: https://www.nerdfonts.com/font-downloads" -ForegroundColor Yellow
+}
+
 Write-Host ""
 Write-Host "="*60 -ForegroundColor Cyan
 Write-Host "  INSTALACIÓN COMPLETADA" -ForegroundColor Green
