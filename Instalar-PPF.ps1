@@ -261,11 +261,11 @@ Restore-PPFTHEME -ErrorAction SilentlyContinue
 # Configurar el prompt de PowerShell
 function global:prompt {
     try {
-        `$context = Invoke-Prompt
-        Get-PromptString -Context `$context -Renderer 'PowerLine'
+        $context = Invoke-Prompt
+        Get-PromptString -Context $context -Renderer 'PowerLine'
     }
     catch {
-        'PS ' + `$executionContext.SessionState.Path.CurrentLocation + '➜ '
+        'PS ' + $executionContext.SessionState.Path.CurrentLocation + '➜ '
     }
 }
 '@
@@ -276,14 +276,14 @@ if (Test-Path -LiteralPath $profilePath) {
     
     # Remover CUALQUIER línea relacionada con PPF para evitar duplicados y errores
     $existingLines = $existingLines | Where-Object {
-        $_ -notmatch 'Pablitus Prompt Framework - Configuración' -and
+        $_ -notmatch 'Pablitus Prompt Framework' -and
         $_ -notmatch 'ppf-theme-persist' -and
         $_ -notmatch 'PPFThemePrefPath' -and
         $_ -notmatch 'Set-PromptThemePersist' -and
         $_ -notmatch 'Restore-PPFTHEME' -and
         $_ -notmatch 'function global:prompt' -and
-        $_ -notmatch '\$context = Invoke-Prompt' -and
-        $_ -notmatch '\$executionContext.SessionState.Path.CurrentLocation' -and
+        $_ -notmatch '\$context\s*=' -and
+        $_ -notmatch '\$executionContext\.SessionState' -and
         $_ -notmatch '^=+$' -and
         $_ -notmatch '^$'
     }
