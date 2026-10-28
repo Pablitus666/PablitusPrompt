@@ -195,14 +195,9 @@ if (-not (Test-Path -LiteralPath $profileDir)) {
     $null = New-Item -ItemType Directory -Path $profileDir -Force
 }
 
-# Leer el contenido de ppf-theme-persist.ps1 para incrustarlo en el perfil
-$ppfPersistContent = ""
-$ppfPersistSourcePath = Join-Path $repoRoot "src/Core/ppf-theme-persist.ps1"
-if (Test-Path -LiteralPath $ppfPersistSourcePath) {
-    $ppfPersistContent = Get-Content -LiteralPath $ppfPersistSourcePath -Raw
-}
-
-$profileContent = @"
+# Construir el perfil usando here-string con comillas simples (nada se expande)
+# Las variables del instalador se insertan mediante concatenación
+$profileContent = @'
 # ============================================
 # Pablitus Prompt Framework - Configuración
 # ============================================
@@ -273,7 +268,19 @@ function global:prompt {
         'PS ' + `$executionContext.SessionState.Path.CurrentLocation + '➜ '
     }
 }
-"@
+'@
+
+# Siempre escribir el perfil (forzar actualización completa)
+# Primero, eliminar cualquier sección anterior de PPF del perfil
+if (Test-Path -LiteralPath $profilePath) {
+    $existingContent = Get-Content -LiteralPath $profilePath -Raw
+    # Remover secciones anteriores de PPF (entre marcadores)
+    if ($existingContent -match '# ============================================\r?\n# Pablitus Prompt Framework - Configuración.*?\r?\n# ============================================') {
+        $existingContent = $existingContent -replace '# ============================================\r?\n# Pablitus Prompt Framework - Configuración.*?\r?\n# ============================================\r?\n?', ''
+        $existingContent = $existingContent.TrimEnd("`r`n") + "`r`n"
+        Set-Content -LiteralPath $profilePath -Value $existingContent
+    }
+}
 
 # Siempre escribir el perfil (forzar actualización completa)
 # Primero, eliminar cualquier sección anterior de PPF del perfil
