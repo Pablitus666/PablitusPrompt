@@ -10,7 +10,8 @@ dotnet/publish/
 ppf-theme-pref.json
 
 # Módulo instalado (no rastrear instalación local)
-$env:USERPROFILE\Documents\PowerShell\Modules\PablitusPrompt/
+# Ruta: <Documentos del usuario>\PowerShell\Modules\PablitusPrompt
+# (derivada del idioma del SO en tiempo de instalacion, no hardcodeada)
 
 # Logs y benchmarks generados localmente
 benchmarks/*.json

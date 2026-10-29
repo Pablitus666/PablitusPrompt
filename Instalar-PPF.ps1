@@ -7,9 +7,36 @@
 
 $ErrorActionPreference = "Stop"
 
+# ============================================================
+# Obtener la carpeta de Documentos del usuario de forma robusta,
+# sin asumir el idioma del SO (Documents, Documentos, 文档, etc.)
+# ============================================================
+function Get-PPFUserDocumentsPath {
+    # Windows: usar la carpeta conocida del sistema (idioma-agnostico)
+    if ([System.OperatingSystem]::IsWindows()) {
+        try {
+            $path = [System.Environment]::GetFolderPath(
+                [System.Environment+SpecialFolder]::MyDocuments)
+            if ($path -and (Test-Path -LiteralPath $path)) {
+                return $path
+            }
+        }
+        catch {}
+        # Fallback Windows si GetFolderPath falla
+        return Join-Path $env:USERPROFILE "Documents"
+    }
+    # macOS / Linux
+    $homeDocs = Join-Path $env:HOME "Documents"
+    if (Test-Path -LiteralPath $homeDocs) { return $homeDocs }
+    return $env:HOME
+}
+
+$userDocuments = Get-PPFUserDocumentsPath
+
 $repoRoot = Get-Location
 $srcRoot = Join-Path $repoRoot "src"
-$modulePath = Join-Path $env:USERPROFILE "Documents\PowerShell\Modules\PablitusPrompt"
+# Ruta del módulo basada en los Documentos REALES del usuario (no hardcodeada)
+$modulePath = Join-Path $userDocuments "PowerShell\Modules\PablitusPrompt"
 $dotnetPublish = Join-Path $repoRoot "dotnet/publish"
 
 Write-Host "================================================" -ForegroundColor Cyan

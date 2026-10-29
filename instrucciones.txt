@@ -48,8 +48,9 @@ Desde la carpeta raíz del repositorio (D:\PablitusPrompt), ejecuta:
 
 El instalador hará lo siguiente:
 
-  - Creará la carpeta del módulo en:
-        C:\Users\<TuUsuario>\Documents\PowerShell\Modules\PablitusPrompt
+  - Creará la carpeta del módulo en la misma ubicación de $PROFILE (PowerShell del usuario):
+        C:\Users\<TuUsuario>\OneDrive\Documentos\PowerShell\Modules\PablitusPrompt
+        (en Windows en español con OneDrive; el instalador la deriva automáticamente de $PROFILE)
   - Copiará TODO el contenido de src/ al módulo
   - Copiará el núcleo .NET compilado a:
         ...\PablitusPrompt\dotnet\publish\PablitusPrompt.Core.dll
