@@ -8,7 +8,22 @@ PPF funciona de forma local, no depende de servicios externos para renderizar el
 
 ---
 
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-0078D6?style=flat) ![Language](https://img.shields.io/badge/language-PowerShell%207%2B-5391FE?style=flat&logo=powershell&logoColor=white) ![Version](https://img.shields.io/badge/version-1.5.0-blue?style=flat) ![Architecture](https://img.shields.io/badge/architecture-Modular-informational?style=flat) ![Bootstrap](https://img.shields.io/badge/bootstrap-Fast-success?style=flat) ![Providers](https://img.shields.io/badge/providers-13-5391FE?style=flat) ![Segments](https://img.shields.io/badge/segments-14-informational?style=flat) ![Renderers](https://img.shields.io/badge/renderers-8-orange?style=flat) ![Themes](https://img.shields.io/badge/themes-14-9B59B6?style=flat) ![Output](https://img.shields.io/badge/output-PowerLine%20%2F%20ANSI%20%2F%20HTML-blueviolet?style=flat) ![Cache](https://img.shields.io/badge/cache-Memory%20%2B%20Disk-success?style=flat) ![Mode](https://img.shields.io/badge/mode-100%25%20Local-brightgreen?style=flat) ![Status](https://img.shields.io/badge/status-Stable-brightgreen?style=flat) ![Tests](https://img.shields.io/badge/tests-192%20passing-brightgreen?style=flat) ![Analyzer](https://img.shields.io/badge/analyzer-0%20findings-success?style=flat) ![License](https://img.shields.io/badge/license-MIT-green?style=flat)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-0078D6?style=flat)
+![Language](https://img.shields.io/badge/language-PowerShell%207%2B-5391FE?style=flat&logo=powershell&logoColor=white)
+![Version](https://img.shields.io/badge/version-1.5.0-blue?style=flat)
+![Architecture](https://img.shields.io/badge/architecture-Modular-informational?style=flat)
+![Bootstrap](https://img.shields.io/badge/bootstrap-Fast-success?style=flat)
+![Providers](https://img.shields.io/badge/providers-13-5391FE?style=flat)
+![Segments](https://img.shields.io/badge/segments-14-informational?style=flat)
+![Renderers](https://img.shields.io/badge/renderers-8-orange?style=flat)
+![Themes](https://img.shields.io/badge/themes-14-9B59B6?style=flat)
+![Output](https://img.shields.io/badge/output-PowerLine%20%2F%20ANSI%20%2F%20HTML-blueviolet?style=flat)
+![Cache](https://img.shields.io/badge/cache-Memory%20%2B%20Disk-success?style=flat)
+![Mode](https://img.shields.io/badge/mode-100%25%20Local-brightgreen?style=flat)
+![Status](https://img.shields.io/badge/status-Stable-brightgreen?style=flat)
+![Tests](https://img.shields.io/badge/tests-192%20passing-brightgreen?style=flat)
+![Analyzer](https://img.shields.io/badge/analyzer-0%20findings-success?style=flat)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat)
 
 ---
 
